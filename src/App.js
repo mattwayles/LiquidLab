@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Layout from './containers/Layout/Layout';
+import Auth from './containers/Auth/Auth';
+import LiquidLab from './containers/LiquidLab/LiquidLab';
 import './App.css';
 
 class App extends Component {
   render() {
+      let routes =
+          <Switch>
+              <Route path="/login" component={Auth} />
+              <Route path="/" component={LiquidLab} />
+          </Switch>;
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+          <BrowserRouter>
+            <Layout>
+                {routes}
+            </Layout>
+          </BrowserRouter>
       </div>
     );
   }
