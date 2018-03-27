@@ -15,6 +15,8 @@ export const errorMessage = (errorMessage) => {
             return "The provided e-mail address was found in our records, but the password is incorrect.";
         case errorType.EMAIL_EXISTS:
             return "A user record already exists for the provided e-mail address.";
+        case errorType.BAD_REQUEST:
+            return "The server received a bad request. Please contact your system administrator.";
         default:
             return errorMessage;
     }
