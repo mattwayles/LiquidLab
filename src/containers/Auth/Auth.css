@@ -1,0 +1,51 @@
+.Auth {
+    margin: 100px auto;
+    width: 50%;
+    text-align: center;
+    box-shadow: 2px 2px 5px #ccc;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.Label {
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.Input {
+    display: block;
+}
+
+.Links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    height: 100%;
+}
+
+.NavLink {
+    padding: 8px;
+}
+
+@media (max-width: 500px) {
+    .Auth {
+        width: 90%;
+    }
+
+    .Label {
+        font-size: 1.1em;
+    }
+}
+
+@media (min-width: 501px) AND (max-width: 1024px) {
+    .Auth {
+        width: 80%;
+    }
+}

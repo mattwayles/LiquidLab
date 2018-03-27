@@ -1,0 +1,66 @@
+.About {
+    margin: 100px auto;
+    width: 80%;
+    box-shadow: 2px 2px 5px #ccc;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 25px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.About header {
+    font-size: 3em;
+    font-family: inherit;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.About h1 {
+    color: var(--main-color);
+}
+
+.About h3 {
+    padding: 10px 50px;
+}
+
+.About p {
+    padding: 10px 50px;
+}
+
+.About ul{
+    color: var(--main-color);
+    padding: 10px 100px;
+}
+
+@media (max-width: 500px) {
+    .About {
+        margin: 75px auto;
+        width: 90%;
+    }
+
+    .About header {
+        text-align: center;
+        font-size: 1.5em;
+    }
+
+    .About h3 {
+        text-align: center;
+        padding: 5px;
+        font-size: 0.85em;
+    }
+    .About h1 {
+        text-align: center;
+        font-size: 1.1em;
+    }
+
+    .About p {
+        padding: 5px;
+        font-size: .75em;
+    }
+
+    .About ul {
+        padding: 0 0 0 25px;
+        font-size: .6em;
+    }
+}
