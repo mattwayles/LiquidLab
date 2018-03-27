@@ -1,0 +1,17 @@
+.Main {
+    margin: 100px auto;
+    width: 50%;
+    text-align: center;
+    box-shadow: 2px 2px 5px #ccc;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.Main p {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--main-color);
+}
