@@ -12,9 +12,9 @@ export const auth = (email, password, register) => {
             returnSecureToken: true
         };
 
-        let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU";
+        let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=[API_KEY]";
         if (!register) {
-            url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU";
+            url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=[API_KEY]";
         }
         axios.post(url, authData)
             .then(response => {
