@@ -1,0 +1,11 @@
+.Formula {
+    box-shadow: 2px 2px 5px #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: var(--background-color);
+    margin: 10px;
+    height: 400px;
+    width: 60%;
+    display: flex;
+    flex-flow: row;
+}

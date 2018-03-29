@@ -1,0 +1,38 @@
+.Recipe {
+    width: 70%;
+    height: 100%;
+}
+
+.RecipeInner {
+    margin: 0 3%;
+    display: grid;
+    grid-template-columns: 100%;
+}
+
+.Header {
+    text-align: center;
+    font-size: 1.5em;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.RecipeInner input {
+    text-align: center;
+    margin: 0 auto 10px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.RecipeName {
+    height: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+}
+
+.RecipeNameInput {
+    height: 90%;
+    width: 10%;
+}

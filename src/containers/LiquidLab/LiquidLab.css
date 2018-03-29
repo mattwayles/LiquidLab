@@ -1,0 +1,45 @@
+.LiquidLab {
+    margin: 100px auto;
+    width: 90%;
+    box-shadow: 2px 2px 5px #ccc;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.Header {
+    font-size: 42px;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.Header select {
+    margin-left: 10%;
+    width: 50%;
+    font-size: 0.5em;
+    background-color: var(--main-color);
+    color: var(--background-color);
+    border-radius: 5px;
+}
+
+.Views {
+    display: flex;
+    flax-flow: column;
+}
+
+.Results{
+    box-shadow: 2px 2px 5px #ccc;
+    border-radius: 5px;
+    background-color: var(--background-color);
+    margin: 10px;
+    height: 400px;
+    width: 40%;
+}
+.Results p {
+    text-align: center;
+    line-height: 275px;
+    font-size: 3em;
+    opacity: 0.2;
+}

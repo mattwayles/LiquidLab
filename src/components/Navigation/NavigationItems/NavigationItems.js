@@ -6,6 +6,7 @@ import classes from './NavigationItems.css';
 
 const navigationItems = (props) => (
     <ul className={classes.NavigationItems}>
+        <NavigationItem link="/Help">Help</NavigationItem>
         <NavigationItem link="/about">About</NavigationItem>
         {props.isAuthenticated
             ? <NavigationItem link="/logout">Logout</NavigationItem>

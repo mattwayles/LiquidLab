@@ -1,0 +1,16 @@
+.Quantity {
+    margin-left: 3%;
+    width: 25%;
+    height: 95%;
+    display: grid;
+    grid-template-columns: 160px;
+    border: none;
+}
+
+.Header {
+    text-align: center;
+    font-size: 1.5em;
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-bottom: 20px;
+}

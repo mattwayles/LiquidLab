@@ -1,19 +1,17 @@
 .Button {
-    background-color: var(--main-color);
+    background-color: var(--accent-color);
     border: none;
-    color: var(--accent-color);
+    color: var(--background-color);
     outline: none;
     border-radius: 25px;
     cursor: pointer;
     font: inherit;
     padding: 10px;
-    margin: 20px;
     font-weight: bold;
-    width: 100px;
 }
 
 .Button:disabled {
-    color: #ccc;
+    background-color: #ccc;
     cursor: not-allowed;
 }
 

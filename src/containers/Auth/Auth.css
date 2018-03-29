@@ -10,10 +10,15 @@
     background-color: white;
 }
 
+.Auth Button {
+    width: 100px;
+    margin: 20px;
+}
+
 .Label {
     font-size: 2em;
     font-weight: bold;
-    color: var(--main-color);
+    color: var(--accent-color);
 }
 
 .Input {
