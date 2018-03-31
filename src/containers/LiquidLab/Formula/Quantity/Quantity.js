@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as actions from '../../../../store/actions/index';
 import { connect } from 'react-redux';
+import { enforceMaxLength } from '../../../../shared/utility';
 
 
 import Auxil from '../../../../hoc/Auxil';
@@ -8,12 +9,9 @@ import QuantityControl from '../../../../components/QuantityControl/QuantityCont
 import classes from './Quantity.css';
 
 class Quantity extends Component {
-    enforceMaxLength = (value, maxLength) => {
-        return value.slice(0,maxLength)
-    };
 
     dataEnteredHandler = (event, control) => {
-        event.target.value = this.enforceMaxLength(event.target.value, event.target.maxLength);
+        event.target.value = enforceMaxLength(event.target.value, event.target.maxLength);
 
         this.props.onDataEntered(control, event.target.value);
     }
@@ -48,7 +46,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onDataEntered: (control, value) => dispatch(actions.quantityDataEntered(control, value))
+        onDataEntered: (control, value) => dispatch(actions.inputDataEntered(control, value))
     }
 };
 

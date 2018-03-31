@@ -5,10 +5,15 @@
 
 .RecipeInner {
     margin: 0 3%;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     grid-template-columns: 100%;
 }
 
+.Col1, .Col2 {
+    border: 1px red solid;
+    width: 45%;
+}
 .Header {
     text-align: center;
     font-size: 1.5em;

@@ -1,7 +1,6 @@
 import * as errorType from "./errorTypes";
 
 export const errorMessage = (errorMessage) => {
-    console.log(errorMessage);
     switch (errorMessage) {
         case errorType.INVALID_EMAIL:
             return "Invalid E-Mail address entered. The e-mail address must be in the format xxxx@yyy.zzz";

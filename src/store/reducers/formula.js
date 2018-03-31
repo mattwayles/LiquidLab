@@ -2,11 +2,14 @@ import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../../shared/utility.js';
 
 const initialState = {
-    quantity: {
+    inputs: {
+        name: '',
+        batch: '',
         mlToMake: null,
         targetNic: null,
         targetPg: null,
         targetVg: null,
+        notes: null
     },
     weights: {
         nicStrength: 100,
@@ -17,20 +20,19 @@ const initialState = {
         pgWeight: 1.04,
         vgWeight: 1.26
     },
-    notes: null,
-    flavors: []
+    flavors: [],
 };
 
 const reducer = (state = initialState, action) => {
-    if (action.type === actionTypes.QUANTITY_DATA_ENTERED) {
-        const updatedQuantity = updateObject(state.quantity, {[action.control]: action.value});
-        return updateObject(state, {quantity: updatedQuantity})
+    switch (action.type) {
+        case actionTypes.INPUT_DATA_ENTERED:
+            const updatedQuantity = updateObject(state.inputs, {[action.control]: action.value});
+            return updateObject(state, {inputs: updatedQuantity});
+        case actionTypes.RECIPE_DATA_ENTERED: return updateObject(state, { flavors: action.flavors });
+        case actionTypes.UPDATE_INGREDIENTS: return {...state};
+        case actionTypes.UPDATE_RECIPE_INFO: return {...state};
+        default: return initialState
     }
-    if (action.type === actionTypes.RECIPE_DATA_ENTERED) {
-        return updateObject(state, { flavors: action.flavors });
-    }
-    
-    return initialState;
 };
 
 

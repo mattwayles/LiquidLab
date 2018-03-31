@@ -1,8 +1,8 @@
 import * as actionTypes from './actionTypes';
 
-export const quantityDataEntered = (control, value) => {
+export const inputDataEntered = (control, value) => {
     return {
-        type: actionTypes.QUANTITY_DATA_ENTERED,
+        type: actionTypes.INPUT_DATA_ENTERED,
         control: control,
         value: value
     }

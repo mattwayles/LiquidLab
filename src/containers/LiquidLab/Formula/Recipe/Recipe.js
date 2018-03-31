@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
+import { enforceMaxLength } from '../../../../shared/utility';
 import * as actions from '../../../../store/actions/index';
 import RecipeControl from '../../../../components/RecipeControl/RecipeControl';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
@@ -27,6 +28,7 @@ class Recipe extends Component {
         this.setState({ recipeControls: recipeControlArray });
     }
 
+
     plusClickedHandler = () => {
         let controlId = 0;
         let recipeControlArray = [...this.state.recipeControls];
@@ -40,17 +42,14 @@ class Recipe extends Component {
         this.setState({ recipeControls: recipeControlArray });
     };
 
-    enforceMaxLength = (value, maxLength) => {
-        if (maxLength >= 0) {
-            return value.slice(0, maxLength)
-        }
-        else {
-            return value;
-        }
+    inputDataEnteredHandler = (event, control) => {
+        this.props.onInputDataEntered(control, event.target.value);
+
+        //Set the value to recipeControls and update state
     };
 
-    dataEnteredHandler = (event) => {
-        event.target.value = this.enforceMaxLength(event.target.value, event.target.maxLength);
+    flavorDataEnteredHandler = (event) => {
+        event.target.value = enforceMaxLength(event.target.value, event.target.maxLength);
 
         let exists = false;
         let updatedFlavors = [...this.props.flavors];
@@ -87,7 +86,7 @@ class Recipe extends Component {
                 extra={control.extra}
                 buttons={control.buttons}
                 plusClicked={this.plusClickedHandler}
-                change={this.dataEnteredHandler}
+                change={this.flavorDataEnteredHandler}
                 calculate={this.props.clicked}
             />
         ));
@@ -97,8 +96,14 @@ class Recipe extends Component {
                 <div className={classes.RecipeInner}>
                     <p className={classes.Header}>Recipe</p>
                     <div className={classes.RecipeName} >
-                        <input className={classes.RecipeNameInput} type="text" placeholder="Recipe Name"/>
-                        <BatchSelect className={classes.Batch} />
+                        <input className={classes.RecipeNameInput}
+                               value={this.props.input.name}
+                               type="text"
+                               placeholder="Recipe Name"
+                                onChange={(event) => this.inputDataEnteredHandler(event, 'name')} />
+                        <BatchSelect className={classes.Batch}
+                                     value={this.props.input.batch}
+                                     changed={(event) => this.inputDataEnteredHandler(event, 'batch')} />
                     </div>
                     {controls}
                 </div>
@@ -108,6 +113,7 @@ class Recipe extends Component {
 
 const mapStateToProps = state => {
     return {
+        input: state.formula.inputs,
        flavors: state.formula.flavors
     }
 };
@@ -115,6 +121,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onDataEntered: (arr) => dispatch(actions.recipeDataEntered(arr)),
+        onInputDataEntered: (control, value) => dispatch(actions.inputDataEntered(control, value))
     }
 };
 

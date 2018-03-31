@@ -1,0 +1,11 @@
+.ResultsControl {
+    display: grid;
+    grid-template-columns: 13% 47% 13% 13% 13%;
+}
+
+.ResultsControl p {
+    margin-top: 0;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.85em;
+}

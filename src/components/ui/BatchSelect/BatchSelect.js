@@ -2,9 +2,9 @@ import React from 'react';
 
 import './BatchSelect.css';
 
-const batchSelect = () => (
-    <select value="">
-        <option value=""></option>
+const batchSelect = (props) => (
+    <select value={props.value} onChange={props.changed}>
+        <option value=""> </option>
         <option value="α">α</option>
         <option value="β">β</option>
         <option value="γ">γ</option>

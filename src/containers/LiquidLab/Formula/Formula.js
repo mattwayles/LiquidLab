@@ -11,13 +11,12 @@ class Formula extends Component {
         return Math.round((formula) * 100) /100;
     };
 
-    calcInputs = () => {
+    mapInputs = () => {
         return {
-            flavorMlTotal: this.props.results.flavorMlTotal,
-            mlToMake: this.props.quantity.mlToMake,
-            inputNic: this.props.quantity.targetNic,
-            inputPg: this.props.quantity.targetPg / 100,
-            inputVg: this.props.quantity.targetVg / 100,
+            mlToMake: this.props.inputs.mlToMake,
+            inputNic: this.props.inputs.targetNic,
+            inputPg: this.props.inputs.targetPg / 100,
+            inputVg: this.props.inputs.targetVg / 100,
             nicStrength: this.props.weights.nicStrength,
             nicBasePg: this.props.weights.nicBasePg / 100,
             nicBaseVg: this.props.weights.nicBaseVg / 100,
@@ -28,13 +27,13 @@ class Formula extends Component {
         }
     };
 
-    calcBaseResults = () => {
-        const input = this.calcInputs();
+    calcBaseResults = (flavorMlTotal) => {
+        const input = this.mapInputs();
         const targetNic = this.round(input.mlToMake * input.inputNic);
         const pgTarget = this.round(input.mlToMake * input.inputPg - targetNic * input.nicBasePg);
         const vgTarget = this.round(input.mlToMake * input.inputVg - targetNic * input.nicBaseVg);
         const nicMl = this.round(input.mlToMake / input.nicStrength * input.inputNic);
-        const pgMl = this.round(pgTarget - (nicMl - targetNic) * input.nicBasePg - input.flavorMlTotal);
+        const pgMl = this.round(pgTarget - (nicMl - targetNic) * input.nicBasePg - flavorMlTotal);
         const vgMl = this.round(vgTarget - (nicMl - targetNic) * input.nicBaseVg);
         return {
             ...input,
@@ -51,14 +50,9 @@ class Formula extends Component {
     };
 
     calculateFlavorResults = (flavor) => {
-        const input = this.calcInputs();
+        const input = this.mapInputs();
         const flavorMl = this.round(input.mlToMake * flavor.percent / 100);
         const flavorGrams = this.round(flavorMl * input.flavorWeight);
-
-        //TODO: THIS IS NOT WORKING. THE VALUE IS NOT STICKING, ONLY THE NEWEST VALUE IS BEING SET. FIX!
-        const newFlavorMlTotal = input.flavorMlTotal + flavorMl;
-        this.props.onCalculateResults('flavorMlTotal', newFlavorMlTotal);
-
 
         return {
             ven: flavor.ven,
@@ -71,43 +65,30 @@ class Formula extends Component {
 
     onCalculate = () => {
         let flavorResults = [];
+        let flavorMlTotal = 0;
         for (let i = 0; i < this.props.flavors.length; i++) {
-            flavorResults.push(this.calculateFlavorResults(this.props.flavors[i]));
+            const flavorResult = this.calculateFlavorResults(this.props.flavors[i]);
+            flavorMlTotal = flavorMlTotal + flavorResult.ml;
+            flavorResults.push(flavorResult);
         }
-        this.props.onCalculateResults('flavors', flavorResults);
 
-        //TODO: NEEDS TO WORK BEFORE CALLING BASERESULTS
-        console.log(this.props.quantity.flavorMlTotal);
+        this.props.onUpdateIngredients('flavors', flavorResults);
 
-        const baseResults = this.calcBaseResults();
-        this.props.onCalculateResults('pg', {ml: baseResults.pgMl, grams: baseResults.pgGrams, percent: baseResults.pgPercent});
-        this.props.onCalculateResults('vg', {ml: baseResults.vgMl, grams: baseResults.vgGrams, percent: baseResults.vgPercent});
-        this.props.onCalculateResults('nic', {ml: baseResults.nicMl, grams: baseResults.nicGrams, percent: baseResults.nicPercent});
+        const baseResults = this.calcBaseResults(flavorMlTotal);
+        this.props.onUpdateRecipeInfo('name', this.props.inputs.name );
+        this.props.onUpdateRecipeInfo('batch', this.props.inputs.batch );
+        this.props.onUpdateRecipeInfo('notes', this.props.inputs.notes );
+        this.props.onUpdateIngredients('pg', {ml: baseResults.pgMl, grams: baseResults.pgGrams, percent: baseResults.pgPercent});
+        this.props.onUpdateIngredients('vg', {ml: baseResults.vgMl, grams: baseResults.vgGrams, percent: baseResults.vgPercent});
+        this.props.onUpdateIngredients('nic', {ml: baseResults.nicMl, grams: baseResults.nicGrams, percent: baseResults.nicPercent});
     };
 
 
     render () {
-        console.log(
-            "Nic ML: ", this.props.results.nic.ml +
-            " Nic Grams: ", this.props.results.nic.grams +
-                " Nic Percent: ", this.props.results.nic.percent +
-            " PG ML: ", this.props.results.pg.ml +
-            " PG Grams: ", this.props.results.pg.grams +
-            " PG Percent: ", this.props.results.pg.percent +
-            " VG ML: ", this.props.results.vg.ml +
-            " VG Grams: ", this.props.results.vg.grams +
-            " VG Percent: ", this.props.results.vg.percent
-        );
-
-        for (let i = 0; i < this.props.results.flavors.length; i++) {
-            console.log(this.props.results.flavors[i]);
-        }
-
-
         return (
             <div className={classes.Formula}>
                 <Quantity  />
-                <Recipe clicked={this.onCalculate} />
+                <Recipe clicked={() => {this.onCalculate(); this.props.displayResults()} } />
             </div>
         );
     }
@@ -115,17 +96,17 @@ class Formula extends Component {
 
 const mapStateToProps = state => {
     return {
-        quantity: state.formula.quantity,
+        inputs: state.formula.inputs,
         flavors: state.formula.flavors,
-        weights: state.formula.weights,
-        results: state.results
+        weights: state.formula.weights
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onCalculateResults: (control, value) => dispatch(actions.calculateResults(control, value))
+        onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
+        onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value))
     }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Formula);

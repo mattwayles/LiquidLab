@@ -2,25 +2,39 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import Formula from './Formula/Formula';
+import Results from './Results/Results';
 
 import classes from './LiquidLab.css';
 
-class Main extends Component {
+class LiquidLab extends Component {
+    state = {
+        recipe: '',
+        results: false
+    }
+    
+    recipeSelectHandler(event) {
+        this.setState({ recipe: event.target.value });
+    }
+    
+    displayResultsHandler = () => {
+        this.setState({ results: true })
+    };
+    
     render() {
         return (
             <div className={classes.LiquidLab}>
                 <header className={classes.Header}>ReactApp
-                    <select value="">
-                        <option value="" disabled>Select A Recipe</option>
+                    <select value={this.state.recipe} onChange={(event) => this.recipeSelectHandler(event)}>
+                        <option value="" disabled>Select a Recipe...</option>
                         <option value="Recipe1">Recipe1</option>
                         <option value="Recipe2">Recipe2</option>
                         <option value="Recipe3">Recipe3</option>
                     </select>
                 </header>
                 <div className={classes.Views}>
-                    <Formula />
+                    <Formula displayResults={this.displayResultsHandler} />
                 <div className={classes.Results}>
-                    <p>Results</p>
+                    {this.state.results ? <Results /> : <p className={classes.Placeholder}>Results</p>}
                 </div>
                     </div>
             </div> 
@@ -34,4 +48,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps)(Main);
+export default connect(mapStateToProps)(LiquidLab);
