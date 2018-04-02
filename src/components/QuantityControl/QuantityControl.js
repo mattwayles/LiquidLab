@@ -9,10 +9,10 @@ const QuantityControl = (props) => {
         <Auxil>
             <p>{props.label}</p>
             {props.autofocus ?
-                <Input valid={props.valid} change={props.change} type={props.type} maxLength={props.maxLength} autoFocus/>
-                : <Input valid={props.valid} change={props.change} type={props.type} maxLength={props.maxLength} />
+                <Input valid={props.valid} change={props.change} type={props.type} maxLength={props.maxLength} placeholder="0" autoFocus/>
+                : <Input valid={props.valid} change={props.change} type={props.type} maxLength={props.maxLength} placeholder="0" />
             }
-            <p>{props.suffix}</p>
+            <p>{props.suffix}</p> 
         </Auxil>;
 
     if (props.type === 'textarea') {

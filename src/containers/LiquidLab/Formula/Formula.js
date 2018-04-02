@@ -78,10 +78,6 @@ class Formula extends Component {
 
         const baseResults = this.calcBaseResults(flavorMlTotal);
 
-        this.props.onCheckInputValidity('mlToMake', this.props.inputs.mlToMake.value);
-        this.props.onCheckInputValidity('targetNic', this.props.inputs.targetNic.value);
-        this.props.onCheckInputValidity('targetPg', this.props.inputs.targetPg.value);
-        this.props.onCheckInputValidity('targetVg', this.props.inputs.targetVg.value);
         this.props.onCheckValidityCompare(
             'targetPg', this.props.inputs.targetPg.value, 'targetVg', this.props.inputs.targetVg.value);
 
@@ -114,7 +110,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onCheckInputValidity: (control, value, valid) => dispatch(actions.checkInputValidity(control, value)),
         onCheckValidityCompare: (control1, value1, control2, value2) => dispatch(actions.checkValidityCompare(control1, value1, control2, value2)),
         onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
         onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value))

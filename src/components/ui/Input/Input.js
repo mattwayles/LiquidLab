@@ -15,6 +15,7 @@ const input = (props) => {
             inputElement = (
                 <select
                     className={inputClasses.join(' ')}
+                    name={props.name}
                     value={props.value}
                     onChange={props.change}>
                     {props.elementConfig.options.map(option => (
@@ -26,10 +27,14 @@ const input = (props) => {
         default:
             inputElement = <input
                 className={inputClasses.join(' ')}
+                id={props.id}
+                name={props.name}
+                type={props.type}
                 {...props.elementConfig}
                 value={props.value}
                 onChange={props.change}
-                placeholder="0"
+                placeholder={props.placeholder}
+                maxLength={props.maxLength}
             />;
 
     }

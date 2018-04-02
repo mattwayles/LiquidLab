@@ -40,16 +40,13 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.CHECK_INPUT_VALIDITY:
-            const updatedValidity = updateObject(state.inputs, {[action.control]: { value: action.value, valid: action.valid}});
-            return updateObject(state, {inputs: updatedValidity});
         case actionTypes.CHECK_VALIDITY_COMPARE:
             const updatedPgVgTarget = updateObject(state.inputs,
                 {'targetPg': { value: action.value1, valid: action.valid},
                     'targetVg': { value: action.value2, valid: action.valid}});
             return updateObject(state, {inputs: updatedPgVgTarget});
         case actionTypes.INPUT_DATA_ENTERED:
-            const updatedQuantity = updateObject(state.inputs, {[action.control]: { value: action.value}});
+            const updatedQuantity = updateObject(state.inputs, {[action.control]: { value: action.value, valid: action.valid}});
             return updateObject(state, {inputs: updatedQuantity});
         case actionTypes.RECIPE_DATA_ENTERED: return updateObject(state, { flavors: action.flavors });
         case actionTypes.UPDATE_INGREDIENTS: return {...state};

@@ -12,7 +12,21 @@ class Quantity extends Component {
 
     dataEnteredHandler = (event, control) => {
         event.target.value = enforceMaxLength(event.target.value, event.target.maxLength);
-        this.props.onDataEntered(control, event.target.value);
+
+        let valid = event.target.value >= 0;
+        if (control === 'targetPg') {
+            valid = +event.target.value + +this.props.targetVg.value === 100;
+            this.props.onDataEntered('targetPg', event.target.value, valid);
+            this.props.onDataEntered('targetVg', this.props.targetVg.value, valid);
+        }
+        else if (control === 'targetVg') {
+            valid = +event.target.value + +this.props.targetPg.value === 100;
+            this.props.onDataEntered('targetPg', this.props.targetPg.value, valid);
+            this.props.onDataEntered('targetVg', event.target.value, valid);
+        }
+        else {
+            this.props.onDataEntered(control, event.target.value, valid);
+        }
     }
 
     render() {
@@ -45,7 +59,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onDataEntered: (control, value) => dispatch(actions.inputDataEntered(control, value))
+        onDataEntered: (control, value, valid) => dispatch(actions.inputDataEntered(control, value, valid))
     }
 };
 

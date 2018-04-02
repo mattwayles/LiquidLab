@@ -1,19 +1,5 @@
 import * as actionTypes from './actionTypes';
 
-export const checkInputValidity = (control, value) => {
-    let valid = true;
-
-    valid = valid && value >= 0;
-
-    return {
-        type: actionTypes.CHECK_INPUT_VALIDITY,
-        state: 'state.inputs',
-        control: control,
-        value: value,
-        valid: valid
-    }
-};
-
 export const checkValidityCompare = (control1, value1, control2, value2) => {
     let valid = true;
     
@@ -27,11 +13,12 @@ export const checkValidityCompare = (control1, value1, control2, value2) => {
     }
 };
 
-export const inputDataEntered = (control, value) => {
+export const inputDataEntered = (control, value, valid) => {
     return {
         type: actionTypes.INPUT_DATA_ENTERED,
         control: control,
-        value: value
+        value: value,
+        valid: valid
     }
 };
 

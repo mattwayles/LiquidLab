@@ -5,16 +5,17 @@
 
 .RecipeInner {
     position: relative;
-    margin: 0 3%;
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
     padding-bottom: 20px;
 }
 
 .Col1, .Col2 {
-    width: 50%;
+    width: 49%;
     margin: 0 auto;
 }
+
 .Header {
     margin: 20px auto;
     font-size: 1.5em;

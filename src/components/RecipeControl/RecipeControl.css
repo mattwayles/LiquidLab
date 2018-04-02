@@ -1,15 +1,11 @@
 .RecipeControl {
     display: grid;
-    grid-template-columns: 30px 150px 25px 25px;
+    grid-template-columns: 35px 140px 40px 20px;
     grid-column-gap: 10px;
 }
 
 .RecipeControl p {
+    text-align: left;
     margin-top: 0;
 }
 
-.RecipeControl input {
-    height: 15px;
-    width: 75%;
-    border-radius: 5px;
-}

@@ -53,6 +53,8 @@ class Recipe extends Component {
         let updatedFlavors = [...this.props.flavors];
         let valid = event.target.value >= 0;
 
+        console.log(event.target.id);
+
         for(let i = 0; i < updatedFlavors.length; i++) {
             if (updatedFlavors[i].control === event.target.id) {
                 let updatedFlavor = {
@@ -69,23 +71,38 @@ class Recipe extends Component {
                 [event.target.name]: event.target.value,
                 valid: valid})
         }
-        console.log(valid);
         this.props.onDataEntered(updatedFlavors);
         
     };
 
     render () {
-        let controls = this.state.col1Controls.map(control => (
-            <RecipeControl
-                key={control.id}
-                id={control.id}
-                ven={control.ven}
-                plusClicked={this.plusClickedHandler}
-                change={this.flavorDataEnteredHandler}
-                calculate={this.props.clicked}
-            />
-        ));
+        let recipeControl1 = null
+        let controls = this.state.col1Controls.map(control => {
+            if (this.props.flavors[control.id]) {
+                recipeControl1 =
+                    <RecipeControl
+                        key={control.id}
+                        id={control.id}
+                        valid={this.props.flavors[control.id].valid}
+                        plusClicked={this.plusClickedHandler}
+                        change={this.flavorDataEnteredHandler}
+                        calculate={this.props.clicked}
+                    />
+            }
+            else {
+                recipeControl1 =
+                    <RecipeControl
+                        key={control.id}
+                        id={control.id}
+                        plusClicked={this.plusClickedHandler}
+                        change={this.flavorDataEnteredHandler}
+                        calculate={this.props.clicked}
+                    />
+            }
+            return recipeControl1;
+        });
 
+        let recipeControl2 = null;
         let controls2 = this.state.col2Controls.map(control => {
             if (control.type === 'button') {
                 return (
@@ -97,14 +114,28 @@ class Recipe extends Component {
                 )
             }
             else {
-                return (<RecipeControl
-                    key={control.id}
-                    id={control.id}
-                    ven={control.ven}
-                    plusClicked={this.plusClickedHandler}
-                    change={this.flavorDataEnteredHandler}
-                    calculate={this.props.clicked}
-                />)
+                if (this.props.flavors[control.id]) {
+                        recipeControl2 =
+                            <RecipeControl
+                                key={control.id}
+                                id={control.id}
+                                valid={this.props.flavors[control.id].valid}
+                                plusClicked={this.plusClickedHandler}
+                                change={this.flavorDataEnteredHandler}
+                                calculate={this.props.clicked}
+                            />
+                    }
+                    else {
+                        recipeControl2 =
+                            <RecipeControl
+                                key={control.id}
+                                id={control.id}
+                                plusClicked={this.plusClickedHandler}
+                                change={this.flavorDataEnteredHandler}
+                                calculate={this.props.clicked}
+                            />
+                    }
+                    return recipeControl2;
             }
         });
 
