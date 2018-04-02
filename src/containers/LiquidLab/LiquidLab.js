@@ -33,10 +33,10 @@ class LiquidLab extends Component {
                 </header>
                 <div className={classes.Views}>
                     <Formula displayResults={this.displayResultsHandler} />
-                <div className={classes.Results}>
-                    {this.state.results ? <Results /> : <p className={classes.Placeholder}>Results</p>}
-                </div>
+                    <div className={classes.Results}>
+                        {this.state.results ? <Results /> : <p className={classes.Placeholder}>Results</p>}
                     </div>
+                </div>
             </div> 
         ); 
     }

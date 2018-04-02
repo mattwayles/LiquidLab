@@ -34,7 +34,7 @@ class Results extends Component {
                         flavor={flavor.flavor}
                         ml={flavor.ml}
                         grams={flavor.grams}
-                        percent={flavor.percent}
+                        percent={flavor.percent + '%'}
                         />
                 });
                 return flavors;
@@ -45,19 +45,24 @@ class Results extends Component {
                     flavor={item.toUpperCase()}
                     ml={this.props.results.ingredients[item].ml}
                     grams={this.props.results.ingredients[item].grams}
-                    percent={this.props.results.ingredients[item].percent}/>
+                    percent={this.props.results.ingredients[item].percent + '%'}/>
             }
         });
 
         return (
-           <div className={classes.Results}>
-               <Auxil>
-                   <p className={classes.Header}>Results</p>
-                   <ResultsControl ml="ML" grams="Grams" percent="%" />
-                   {results}
-                   <ResultsControl ven="test" flavor="Test Flavor" ml="15.7" grams="17.2" percent="5" />
-               </Auxil>;
-           </div>
+            <Auxil>
+                <p className={classes.Header}>
+                    {this.props.results.recipeInfo.name.value + " "}
+                    {this.props.results.recipeInfo.batch.value ?
+                        <span style={{fontSize: '0.75em'}}>({this.props.results.recipeInfo.batch.value})</span>
+                        : null}
+                </p>
+                <div className={classes.Results}>
+                    <ResultsControl head ml="ML" grams="Grams" percent="%" />
+                    {results}
+
+                </div>
+            </Auxil>
         );
     }
 }

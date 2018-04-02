@@ -6,25 +6,17 @@ const input = (props) => {
     let inputElement = null;
     const inputClasses = [classes.InputElement];
 
-    if (props.invalid && props.shouldValidate && props.touched) {
+    if (props.valid === false) {
         inputClasses.push(classes.Invalid);
     }
 
     switch (props.elementType) {
-        case ('textArea'):
-            inputElement = <textArea
-                className={inputClasses.join(' ')}
-                {...props.elementConfig}
-                value={props.value}
-                onChange={props.changed}
-            />;
-            break;
         case ('select'):
             inputElement = (
                 <select
                     className={inputClasses.join(' ')}
                     value={props.value}
-                    onChange={props.changed}>
+                    onChange={props.change}>
                     {props.elementConfig.options.map(option => (
                         <option key={option.value} value={option.value}>{option.displayValue}</option>
                     ))}
@@ -36,12 +28,13 @@ const input = (props) => {
                 className={inputClasses.join(' ')}
                 {...props.elementConfig}
                 value={props.value}
-                onChange={props.changed}
+                onChange={props.change}
+                placeholder="0"
             />;
 
     }
     return (
-        <div>
+        <div style={{height: '0'}}>
             <label>{props.label}</label>
             {inputElement}
         </div>

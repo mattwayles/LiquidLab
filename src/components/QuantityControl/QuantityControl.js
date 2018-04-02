@@ -1,5 +1,6 @@
 import React from'react';
 import Auxil from '../../hoc/Auxil';
+import Input from '../ui/Input/Input'
 
 import classes from './QuantityControl.css';
 
@@ -8,8 +9,8 @@ const QuantityControl = (props) => {
         <Auxil>
             <p>{props.label}</p>
             {props.autofocus ?
-                <input onChange={props.change} type={props.type} maxLength={props.maxLength} autoFocus/>
-                : <input onChange={props.change} type={props.type} maxLength={props.maxLength} />
+                <Input valid={props.valid} change={props.change} type={props.type} maxLength={props.maxLength} autoFocus/>
+                : <Input valid={props.valid} change={props.change} type={props.type} maxLength={props.maxLength} />
             }
             <p>{props.suffix}</p>
         </Auxil>;

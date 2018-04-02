@@ -5,47 +5,45 @@ import { enforceMaxLength } from '../../../../shared/utility';
 import * as actions from '../../../../store/actions/index';
 import RecipeControl from '../../../../components/RecipeControl/RecipeControl';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
+import Button from '../../../../components/ui/Button/Button';
 import classes from './Recipe.css';
 
 
 class Recipe extends Component {
     state = {
-        recipeControls: []
+        col1Controls: [],
+        col2Controls: [],
+        index: 0
     };
 
     componentWillMount () {
-        let recipeControlArray = this.state.recipeControls;
-        let controlId = 0;
+        let col1ControlArray = [...this.state.col1Controls];
+        let controlId = this.state.index;
 
-        recipeControlArray.push({id: controlId, extra: false, plus: true, buttons: false});
-        controlId++;
-        for (let i = 0; i < 6; i++) {
-            recipeControlArray.push({id: controlId, extra: false, plus: false, buttons: false});
+        for (let i = 0; i < 8; i++) {
+            col1ControlArray.push({id: controlId});
             controlId++;
         }
-        recipeControlArray.push({id: controlId, extra: false, plus: false, buttons: true});
 
-        this.setState({ recipeControls: recipeControlArray });
+        let col2ControlArray = [...this.state.col2Controls];
+        col2ControlArray.push({ type: 'button'});
+
+        this.setState({ col1Controls: col1ControlArray, col2Controls: col2ControlArray, index: controlId });
     }
 
 
     plusClickedHandler = () => {
-        let controlId = 0;
-        let recipeControlArray = [...this.state.recipeControls];
+        let col2ControlArray = [...this.state.col2Controls];
 
-        for (let i = 0; i < recipeControlArray.length - 1; i++) {
-            recipeControlArray[i].id++;
+        if (this.state.index === 14) {
+            col2ControlArray.unshift({id: this.state.index});
+            col2ControlArray.splice(-1, 1);
+            this.setState({col2Controls: col2ControlArray})
         }
-        recipeControlArray.unshift({id: controlId, extra: true, plus: false, buttons: false});
-        recipeControlArray.splice(recipeControlArray.length - 2, 1);
-
-        this.setState({ recipeControls: recipeControlArray });
-    };
-
-    inputDataEnteredHandler = (event, control) => {
-        this.props.onInputDataEntered(control, event.target.value);
-
-        //Set the value to recipeControls and update state
+        else {
+            col2ControlArray.unshift({id: this.state.index});
+            this.setState({col2Controls: col2ControlArray, index: this.state.index + 1});
+        }
     };
 
     flavorDataEnteredHandler = (event) => {
@@ -53,43 +51,62 @@ class Recipe extends Component {
 
         let exists = false;
         let updatedFlavors = [...this.props.flavors];
-
-        const controlAndField = event.target.name.split("_");
-        const control = controlAndField[0];
-        const field = controlAndField[1];
+        let valid = event.target.value >= 0;
 
         for(let i = 0; i < updatedFlavors.length; i++) {
-            if (updatedFlavors[i].control === control) {
+            if (updatedFlavors[i].control === event.target.id) {
                 let updatedFlavor = {
                     ...updatedFlavors[i],
-                    [field]: event.target.value};
+                    [event.target.name]: event.target.value,
+                    valid: valid};
                 exists = true;
                 updatedFlavors[i] = updatedFlavor;
             }
         }
         if (!exists) {
             updatedFlavors.push({
-                control: control,
-                [field]: event.target.value})
+                control: event.target.id,
+                [event.target.name]: event.target.value,
+                valid: valid})
         }
+        console.log(valid);
         this.props.onDataEntered(updatedFlavors);
         
     };
 
     render () {
-        let controls = this.state.recipeControls.map(control => (
+        let controls = this.state.col1Controls.map(control => (
             <RecipeControl
                 key={control.id}
                 id={control.id}
                 ven={control.ven}
-                plus={control.plus}
-                extra={control.extra}
-                buttons={control.buttons}
                 plusClicked={this.plusClickedHandler}
                 change={this.flavorDataEnteredHandler}
                 calculate={this.props.clicked}
             />
         ));
+
+        let controls2 = this.state.col2Controls.map(control => {
+            if (control.type === 'button') {
+                return (
+                    <button
+                        key="plusBtn"
+                        className={classes.PlusButton}
+                        onClick={this.plusClickedHandler}
+                    >+</button>
+                )
+            }
+            else {
+                return (<RecipeControl
+                    key={control.id}
+                    id={control.id}
+                    ven={control.ven}
+                    plusClicked={this.plusClickedHandler}
+                    change={this.flavorDataEnteredHandler}
+                    calculate={this.props.clicked}
+                />)
+            }
+        });
 
         return(
             <div className={classes.Recipe}>
@@ -97,15 +114,25 @@ class Recipe extends Component {
                     <p className={classes.Header}>Recipe</p>
                     <div className={classes.RecipeName} >
                         <input className={classes.RecipeNameInput}
-                               value={this.props.input.name}
+                               value={this.props.input.name.value}
                                type="text"
                                placeholder="Recipe Name"
-                                onChange={(event) => this.inputDataEnteredHandler(event, 'name')} />
+                                onChange={(event) => this.props.onInputDataEntered('name', event.target.value)} />
                         <BatchSelect className={classes.Batch}
-                                     value={this.props.input.batch}
-                                     changed={(event) => this.inputDataEnteredHandler(event, 'batch')} />
+                                     value={this.props.input.batch.value}
+                                     changed={(event) => this.props.onInputDataEntered('batch', event.target.value)} />
                     </div>
-                    {controls}
+                    <div className={classes.Col1}>
+                        {controls}
+                    </div>
+                    <div className={classes.Col2}>
+                        {controls2}
+                    </div>
+                    <div className={classes.RecipeButtons}>
+                        <Button disabled clicked={null} >Delete</Button>
+                        <Button disabled clicked={null} >Save</Button>
+                        <Button clicked={this.props.clicked} >Calculate</Button>
+                    </div>
                 </div>
             </div>
         )}

@@ -12,7 +12,6 @@ class Quantity extends Component {
 
     dataEnteredHandler = (event, control) => {
         event.target.value = enforceMaxLength(event.target.value, event.target.maxLength);
-
         this.props.onDataEntered(control, event.target.value);
     }
 
@@ -20,12 +19,12 @@ class Quantity extends Component {
         let controls =
             <Auxil>
                 <p className={classes.Header}>Quantity</p>
-                <QuantityControl change={(event) => this.dataEnteredHandler(event, 'mlToMake')} label="ML To Make:" type="number" suffix="ml" maxLength="4" autofocus />
-                <QuantityControl change={(event) => this.dataEnteredHandler(event, 'targetNic')} label="Target Kel:" type="number" suffix="mg" maxLength="3"/>
-                <QuantityControl change={(event) => this.dataEnteredHandler(event, 'targetPg')} label="Target PG:" type="number" suffix="%" maxLength="3"/>
-                <QuantityControl change={(event) => this.dataEnteredHandler(event, 'targetVg')} label="Target VG:" type="number" suffix="%" maxLength="3"/>
+                <QuantityControl valid={this.props.mlToMake.valid} change={(event) => this.dataEnteredHandler(event, 'mlToMake')} label="ML To Make:" type="number" suffix="ml" maxLength="4" autofocus />
+                <QuantityControl valid={this.props.targetNic.valid} change={(event) => this.dataEnteredHandler(event, 'targetNic')} label="Target Nic:" type="number" suffix="mg" maxLength="3" />
+                <QuantityControl valid={this.props.targetPg.valid} change={(event) => this.dataEnteredHandler(event, 'targetPg')} label="Target PG:" type="number" suffix="%" maxLength="3" />
+                <QuantityControl valid={this.props.targetVg.valid} change={(event) => this.dataEnteredHandler(event, 'targetVg')} label="Target VG:" type="number" suffix="%" maxLength="3" />
                 <QuantityControl change={(event) => this.dataEnteredHandler(event, 'notes')} label="Notes" type="textarea" />
-            </Auxil>
+            </Auxil>;
         return (
             <div className={classes.Quantity}>
                 {controls}
@@ -36,11 +35,11 @@ class Quantity extends Component {
 
 const mapStateToProps = state => {
     return {
-        mlToMake: state.formula.mlToMake,
-        targetNic: state.formula.targetNic,
-        targetPg: state.formula.targetPg,
-        targetVg: state.formula.targetVg,
-        notes: state.formula.notes
+        mlToMake: state.formula.inputs.mlToMake,
+        targetNic: state.formula.inputs.targetNic,
+        targetPg: state.formula.inputs.targetPg,
+        targetVg: state.formula.inputs.targetVg,
+        notes: state.formula.inputs.notes
     }
 };
 

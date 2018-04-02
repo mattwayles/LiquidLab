@@ -3,12 +3,27 @@ import { updateObject } from '../../shared/utility.js';
 
 const initialState = {
     inputs: {
-        name: '',
+        name: {
+            value: '',
+            valid: true
+        },
+        mlToMake: {
+            value: 0,
+            valid: true
+        },
+        targetNic: {
+            value: 0,
+            valid: true
+        },
+        targetPg: {
+            value: 0,
+            valid: true
+        },
+        targetVg: {
+            value: 0,
+            valid: true
+        },
         batch: '',
-        mlToMake: null,
-        targetNic: null,
-        targetPg: null,
-        targetVg: null,
         notes: null
     },
     weights: {
@@ -20,13 +35,21 @@ const initialState = {
         pgWeight: 1.04,
         vgWeight: 1.26
     },
-    flavors: [],
+    flavors: []
 };
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
+        case actionTypes.CHECK_INPUT_VALIDITY:
+            const updatedValidity = updateObject(state.inputs, {[action.control]: { value: action.value, valid: action.valid}});
+            return updateObject(state, {inputs: updatedValidity});
+        case actionTypes.CHECK_VALIDITY_COMPARE:
+            const updatedPgVgTarget = updateObject(state.inputs,
+                {'targetPg': { value: action.value1, valid: action.valid},
+                    'targetVg': { value: action.value2, valid: action.valid}});
+            return updateObject(state, {inputs: updatedPgVgTarget});
         case actionTypes.INPUT_DATA_ENTERED:
-            const updatedQuantity = updateObject(state.inputs, {[action.control]: action.value});
+            const updatedQuantity = updateObject(state.inputs, {[action.control]: { value: action.value}});
             return updateObject(state, {inputs: updatedQuantity});
         case actionTypes.RECIPE_DATA_ENTERED: return updateObject(state, { flavors: action.flavors });
         case actionTypes.UPDATE_INGREDIENTS: return {...state};

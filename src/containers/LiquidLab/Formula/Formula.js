@@ -13,10 +13,10 @@ class Formula extends Component {
 
     mapInputs = () => {
         return {
-            mlToMake: this.props.inputs.mlToMake,
-            inputNic: this.props.inputs.targetNic,
-            inputPg: this.props.inputs.targetPg / 100,
-            inputVg: this.props.inputs.targetVg / 100,
+            mlToMake: this.props.inputs.mlToMake.value,
+            inputNic: this.props.inputs.targetNic.value,
+            inputPg: this.props.inputs.targetPg.value / 100,
+            inputVg: this.props.inputs.targetVg.value / 100,
             nicStrength: this.props.weights.nicStrength,
             nicBasePg: this.props.weights.nicBasePg / 100,
             nicBaseVg: this.props.weights.nicBaseVg / 100,
@@ -66,15 +66,25 @@ class Formula extends Component {
     onCalculate = () => {
         let flavorResults = [];
         let flavorMlTotal = 0;
+        
         for (let i = 0; i < this.props.flavors.length; i++) {
             const flavorResult = this.calculateFlavorResults(this.props.flavors[i]);
             flavorMlTotal = flavorMlTotal + flavorResult.ml;
             flavorResults.push(flavorResult);
         }
 
+
         this.props.onUpdateIngredients('flavors', flavorResults);
 
         const baseResults = this.calcBaseResults(flavorMlTotal);
+
+        this.props.onCheckInputValidity('mlToMake', this.props.inputs.mlToMake.value);
+        this.props.onCheckInputValidity('targetNic', this.props.inputs.targetNic.value);
+        this.props.onCheckInputValidity('targetPg', this.props.inputs.targetPg.value);
+        this.props.onCheckInputValidity('targetVg', this.props.inputs.targetVg.value);
+        this.props.onCheckValidityCompare(
+            'targetPg', this.props.inputs.targetPg.value, 'targetVg', this.props.inputs.targetVg.value);
+
         this.props.onUpdateRecipeInfo('name', this.props.inputs.name );
         this.props.onUpdateRecipeInfo('batch', this.props.inputs.batch );
         this.props.onUpdateRecipeInfo('notes', this.props.inputs.notes );
@@ -104,6 +114,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onCheckInputValidity: (control, value, valid) => dispatch(actions.checkInputValidity(control, value)),
+        onCheckValidityCompare: (control1, value1, control2, value2) => dispatch(actions.checkValidityCompare(control1, value1, control2, value2)),
         onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
         onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value))
     }

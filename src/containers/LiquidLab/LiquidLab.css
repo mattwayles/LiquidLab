@@ -13,12 +13,14 @@
     font-size: 42px;
     font-weight: bold;
     color: var(--main-color);
+    margin-bottom: 10px;
 }
 
 .Header select {
     margin-left: 10%;
     width: 50%;
-    font-size: 0.5em;
+    height: 30px;
+    font-size: 0.3em;
     background-color: var(--main-color);
     color: var(--background-color);
     border-radius: 5px;
@@ -34,8 +36,9 @@
     border-radius: 5px;
     background-color: var(--background-color);
     margin: 10px;
-    height: 400px;
+    height: 420px;
     width: 40%;
+    overflow-y: auto;
 }
 .Placeholder {
     text-align: center;

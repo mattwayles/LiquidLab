@@ -34,15 +34,19 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-    if (action.type === actionTypes.UPDATE_INGREDIENTS) {
-        const updatedIngredients = updateObject(state.ingredients, {[action.control]: action.value});
-        return updateObject(state, {ingredients: updatedIngredients});
+    switch (action.type) {
+        case actionTypes.UPDATE_INGREDIENTS:
+            const updatedIngredients = updateObject(state.ingredients, {[action.control]: action.value});
+            return updateObject(state, {ingredients: updatedIngredients});
+        case actionTypes.UPDATE_RECIPE_INFO:
+            const updatedInfo = updateObject(state.recipeInfo, {[action.control]: action.value});
+            return updateObject(state, {recipeInfo: updatedInfo});
+        case actionTypes.INPUT_DATA_ENTERED: return {...state};
+        case actionTypes.RECIPE_DATA_ENTERED: return {...state};
+        case actionTypes.CHECK_INPUT_VALIDITY: return {...state};
+        case actionTypes.CHECK_VALIDITY_COMPARE: return {...state};
+        default: return initialState;
     }
-    if (action.type === actionTypes.UPDATE_RECIPE_INFO) {
-        const updatedInfo = updateObject(state.recipeInfo, {[action.control]: action.value});
-        return updateObject(state, {inputs: updatedInfo});
-    }
-    return initialState;
 };
 
 

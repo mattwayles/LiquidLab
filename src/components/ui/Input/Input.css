@@ -4,13 +4,13 @@ body {
 
 .InputElement {
     outline: none;
-    margin: 0.6em auto;
+    text-align: center;
     border-radius: 5px;
-    background-color: var(--background-color);
+    width: 90%;
+    height: 25px;
     font: inherit;
-    padding: 6px 10px;
-    display: block;
-    width: 40%;
+    font-size: 0.65em;
+    padding: 6px;
     box-sizing: border-box;
 }
 

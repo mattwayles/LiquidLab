@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { NavLink, Redirect } from 'react-router-dom';
-import { updateObject, checkValidity } from '../../shared/utility';
+import { updateObject } from '../../shared/utility';
 
 import Input from '../../components/ui/Input/Input';
 import Button from '../../components/ui/Button/Button';
@@ -72,11 +72,28 @@ class Auth extends Component {
         }
     }
 
+
+    checkValidity = (value, rules) => {
+        let isValid = true;
+        if (rules.required) {
+            isValid = value.trim() !== '' && isValid;
+        }
+
+        if (rules.minLength) {
+            isValid = value.length >= rules.minLength && isValid;
+        }
+
+        if (rules.maxLength) {
+            isValid = value.length <= rules.maxLength && isValid;
+        }
+    return isValid;
+};
+
     inputChangedHandler = (event, id) => {
         const updatedControls = updateObject(this.state.controls, {
             [id]: updateObject(this.state.controls[id], {
                 value: event.target.value,
-                valid: checkValidity(event.target.value, this.state.controls[id].validation),
+                valid: this.checkValidity(event.target.value, this.state.controls[id].validation),
                 touched: true
             })
         });
