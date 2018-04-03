@@ -12,19 +12,15 @@
     height: 0;
 }
 
-.QuantityControl textarea {
-    grid-column-start: 1;
-    grid-column-end: 4;
-    width: 100%;
-    height: 130px;
-    border-radius: 5px;
-    margin: 0;
-    resize: none;
-    overflow: auto;
-}
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0
+}
+
+@media (max-width: 520px) {
+    .QuantityControl {
+        margin: 0 auto;
+    }
 }

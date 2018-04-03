@@ -43,7 +43,6 @@ const reducer = (state = initialState, action) => {
             return updateObject(state, {recipeInfo: updatedInfo});
         case actionTypes.INPUT_DATA_ENTERED: return {...state};
         case actionTypes.RECIPE_DATA_ENTERED: return {...state};
-        case actionTypes.CHECK_VALIDITY_COMPARE: return {...state};
         default: return initialState;
     }
 };

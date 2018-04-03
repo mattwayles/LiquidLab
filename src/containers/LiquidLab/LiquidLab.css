@@ -28,7 +28,6 @@
 
 .Views {
     display: flex;
-    flax-flow: column;
 }
 
 .Results{
@@ -36,13 +35,44 @@
     border-radius: 5px;
     background-color: var(--background-color);
     margin: 10px;
-    height: 420px;
+    height: 100%;
+    max-height: 420px;
     width: 40%;
     overflow-y: auto;
 }
 .Placeholder {
     text-align: center;
-    line-height: 275px;
+    line-height: 325px;
     font-size: 3em;
     opacity: 0.2;
+}
+
+@media (max-width: 1439px) {
+    .Results {
+        max-height: 684.85px;
+    }
+    .Placeholder {
+        line-height: 365px;
+    }
+}
+
+@media (max-width: 1023px) {
+    .Views {
+        flex-flow: column;
+    }
+    .Results {
+        width: 95%;
+        margin: 2% auto;
+    }
+}
+
+@media (max-width: 520px) {
+    .Header {
+        text-align: center;
+    }
+    .Header select {
+        margin: 0 auto 4% auto;
+        width: 95%;
+
+    }
 }

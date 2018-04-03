@@ -1,14 +1,16 @@
 .Recipe {
-    width: 70%;
+    width: 75%;
     height: 100%;
 }
 
 .RecipeInner {
     position: relative;
+    width: 90%;
+    float: right;
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    padding-bottom: 20px;
+    padding: 0 10px 20px 0;
 }
 
 .Col1, .Col2 {
@@ -58,11 +60,42 @@
 
 .RecipeButtons {
     position: absolute;
-    margin-top: 20px;
+    margin: 0 10px 8px 0;
     bottom: 0;
     right: 0;
 }
 
 .RecipeButtons Button {
     margin-left: 8px;
+}
+
+@media (max-width: 1439px) {
+    .RecipeInner {
+        padding-bottom: 55px;
+        width: 90%;
+    }
+    .Col1, .Col2 {
+        width: 90%;
+        margin: 0 auto;
+    }
+    .PlusButton {
+        width: 25px;
+        height: 25px;
+    }
+    .RecipeName {
+        width: 90%;
+        margin: 0 auto 4% auto;
+    }
+}
+
+@media (max-width: 520px) {
+    .Recipe {
+        width: 95%;
+    }
+    .RecipeButtons Button {
+        font-size: .85em;
+    }
+    .Header {
+        margin: 0 auto 20px auto;
+    }
 }

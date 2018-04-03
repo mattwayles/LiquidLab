@@ -4,8 +4,7 @@ import { updateObject } from '../../shared/utility.js';
 const initialState = {
     inputs: {
         name: {
-            value: '',
-            valid: true
+            value: ''
         },
         mlToMake: {
             value: 0,
@@ -40,11 +39,6 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.CHECK_VALIDITY_COMPARE:
-            const updatedPgVgTarget = updateObject(state.inputs,
-                {'targetPg': { value: action.value1, valid: action.valid},
-                    'targetVg': { value: action.value2, valid: action.valid}});
-            return updateObject(state, {inputs: updatedPgVgTarget});
         case actionTypes.INPUT_DATA_ENTERED:
             const updatedQuantity = updateObject(state.inputs, {[action.control]: { value: action.value, valid: action.valid}});
             return updateObject(state, {inputs: updatedQuantity});

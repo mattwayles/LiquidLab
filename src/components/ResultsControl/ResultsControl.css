@@ -1,6 +1,6 @@
 .ResultsControl {
     display: grid;
-    grid-template-columns: 3fr 1fr 1fr 1fr;
+    grid-template-columns: 50% 25% 25% 10%;
 }
 
 .ResultsControl p {
@@ -10,6 +10,7 @@
     font-size: 0.85em;
     padding-left: 20px;
     text-align: center;
+
 }
 
 .CalculationResult {

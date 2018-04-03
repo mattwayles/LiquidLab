@@ -7,31 +7,17 @@ import classes from './Results.css';
 
 class Results extends Component {
     render () {
-        /*console.log(
-            "Recipe Name: ", this.props.results.name, this.props.results.batch,
-            "\nNic ML: ", this.props.results.nic.ml +
-            "\nNic Grams: ", this.props.results.nic.grams +
-            "\nNic Percent: ", this.props.results.nic.percent +
-            "\nPG ML: ", this.props.results.pg.ml +
-            "\nPG Grams: ", this.props.results.pg.grams +
-            "\nPG Percent: ", this.props.results.pg.percent +
-            "\nVG ML: ", this.props.results.vg.ml +
-            "\nVG Grams: ", this.props.results.vg.grams +
-            "\nVG Percent: ", this.props.results.vg.percent
-        );
-
-        for (let i = 0; i < this.props.results.flavors.length; i++) {
-            console.log(this.props.results.flavors[i]);
-        }
-        console.log("Notes: ", this.props.results.notes);*/
-
         let results = Object.keys(this.props.results.ingredients).map((item, index) => {
             if (item === 'flavors') {
                 let flavors = this.props.results.ingredients.flavors.map((flavor, flavorIndex) => {
+                    let flavorName = 'No-Name Flavor';
+                    if (flavor.flavor) {
+                        flavorName = flavor.flavor;
+                    }
                     return <ResultsControl
                         key={flavorIndex}
                         ven={flavor.ven}
-                        flavor={flavor.flavor}
+                        flavor={flavorName}
                         ml={flavor.ml}
                         grams={flavor.grams}
                         percent={flavor.percent + '%'}
@@ -57,10 +43,10 @@ class Results extends Component {
                         <span style={{fontSize: '0.75em'}}>({this.props.results.recipeInfo.batch.value})</span>
                         : null}
                 </p>
+                <p className={classes.Notes}><em>{this.props.results.recipeInfo.notes.value}</em></p>
                 <div className={classes.Results}>
                     <ResultsControl head ml="ML" grams="Grams" percent="%" />
                     {results}
-
                 </div>
             </Auxil>
         );

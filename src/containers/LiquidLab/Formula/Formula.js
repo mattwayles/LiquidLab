@@ -11,6 +11,34 @@ class Formula extends Component {
         return Math.round((formula) * 100) /100;
     };
 
+    validateInputs = (inputs, flavors) => {
+        if (inputs.name.value === "") {
+            window.alert("Please enter a recipe name");
+            return false;
+        }
+        else if (inputs.mlToMake.value < 1) {
+            window.alert("ML To Make must be greater than or equal to 1");
+            return false;
+        }
+        else if (inputs.targetNic.value < 0) {
+            window.alert("Target NIC must be greater than or equal to 0");
+            return false;
+        }
+        else if (+inputs.targetPg.value + +inputs.targetVg.value !== 100) {
+            window.alert("Target PG and Target VG must equal 100%");
+            return false;
+        }
+        else {
+            for (let i = 0; i < flavors.length; i++) {
+                if (!flavors[i].percent > 0) {
+                    window.alert("Added flavors must contain a percentage greater than zero");
+                    return false;
+                }
+            }
+            return true;
+        }
+    };
+
     mapInputs = () => {
         return {
             mlToMake: this.props.inputs.mlToMake.value,
@@ -64,29 +92,44 @@ class Formula extends Component {
     };
 
     onCalculate = () => {
-        let flavorResults = [];
-        let flavorMlTotal = 0;
-        
-        for (let i = 0; i < this.props.flavors.length; i++) {
-            const flavorResult = this.calculateFlavorResults(this.props.flavors[i]);
-            flavorMlTotal = flavorMlTotal + flavorResult.ml;
-            flavorResults.push(flavorResult);
+        if (this.validateInputs(this.props.inputs, this.props.flavors)) {
+            let flavorResults = [];
+            let flavorMlTotal = 0;
+
+            for (let i = 0; i < this.props.flavors.length; i++) {
+                const flavorResult = this.calculateFlavorResults(this.props.flavors[i]);
+                flavorMlTotal = flavorMlTotal + flavorResult.ml;
+                flavorResults.push(flavorResult);
+            }
+
+            this.props.onUpdateIngredients('flavors', flavorResults);
+
+            const baseResults = this.calcBaseResults(flavorMlTotal);
+
+            this.props.onUpdateRecipeInfo('name', this.props.inputs.name );
+            this.props.onUpdateRecipeInfo('batch', this.props.inputs.batch );
+            this.props.onUpdateRecipeInfo('notes', this.props.inputs.notes );
+            if (baseResults.pgPercent >= 0) {
+                this.props.onUpdateIngredients('pg', {ml: baseResults.pgMl, grams: baseResults.pgGrams, percent: baseResults.pgPercent}) }
+            else {
+                window.alert("This recipe does not contain enough PG for the target ratio");
+                return false; }
+            if (baseResults.vgPercent >= 0) {
+                this.props.onUpdateIngredients('vg', {ml: baseResults.vgMl, grams: baseResults.vgGrams, percent: baseResults.vgPercent}) }
+            else {
+                window.alert("This recipe does not contain enough VG for the target ratio");
+                return false; }
+            if (baseResults.nicPercent >= 0) {
+                this.props.onUpdateIngredients('nic', {ml: baseResults.nicMl, grams: baseResults.nicGrams, percent: baseResults.nicPercent}) }
+            else {
+                window.alert("This recipe does not contain enough NIC for the target amount");
+                return false; }
+
+            return true;
         }
-
-
-        this.props.onUpdateIngredients('flavors', flavorResults);
-
-        const baseResults = this.calcBaseResults(flavorMlTotal);
-
-        this.props.onCheckValidityCompare(
-            'targetPg', this.props.inputs.targetPg.value, 'targetVg', this.props.inputs.targetVg.value);
-
-        this.props.onUpdateRecipeInfo('name', this.props.inputs.name );
-        this.props.onUpdateRecipeInfo('batch', this.props.inputs.batch );
-        this.props.onUpdateRecipeInfo('notes', this.props.inputs.notes );
-        this.props.onUpdateIngredients('pg', {ml: baseResults.pgMl, grams: baseResults.pgGrams, percent: baseResults.pgPercent});
-        this.props.onUpdateIngredients('vg', {ml: baseResults.vgMl, grams: baseResults.vgGrams, percent: baseResults.vgPercent});
-        this.props.onUpdateIngredients('nic', {ml: baseResults.nicMl, grams: baseResults.nicGrams, percent: baseResults.nicPercent});
+        else {
+            return false;
+        }
     };
 
 
@@ -94,7 +137,7 @@ class Formula extends Component {
         return (
             <div className={classes.Formula}>
                 <Quantity  />
-                <Recipe clicked={() => {this.onCalculate(); this.props.displayResults()} } />
+                <Recipe clicked={() => this.onCalculate() ? this.props.displayResults() : null} />
             </div>
         );
     }
@@ -110,7 +153,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onCheckValidityCompare: (control1, value1, control2, value2) => dispatch(actions.checkValidityCompare(control1, value1, control2, value2)),
         onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
         onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value))
     }

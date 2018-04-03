@@ -1,8 +1,16 @@
 .Results {
     width: 75%;
-    margin-left: 20px;
+    margin: 0 20px 20px 20px;
     display: grid;
     grid-template-columns: 100%;
+}
+
+.Notes {
+    width: 90%;
+    margin: 20px auto;
+    text-align: center;
+    color: var(--main-color);
+
 }
 
 .Header {
@@ -11,4 +19,25 @@
     font-size: 1.5em;
     color: var(--accent-color);
     font-weight: bold;
+}
+
+@media (max-width: 1439px) {
+    .Results {
+        height: 100%;
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 1023px) {
+    .Results {
+        width: 70%;
+        font-size: 0.75em;
+    }
+}
+
+@media (max-width: 321px) {
+    .Results {
+        width: 68%;
+        font-size: 0.65em;
+    }
 }

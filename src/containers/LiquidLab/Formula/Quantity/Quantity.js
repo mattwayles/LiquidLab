@@ -14,6 +14,10 @@ class Quantity extends Component {
         event.target.value = enforceMaxLength(event.target.value, event.target.maxLength);
 
         let valid = event.target.value >= 0;
+        if (control === 'mlToMake') {
+            valid = event.target.value >= 1;
+            this.props.onDataEntered('mlToMake', this.props.mlToMake.value, valid);
+        }
         if (control === 'targetPg') {
             valid = +event.target.value + +this.props.targetVg.value === 100;
             this.props.onDataEntered('targetPg', event.target.value, valid);
@@ -33,11 +37,13 @@ class Quantity extends Component {
         let controls =
             <Auxil>
                 <p className={classes.Header}>Quantity</p>
-                <QuantityControl valid={this.props.mlToMake.valid} change={(event) => this.dataEnteredHandler(event, 'mlToMake')} label="ML To Make:" type="number" suffix="ml" maxLength="4" autofocus />
-                <QuantityControl valid={this.props.targetNic.valid} change={(event) => this.dataEnteredHandler(event, 'targetNic')} label="Target Nic:" type="number" suffix="mg" maxLength="3" />
-                <QuantityControl valid={this.props.targetPg.valid} change={(event) => this.dataEnteredHandler(event, 'targetPg')} label="Target PG:" type="number" suffix="%" maxLength="3" />
-                <QuantityControl valid={this.props.targetVg.valid} change={(event) => this.dataEnteredHandler(event, 'targetVg')} label="Target VG:" type="number" suffix="%" maxLength="3" />
-                <QuantityControl change={(event) => this.dataEnteredHandler(event, 'notes')} label="Notes" type="textarea" />
+                <div className={classes.QuantityGrid}>
+                    <QuantityControl valid={this.props.mlToMake.valid} change={(event) => this.dataEnteredHandler(event, 'mlToMake')} label="ML To Make:" type="number" suffix="ml" maxLength="4" autofocus />
+                    <QuantityControl valid={this.props.targetNic.valid} change={(event) => this.dataEnteredHandler(event, 'targetNic')} label="Target Nic:" type="number" suffix="mg" maxLength="3" />
+                    <QuantityControl valid={this.props.targetPg.valid} change={(event) => this.dataEnteredHandler(event, 'targetPg')} label="Target PG:" type="number" suffix="%" maxLength="3" />
+                    <QuantityControl valid={this.props.targetVg.valid} change={(event) => this.dataEnteredHandler(event, 'targetVg')} label="Target VG:" type="number" suffix="%" maxLength="3" />
+                </div>
+                <textarea className={classes.TextArea} onChange={(event) => this.dataEnteredHandler(event, 'notes')} placeholder="Notes" />
             </Auxil>;
         return (
             <div className={classes.Quantity}>

@@ -23,7 +23,7 @@ class LiquidLab extends Component {
     render() {
         return (
             <div className={classes.LiquidLab}>
-                <header className={classes.Header}>LiquidLab
+                <header className={classes.Header}>ReactApp
                     <select value={this.state.recipe} onChange={(event) => this.recipeSelectHandler(event)}>
                         <option value="" disabled>Select a Recipe...</option>
                         <option value="Recipe1">Recipe1</option>
