@@ -1,0 +1,30 @@
+body {
+    background-color: var(--background-color);
+}
+
+.InputElement {
+    border-radius: 10px;
+    width: 60%;
+    height: 2.5vw;
+    font: inherit;
+    font-size: 1.2vw;
+    box-sizing: border-box;
+    margin-bottom: .8vw;
+    padding-left: .3vw;
+}
+
+.InputElement:focus {
+    outline: none;
+    background-color: #ccc;
+}
+
+.Invalid {
+    border: 1px solid red;
+    background-color: lightsalmon;
+}
+
+@media (max-width: 500px) {
+    .InputElement {
+        width: 80%;
+    }
+}

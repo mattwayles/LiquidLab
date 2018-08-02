@@ -43,7 +43,8 @@ class Results extends Component {
                         <span style={{fontSize: '0.75em'}}>({this.props.results.recipeInfo.batch.value})</span>
                         : null}
                 </p>
-                <p className={classes.Notes}><em>{this.props.results.recipeInfo.notes.value}</em></p>
+                {this.props.results.recipeInfo.notes ?
+                    <p className={classes.Notes}><em>{this.props.results.recipeInfo.notes.value}</em></p> : null}
                 <div className={classes.Results}>
                     <ResultsControl head ml="ML" grams="Grams" percent="%" />
                     {results}

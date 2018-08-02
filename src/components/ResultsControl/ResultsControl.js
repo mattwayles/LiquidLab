@@ -8,10 +8,11 @@ const ResultsControl = (props) => {
     if (!props.head) {
         calcResultStyle = classes.CalculationResult;
     }
+
     return (
         <div className={classes.ResultsControl}>
             <Auxil>
-                <p style={{textAlign: 'right', overflow: 'scroll'}}>
+                <p style={{textAlign: 'right', overflow: 'auto'}}>
                     {props.ven ? '[' + props.ven + ']' : null} {props.flavor}</p>
                 <p className={calcResultStyle}>{props.ml}</p>
                 <p className={calcResultStyle}>{props.grams}</p>

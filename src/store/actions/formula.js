@@ -15,3 +15,10 @@ export const recipeDataEntered = (arr) => {
         flavors: arr
     }
 };
+
+export const selectUserRecipe = (recipe) => {
+    return {
+        type: actionTypes.USER_RECIPE_SELECTED,
+        recipe
+    }
+}

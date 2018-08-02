@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import * as actions from './store/actions/index';
 import Layout from './containers/Layout/Layout';
-import Auth from './containers/Auth/Auth';
 import About from './components/About/About';
-import Logout from './containers/Auth/Logout/Logout';
+import Logout from './containers/Auth/Logout';
 import LiquidLab from './containers/LiquidLab/LiquidLab';
 import './App.css';
+import Register from "./containers/Auth/Register";
+import Login from "./containers/Auth/Login";
+import ForgotPassword from "./containers/Auth/ForgotPassword";
 
 class App extends Component {
     
@@ -20,9 +22,9 @@ class App extends Component {
   render() {
       let routes =
           <Switch>
-              <Route path="/register" render={()=> <Auth isRegister /> } />
-              <Route path="/forgotPassword" render={()=> <Auth forgotPass /> } />
-              <Route path="/login" render={()=> <Auth /> } />
+              <Route path="/register" component={Register} />
+              <Route path="/forgotPassword" component={ForgotPassword} />
+              <Route path="/login" component={Login} />
               <Route path="/about" component={About} />
               <Route path="/" exact component={LiquidLab} />
               <Redirect to="/" />

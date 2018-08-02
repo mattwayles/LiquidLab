@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import authReducer from './store/reducers/auth';
 import formulaReducer from './store/reducers/formula';
+import databaseReducer from './store/reducers/database';
 import resultsReducer from './store/reducers/result';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
@@ -17,7 +18,8 @@ const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX
 const rootReducer = combineReducers({
     auth: authReducer,
     formula: formulaReducer,
-    results: resultsReducer
+    results: resultsReducer,
+    database: databaseReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));

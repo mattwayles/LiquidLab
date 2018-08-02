@@ -1,5 +1,5 @@
 .Auth {
-    margin: 100px auto;
+    margin: 13vw auto 0;
     width: 50%;
     text-align: center;
     box-shadow: 2px 2px 5px #ccc;
@@ -16,13 +16,9 @@
 }
 
 .Label {
-    font-size: 2em;
+    font-size: 2vw;
     font-weight: bold;
     color: var(--accent-color);
-}
-
-.Input {
-    display: block;
 }
 
 .Links {
@@ -35,8 +31,14 @@
     height: 100%;
 }
 
-.NavLink {
-    padding: 8px;
+.Error {
+    margin: 0 auto 3%;
+    width: 80%;
+    font-size: .65vw;
+    padding: 10px 0;
+    font-weight: 600;
+    border-radius: 25px;
+    background-color: #ffff00;
 }
 
 @media (max-width: 500px) {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { enforceMaxLength } from '../../../../shared/utility';
+import { enforceMaxLength } from '../../../../util/shared';
 import * as actions from '../../../../store/actions/index';
 import RecipeControl from '../../../../components/RecipeControl/RecipeControl';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
@@ -76,14 +76,16 @@ class Recipe extends Component {
         let controls = this.state.col1Controls.map(control => {
             let valid = null;
 
-            for (let i = 0; i < this.props.flavors.length; i++) {
-                if (+this.props.flavors[i].control === control.id) {
-                    valid = this.props.flavors[i].percent > 0;
+            if (this.props.flavors) {
+                for (let i = 0; i < this.props.flavors.length; i++) {
+                    if (+this.props.flavors[i].control === control.id) {
+                        valid = this.props.flavors[i].percent > 0;
+                    }
                 }
             }
-
             recipeControl1 =
                 <RecipeControl className={classes.RecipeControl}
+                               values={this.props.flavors ? this.props.flavors[control.id] : null}
                     key={control.id}
                     id={control.id}
                     valid={valid}
@@ -108,14 +110,17 @@ class Recipe extends Component {
             else {
                 let valid = null;
 
-                for (let i = 0; i < this.props.flavors.length; i++) {
-                    if (+this.props.flavors[i].control === control.id) {
-                        valid = this.props.flavors[i].percent > 0;
+                if (this.props.flavors) {
+                    for (let i = 0; i < this.props.flavors.length; i++) {
+                        if (+this.props.flavors[i].control === control.id) {
+                            valid = this.props.flavors[i].percent > 0;
+                        }
                     }
                 }
 
                 recipeControl2 =
                     <RecipeControl className={classes.RecipeControl}
+                                   values={this.props.flavors ? this.props.flavors[control.id] : null}
                         key={control.id}
                         id={control.id}
                         valid={valid}
@@ -149,8 +154,9 @@ class Recipe extends Component {
                     </div>
                     <div className={classes.RecipeButtons}>
                         <Button disabled clicked={null} >Delete</Button>
-                        <Button disabled clicked={null} >Save</Button>
-                        <Button clicked={this.props.clicked} >Calculate</Button>
+                        <Button disabled={!this.props.token || this.props.input.name.value === ""}
+                                clicked={this.props.save} >Save</Button>
+                        <Button clicked={this.props.calculate} >Calculate</Button>
                     </div>
                 </div>
             </div>
@@ -160,7 +166,8 @@ class Recipe extends Component {
 const mapStateToProps = state => {
     return {
         input: state.formula.inputs,
-       flavors: state.formula.flavors
+       flavors: state.formula.flavors,
+        token: state.auth.userId
     }
 };
 

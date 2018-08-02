@@ -1,8 +1,7 @@
 .LiquidLab {
-    margin: 100px auto;
+    margin: 10vw auto;
     width: 90%;
-    box-shadow: 2px 2px 5px #ccc;
-    border: 1px solid #eee;
+    box-shadow: 2px 2px 10px #fff;
     border-radius: 5px;
     padding: 10px;
     box-sizing: border-box;
@@ -42,9 +41,19 @@
 }
 .Placeholder {
     text-align: center;
-    line-height: 325px;
+    line-height: 320px;
     font-size: 3em;
     opacity: 0.2;
+}
+
+.Error {
+    text-align: center;
+    color: red;
+    font-weight: 700;
+}
+
+.ErrorImg {
+    width: 1.5vw;
 }
 
 @media (max-width: 1439px) {

@@ -1,0 +1,107 @@
+export const round = (formula) => {
+    return Math.round((formula) * 100) /100;
+};
+
+export const validateInputs = (inputs, flavors, error) => {
+    if (inputs.name.value === "") {
+        error("Please enter a recipe name");
+        return false;
+    }
+    else if (inputs.mlToMake.value < 1) {
+        error("ML To Make must be greater than or equal to 1");
+        return false;
+    }
+    else if (inputs.targetNic.value < 0) {
+        error("Target NIC must be greater than or equal to 0");
+        return false;
+    }
+    else if (+inputs.targetPg.value + +inputs.targetVg.value !== 100) {
+        error("Target PG and Target VG must equal 100%");
+        return false;
+    }
+    else {
+        for (let i = 0; i < flavors.length; i++) {
+            if (!flavors[i].percent > 0) {
+                error("Each added flavor must contain a percentage greater than zero");
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+export const mapInputs = (inputs, weights) => {
+    return {
+        mlToMake: inputs.mlToMake.value,
+        inputNic: inputs.targetNic.value,
+        inputPg: inputs.targetPg.value / 100,
+        inputVg: inputs.targetVg.value / 100,
+        nicStrength: weights.nicStrength,
+        nicBasePg: weights.nicBasePg / 100,
+        nicBaseVg: weights.nicBaseVg / 100,
+        flavorWeight: weights.flavorWeight,
+        nicWeight: weights.nicWeight,
+        pgWeight: weights.pgWeight,
+        vgWeight: weights.vgWeight
+    }
+};
+
+export const calcBaseResults = (inputs, weights, flavorMlTotal) => {
+    const input = mapInputs(inputs, weights);
+    const targetNic = round(input.mlToMake * input.inputNic);
+    const pgTarget = round(input.mlToMake * input.inputPg - targetNic * input.nicBasePg);
+    const vgTarget = round(input.mlToMake * input.inputVg - targetNic * input.nicBaseVg);
+    const nicMl = round(input.mlToMake / input.nicStrength * input.inputNic);
+    const pgMl = round(pgTarget - (nicMl - targetNic) * input.nicBasePg - flavorMlTotal);
+    const vgMl = round(vgTarget - (nicMl - targetNic) * input.nicBaseVg);
+    return {
+        ...input,
+        nicMl: nicMl,
+        pgMl: pgMl,
+        vgMl: vgMl,
+        nicGrams: round(nicMl * input.nicWeight),
+        pgGrams: round(pgMl * input.pgWeight),
+        vgGrams: round(vgMl * input.vgWeight),
+        nicPercent: round(nicMl / input.mlToMake * 100),
+        pgPercent: round(pgMl / input.mlToMake * 100),
+        vgPercent: round(vgMl / input.mlToMake * 100)
+    }
+};
+
+export const calculateFlavorResults = (inputs, weights, flavor) => {
+    const input = mapInputs(inputs, weights);
+    const flavorMl = round(input.mlToMake * flavor.percent / 100);
+    const flavorGrams = round(flavorMl * input.flavorWeight);
+
+    return {
+        ven: flavor.ven,
+        flavor: flavor.flavor,
+        ml: flavorMl,
+        grams: flavorGrams,
+        percent: flavor.percent
+    }
+};
+
+export const validateBaseResults = (baseResults, update, error) => {
+    if (baseResults.pgPercent >= 0) {
+        update('pg', {ml: baseResults.pgMl, grams: baseResults.pgGrams, percent: baseResults.pgPercent})
+    }
+    else {
+        error("This recipe does not contain enough PG for the target ratio");
+        return false; }
+
+    if (baseResults.vgPercent >= 0) {
+        update('vg', {ml: baseResults.vgMl, grams: baseResults.vgGrams, percent: baseResults.vgPercent}) }
+    else {
+        error("This recipe does not contain enough VG for the target ratio");
+        return false; }
+
+        if (baseResults.nicPercent >= 0) {
+        update('nic', {ml: baseResults.nicMl, grams: baseResults.nicGrams, percent: baseResults.nicPercent}) }
+    else {
+        error("This recipe does not contain enough NIC for the target amount");
+        return false; }
+
+
+        return true;
+};
