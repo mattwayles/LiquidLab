@@ -3,9 +3,9 @@ import * as actionTypes from './actionTypes';
 export const inputDataEntered = (control, value, valid) => {
     return {
         type: actionTypes.INPUT_DATA_ENTERED,
-        control: control,
-        value: value,
-        valid: valid
+        control,
+        value,
+        valid,
     }
 };
 
@@ -21,4 +21,4 @@ export const selectUserRecipe = (recipe) => {
         type: actionTypes.USER_RECIPE_SELECTED,
         recipe
     }
-}
+};

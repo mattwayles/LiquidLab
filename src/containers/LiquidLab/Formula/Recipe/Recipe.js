@@ -57,7 +57,7 @@ class Recipe extends Component {
             if (updatedFlavors[i].control === event.target.id) {
                 let updatedFlavor = {
                     ...updatedFlavors[i],
-                    [event.target.name]: event.target.value};
+                    [event.target.name]: {value: event.target.value, touched: true}};
                 exists = true;
                 updatedFlavors[i] = updatedFlavor;
             }
@@ -65,27 +65,31 @@ class Recipe extends Component {
         if (!exists) {
             updatedFlavors.push({
                 control: event.target.id,
-                [event.target.name]: event.target.value})
+                [event.target.name]: {value: event.target.value, touched: true}})
         }
         this.props.onDataEntered(updatedFlavors);
         
     };
 
     render () {
+        const { col1Controls, col2Controls } = this.state;
+        const { input, flavors, token } = this.props;
+        
         let recipeControl1 = null;
-        let controls = this.state.col1Controls.map(control => {
+        let controls = col1Controls.map(control => {
             let valid = null;
 
-            if (this.props.flavors) {
-                for (let i = 0; i < this.props.flavors.length; i++) {
-                    if (+this.props.flavors[i].control === control.id) {
-                        valid = this.props.flavors[i].percent > 0;
+            if (flavors) {
+                for (let i = 0; i < flavors.length; i++) {
+                    if (+flavors[i].control === control.id) {
+                        valid = flavors[i].percent && flavors[i].percent.value > 0;
                     }
                 }
             }
             recipeControl1 =
-                <RecipeControl className={classes.RecipeControl}
-                               values={this.props.flavors ? this.props.flavors[control.id] : null}
+                <RecipeControl
+                    className={classes.RecipeControl}
+                    values={flavors ? flavors[control.id] : null}
                     key={control.id}
                     id={control.id}
                     valid={valid}
@@ -97,7 +101,7 @@ class Recipe extends Component {
         });
 
         let recipeControl2 = null;
-        let controls2 = this.state.col2Controls.map(control => {
+        let controls2 = col2Controls.map(control => {
             if (control.type === 'button') {
                 return (
                     <button
@@ -110,17 +114,17 @@ class Recipe extends Component {
             else {
                 let valid = null;
 
-                if (this.props.flavors) {
-                    for (let i = 0; i < this.props.flavors.length; i++) {
-                        if (+this.props.flavors[i].control === control.id) {
-                            valid = this.props.flavors[i].percent > 0;
+                if (flavors) {
+                    for (let i = 0; i < flavors.length; i++) {
+                        if (+flavors[i].control === control.id) {
+                            valid = flavors[i].percent && flavors[i].percent.value > 0;
                         }
                     }
                 }
 
                 recipeControl2 =
                     <RecipeControl className={classes.RecipeControl}
-                                   values={this.props.flavors ? this.props.flavors[control.id] : null}
+                                   values={flavors ? flavors[control.id] : null}
                         key={control.id}
                         id={control.id}
                         valid={valid}
@@ -137,13 +141,13 @@ class Recipe extends Component {
                 <div className={classes.RecipeInner}> 
                     <p className={classes.Header}>Recipe</p>
                     <div className={classes.RecipeName} >
-                        <input className={classes.RecipeNameInput}
-                               value={this.props.input.name.value}
+                        <input className={!input.name.touched && input.name.value !== '' ?
+                            classes.RecipeNameInputAuto : classes.RecipeNameInput}
+                               value={input.name.value}
                                type="text"
                                placeholder="Recipe Name"
                                 onChange={(event) => this.props.onInputDataEntered('name', event.target.value)} />
-                        <BatchSelect className={classes.Batch}
-                                     value={this.props.input.batch.value}
+                        <BatchSelect classes={classes.Batch} value={input.batch.value}
                                      changed={(event) => this.props.onInputDataEntered('batch', event.target.value)} />
                     </div>
                     <div className={classes.Col1}>
@@ -154,14 +158,14 @@ class Recipe extends Component {
                     </div>
                     <div className={classes.RecipeButtons}>
                         <Button disabled clicked={null} >Delete</Button>
-                        <Button disabled={!this.props.token || this.props.input.name.value === ""}
+                        <Button disabled={!token || input.name.value === ""}
                                 clicked={this.props.save} >Save</Button>
                         <Button clicked={this.props.calculate} >Calculate</Button>
                     </div>
                 </div>
             </div>
         )}
-};
+}
 
 const mapStateToProps = state => {
     return {

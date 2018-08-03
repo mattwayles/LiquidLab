@@ -32,7 +32,7 @@
     border-radius: 5px;
 }
 
-.RecipeName {
+.RecipeName, .RecipeNameAuto {
     height: 20px;
     margin-bottom: 20px;
     width: 100%;
@@ -40,9 +40,17 @@
     flex-flow: row;
 }
 
-.RecipeNameInput {
+.RecipeNameAuto {
+    background-color: #fcffa5;
+}
+
+.RecipeNameInput, .RecipeNameInputAuto {
     height: 90%;
     width: 10%;
+}
+
+.RecipeNameInputAuto {
+    background-color: #fcffa5;
 }
 
 .PlusButton {

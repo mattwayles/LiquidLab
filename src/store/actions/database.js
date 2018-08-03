@@ -89,8 +89,7 @@ export const saveRecipe = (token, dbEntryId, recipe) => {
     return dispatch => {
         dispatch(saveRecipeStart());
         axios.post('/users/' + dbEntryId + '/recipes.json?auth=' + token, recipe)
-            .then(response => {
-                console.log("RECEIVED: ", response.data);
+            .then(() => {
                 dispatch(saveRecipeSuccess());
             }).catch(error => {
             dispatch(saveRecipeFailed(ErrorMessage(error.response.data.error.message)));

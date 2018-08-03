@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../store/actions/index';
 import Recipe from './Recipe/Recipe';
-import Quantity from './Quantity/Quantity';
+import Target from './Target/Target';
 import classes from './Formula.css';
 import {calcBaseResults, calculateFlavorResults, validateBaseResults, validateInputs} from "../../../util/formulaUtil";
 
@@ -49,7 +49,7 @@ class Formula extends Component {
     render () {
         return (
             <div className={classes.Formula}>
-                <Quantity  />
+                <Target  />
                 <Recipe
                     save={this.handleSave}
                     calculate={() => this.handleCalculate() ? this.props.displayResults() : null} />

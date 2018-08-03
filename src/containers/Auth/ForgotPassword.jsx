@@ -17,7 +17,7 @@ class Login extends React.Component {
     };
 
     handleSubmit = () => {
-        //TODO: Forgot Password e-mail
+        //TODO: Forgot Password e-mail *FIREBASE*
         //TODO: E-mail front-end validation
         //Developers: Use your backend server to send an e-mail
         console.log("Developers: Use your backend server to send an e-mail");

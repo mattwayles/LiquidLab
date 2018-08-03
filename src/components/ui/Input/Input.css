@@ -24,6 +24,10 @@ body {
     background-color: salmon;
 }
 
+.AutoPopulated {
+    background-color: #fcffa5;
+}
+
 @media (max-width: 500px) {
     .InputElement {
         width: 80%;

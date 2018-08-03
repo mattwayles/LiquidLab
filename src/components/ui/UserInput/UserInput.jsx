@@ -11,6 +11,7 @@ const userInput = (props) => {
     return(
             <div>
                 <input
+                    autoFocus={props.autofocus}
                     className={inputClasses.join(' ')}
                     id={props.id}
                     type={props.type}

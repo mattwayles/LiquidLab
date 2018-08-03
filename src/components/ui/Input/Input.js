@@ -6,6 +6,14 @@ const input = (props) => {
     let inputElement = null;
     const inputClasses = [classes.InputElement];
 
+    if (props.classes) {
+        inputClasses.push(props.classes);
+    }
+
+    if (props.autoPopulate) {
+        inputClasses.push(classes.AutoPopulated);
+    }
+
     if (props.valid === false) {
         inputClasses.push(classes.Invalid);
     }

@@ -5,6 +5,8 @@ import { NavLink } from 'react-router-dom';
 import UserInput from "../../components/ui/UserInput/UserInput";
 import {connect} from "react-redux";
 import * as actions from "../../store/actions";
+import Spinner from "../../components/ui/Spinner/Spinner";
+import Auxil from "../../hoc/Auxil";
 
 
 class Register extends React.Component {
@@ -25,7 +27,7 @@ class Register extends React.Component {
 
     render() {
         const { email, password } = this.state;
-        const { error } = this.props;
+        const { error, loading } = this.props;
 
 
 
@@ -33,24 +35,28 @@ class Register extends React.Component {
             <div className={classes.Auth}>
                 <p className={classes.Label}>Register a new ReactApp Account</p>
                 { error ? <p className={classes.Error}>&#9888;&emsp;{error}</p> : null}
-                <UserInput
-                    type="string"
-                    id="email"
-                    value={email}
-                    invalid={error && error.includes("e-mail")}
-                    change={(e) => this.handleUserInput(e, "email")}
-                    placeholder="E-Mail Address"
-                />
-                <UserInput
-                    type="password"
-                    id="password"
-                    value={password}
-                    invalid={error && error.includes("password")}
-                    change={(e) => this.handleUserInput(e, "password")}
-                    placeholder="Password"
-                />
-                <Button clicked={this.handleSubmit}>Submit</Button><br />
-                <NavLink className={classes.NavLink} to="/login">Login to Existing Account</NavLink>
+                {loading ? <Spinner/> :
+                    <Auxil>
+                        <UserInput
+                            type="string"
+                            id="email"
+                            value={email}
+                            invalid={error && error.includes("e-mail")}
+                            change={(e) => this.handleUserInput(e, "email")}
+                            placeholder="E-Mail Address"
+                        />
+                        < UserInput
+                            type="password"
+                            id="password"
+                            value={password}
+                            invalid={error && error.includes("password")}
+                            change={(e) => this.handleUserInput(e, "password")}
+                            placeholder="Password"
+                        />
+                        <Button clicked={this.handleSubmit}>Submit</Button><br />
+                        <NavLink className={classes.NavLink} to="/login">Login to Existing Account</NavLink>
+                    </Auxil>
+                }
             </div>
         )
     }
@@ -59,6 +65,7 @@ class Register extends React.Component {
 const mapStateToProps = state => {
     return {
         error: state.auth.error,
+        loading: state.auth.loading
     }
 };
 

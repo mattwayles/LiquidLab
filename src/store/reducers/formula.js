@@ -5,26 +5,31 @@ const initialState = {
     inputs: {
         name: {
             value: '',
-            valid: true
+            valid: true,
+            touched: false
         },
         mlToMake: {
-            value: 0,
-            valid: true
+            value: '',
+            valid: true,
+            touched: false
         },
         targetNic: {
-            value: 0,
-            valid: true
+            value: '',
+            valid: true,
+            touched: false
         },
         targetPg: {
-            value: 0,
-            valid: true
+            value: '',
+            valid: true,
+            touched: false
         },
         targetVg: {
-            value: 0,
-            valid: true
+            value: '',
+            valid: true,
+            touched: false
         },
-        batch: '',
-        notes: null
+        batch: {value: '', touched: false},
+        notes: {value: '', touched: false}
     },
     weights: {
         //TODO: Remove hard-coded weights
@@ -42,8 +47,9 @@ const initialState = {
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.INPUT_DATA_ENTERED:
-            const updatedQuantity = updateObject(state.inputs, {[action.control]: { value: action.value, valid: action.valid}});
-            return updateObject(state, {inputs: updatedQuantity});
+            const updatedTarget = updateObject(state.inputs, {[action.control]:
+                    { value: action.value, valid: action.valid, touched: true}});
+            return updateObject(state, {inputs: updatedTarget});
         case actionTypes.RECIPE_DATA_ENTERED: return updateObject(state, { flavors: action.flavors });
         case actionTypes.USER_RECIPE_SELECTED: return userRecipeSelected(state, action);
         case actionTypes.UPDATE_INGREDIENTS: return {...state};
@@ -54,33 +60,49 @@ const reducer = (state = initialState, action) => {
 
 
 const userRecipeSelected = (state, action) => {
-    console.log(action.recipe.flavors);
+    let loadedFlavors = [...action.recipe.flavors];
+    for (let index in loadedFlavors) {
+        if (loadedFlavors[index].ven) {
+            loadedFlavors[index].ven.touched = false;
+        }
+        if (loadedFlavors[index].flavor) {
+            loadedFlavors[index].flavor.touched = false;
+        }
+        if (loadedFlavors[index].percent) {
+            loadedFlavors[index].percent.touched = false;
+        }
+    }
     return updateObject(state,
         {inputs: {
             name: {
                 value: action.recipe.name ? action.recipe.name.value : initialState.inputs.name,
-                valid: true
+                valid: true,
+                touched: false
             },
             mlToMake: {
                 value: action.recipe.mlToMake ? action.recipe.mlToMake.value : initialState.inputs.mlToMake,
-                valid: true
+                valid: true,
+                touched: false
             },
             targetNic: {
-                value: action.recipe.targetNic ? action.recipe.name.targetNic : initialState.inputs.targetNic,
-                valid: true
+                value: action.recipe.targetNic ? action.recipe.targetNic.value : initialState.inputs.targetNic,
+                valid: true,
+                touched: false
             },
             targetPg: {
                 value: action.recipe.targetPg ? action.recipe.targetPg.value : initialState.inputs.targetPg,
-                valid: true
+                valid: true,
+                touched: false
             },
             targetVg: {
                 value: action.recipe.targetVg ? action.recipe.targetVg.value : initialState.inputs.targetVg,
-                valid: true
+                valid: true,
+                touched: false
             },
-            batch: action.recipe.batch ? action.recipe.batch.value :  initialState.inputs.batch,
-            notes: action.recipe.notes ? action.recipe.notes.value : initialState.inputs.notes
+            batch: {value: action.recipe.batch ? action.recipe.batch.value : initialState.batch.value, touched: false},
+            notes: {value: action.recipe.notes ? action.recipe.notes.value : initialState.notes.value, touched: false},
         },
-            flavors: action.recipe.flavors
+            flavors: loadedFlavors
     })
 };
 
