@@ -1,6 +1,7 @@
 import axios from '../../axios-ll';
 import ErrorMessage from './error/errorMessage';
 import * as actionTypes from './actionTypes';
+import {selectUserRecipe} from "./formula";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +91,12 @@ export const saveRecipe = (token, dbEntryId, recipe) => {
         dispatch(saveRecipeStart());
         axios.post('/users/' + dbEntryId + '/recipes.json?auth=' + token, recipe)
             .then(() => {
-                dispatch(saveRecipeSuccess());
+                const successMessage = recipe.batch.value ? "Successfully saved " + recipe.name.value + " [" +
+                recipe.batch.value + "] to the database"
+                    : "Successfully saved " + recipe.name.value + " to the database";
+                dispatch(saveRecipeSuccess(successMessage));
+                dispatch(getUserRecipes(token, dbEntryId));
+                dispatch(selectUserRecipe(recipe));
             }).catch(error => {
             dispatch(saveRecipeFailed(ErrorMessage(error.response.data.error.message)));
 
@@ -107,11 +113,10 @@ export const saveRecipeStart = () => {
     }
 };
 
-export const saveRecipeSuccess = (token, userId) => {
+export const saveRecipeSuccess = (success) => {
     return {
         type: actionTypes.SAVE_RECIPE_SUCCESS,
-        idToken: token,
-        userId: userId
+        success
     }
 };
 
@@ -164,5 +169,11 @@ export const getUserRecipesFailed = (error) => {
 export const clearDbRedux = () => {
     return {
         type: actionTypes.CLEAR_DB_REDUX
+    }
+};
+
+export const clearSuccessMessage = () => {
+    return {
+        type: actionTypes.CLEAR_SUCCESS
     }
 };

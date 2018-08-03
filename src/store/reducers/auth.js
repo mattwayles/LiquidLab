@@ -17,13 +17,13 @@ const reducer = (state = initialState, action) => {
         case actionTypes.AUTH_FAILED:return authFailed(state, action);
         case actionTypes.SET_AUTH_REDIRECT: return setAuthRedirectPath(state, action);
         case actionTypes.AUTH_LOGOUT: return authLogout(state, action);
-        case actionTypes.CLEAR_ERROR: return clearError(state, action);
+        case actionTypes.CLEAR_AUTH_ERROR: return clearError(state, action);
         default: return state;
     }
 };
 
 
-const authStart = (state, action) => {
+const authStart = (state) => {
     return updateObject(state, {
         error: null,
         loading: true });
@@ -47,13 +47,13 @@ const setAuthRedirectPath = (state, action) => {
     return updateObject(state, { authRedirectPath: action.path });
 };
 
-const authLogout = (state, action) => {
+const authLogout = (state) => {
     return updateObject(state, {
         token: null,
         userId: null })
 };
 
-const clearError = (state, action) => {
+const clearError = (state) => {
     return updateObject(state, {
         error: null
     })

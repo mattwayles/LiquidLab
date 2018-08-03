@@ -75,18 +75,11 @@ export const checkAuthTimeout = (expirationTime) => {
     };
 };
 
-export const setAuthRedirectPath = (path) => {
-    return {
-        type: actionTypes.SET_AUTH_REDIRECT,
-        path: path
-    }
-};
-
 export const authCheckState = () => {
     return dispatch => {
         const token = localStorage.getItem('token');
         if (!token) {
-            dispatch(clearDbRedux())
+            dispatch(clearDbRedux());
             return dispatch(logout());
         }
         else {
@@ -94,7 +87,6 @@ export const authCheckState = () => {
             if (expirationDate <= new Date()) {
                 dispatch(clearDbRedux());
                 dispatch(logout());
-               ;
             }
             else {
                 const userId = localStorage.getItem('userId');
@@ -113,12 +105,5 @@ export const logout = () => {
     localStorage.removeItem('dbEntryId');
     return {
         type: actionTypes.AUTH_LOGOUT
-    }
-};
-
-export const clearError = (error) => {
-    return {
-        type: actionTypes.CLEAR_ERROR,
-        error: error
     }
 };

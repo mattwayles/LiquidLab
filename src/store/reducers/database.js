@@ -3,7 +3,8 @@ import { updateObject } from '../../util/shared.js';
 
 const initialState = {
     dbEntryId: null,
-    userRecipes: {}
+    userRecipes: {},
+    success: null
 };
 
 const reducer = (state = initialState, action) => {
@@ -14,11 +15,15 @@ const reducer = (state = initialState, action) => {
         case actionTypes.GET_DB_USER_START:return getDbUserStart(state, action);
         case actionTypes.GET_DB_USER_SUCCESS:return getDbUserSuccess(state, action);
         case actionTypes.GET_DB_USER_FAILED:return getDbUserFailed(state, action);
+        case actionTypes.SAVE_RECIPE_START:return saveRecipeStart(state, action);
+        case actionTypes.SAVE_RECIPE_SUCCESS:return saveRecipeSuccess(state, action);
+        case actionTypes.SAVE_RECIPE_FAILED:return saveRecipeFailed(state, action);
         case actionTypes.GET_USER_RECIPES_START:return getUserRecipesStart(state, action);
         case actionTypes.GET_USER_RECIPES_SUCCESS:return getUserRecipesSuccess(state, action);
         case actionTypes.GET_USER_RECIPES_FAILED:return getUserRecipesFailed(state, action);
         case actionTypes.CLEAR_DB_REDUX: return clearDatabaseRedux(state);
-        case actionTypes.CLEAR_ERROR: return clearError(state, action);
+        case actionTypes.CLEAR_DATABASE_ERROR: return clearError(state, action);
+        case actionTypes.CLEAR_SUCCESS: return clearSuccess(state, action);
         default: return state;
     }
 };
@@ -63,6 +68,25 @@ const getDbUserFailed = (state, action) => {
         loading: false });
 };
 
+const saveRecipeStart = (state) => {
+    return updateObject(state, {
+        error: null,
+        loading: true });
+};
+
+const saveRecipeSuccess = (state, action) => {
+    return updateObject(state, {
+        success: action.success,
+        error: null,
+        loading: false });
+};
+
+const saveRecipeFailed = (state, action) => {
+    return updateObject(state, {
+        error: action.error,
+        loading: false });
+};
+
 
 const getUserRecipesStart = (state) => {
     return updateObject(state, {
@@ -90,6 +114,12 @@ const clearDatabaseRedux = (state) => {
 const clearError = (state) => {
     return updateObject(state, {
         error: null
+    })
+};
+
+const clearSuccess = (state) => {
+    return updateObject(state, {
+        success: null
     })
 };
 

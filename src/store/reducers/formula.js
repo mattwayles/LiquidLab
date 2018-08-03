@@ -54,13 +54,14 @@ const reducer = (state = initialState, action) => {
         case actionTypes.USER_RECIPE_SELECTED: return userRecipeSelected(state, action);
         case actionTypes.UPDATE_INGREDIENTS: return {...state};
         case actionTypes.UPDATE_RECIPE_INFO: return {...state};
-        default: return initialState
+        case actionTypes.CLEAR_FORMULA_ERROR: return updateObject(state, {error: null});
+        default: return {...state}
     }
 };
 
 
 const userRecipeSelected = (state, action) => {
-    let loadedFlavors = [...action.recipe.flavors];
+    let loadedFlavors = action.recipe && action.recipe.flavors ? [...action.recipe.flavors] : null;
     for (let index in loadedFlavors) {
         if (loadedFlavors[index].ven) {
             loadedFlavors[index].ven.touched = false;
@@ -72,6 +73,7 @@ const userRecipeSelected = (state, action) => {
             loadedFlavors[index].percent.touched = false;
         }
     }
+
     return updateObject(state,
         {inputs: {
             name: {

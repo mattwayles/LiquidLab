@@ -21,19 +21,19 @@ export const validateInputs = (inputs, flavors, error) => {
     }
     else {
         for (let i = 0; i < flavors.length; i++) {
-            if (!flavors[i].percent > 0) {
+            if (!flavors[i].percent.value > 0) {
                 error("Each added flavor must contain a percentage greater than zero");
                 return false;
             }
         }
         return true;
     }
-}
+};
 
 export const mapInputs = (inputs, weights) => {
     return {
-        mlToMake: inputs.mlToMake.value,
-        inputNic: inputs.targetNic.value,
+        mlToMake: parseInt(inputs.mlToMake.value, 10),
+        inputNic: parseInt(inputs.targetNic.value, 10),
         inputPg: inputs.targetPg.value / 100,
         inputVg: inputs.targetVg.value / 100,
         nicStrength: weights.nicStrength,
@@ -70,19 +70,20 @@ export const calcBaseResults = (inputs, weights, flavorMlTotal) => {
 
 export const calculateFlavorResults = (inputs, weights, flavor) => {
     const input = mapInputs(inputs, weights);
-    const flavorMl = round(input.mlToMake * flavor.percent / 100);
+    const flavorMl = round(input.mlToMake * flavor.percent.value / 100);
     const flavorGrams = round(flavorMl * input.flavorWeight);
 
     return {
-        ven: flavor.ven,
-        flavor: flavor.flavor,
+        ven: flavor.ven.value,
+        flavor: flavor.flavor.value,
         ml: flavorMl,
         grams: flavorGrams,
-        percent: flavor.percent
+        percent: flavor.percent.value
     }
 };
 
 export const validateBaseResults = (baseResults, update, error) => {
+    console.log(baseResults);
     if (baseResults.pgPercent >= 0) {
         update('pg', {ml: baseResults.pgMl, grams: baseResults.pgGrams, percent: baseResults.pgPercent})
     }
@@ -101,7 +102,15 @@ export const validateBaseResults = (baseResults, update, error) => {
     else {
         error("This recipe does not contain enough NIC for the target amount");
         return false; }
-
-
         return true;
+};
+
+export const duplicateRecipe = (name, batch, recipes) => {
+    for (let i in recipes) {
+        if (recipes[i].name && recipes[i].name.value === name
+        && recipes[i].batch && recipes[i].batch.value === batch) {
+            return true;
+        }
+    }
+    return false;
 };

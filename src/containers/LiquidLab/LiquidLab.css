@@ -74,8 +74,22 @@
     font-weight: 700;
 }
 
+
+.Success {
+    text-align: center;
+    color: darkgreen;
+    font-weight: 700;
+    animation-name: success;
+    animation-duration: 3s;
+}
+
 .ErrorImg {
     width: 1.5vw;
+}
+
+@keyframes success {
+    from {opacity: 1;}
+    to {opacity: 0;}
 }
 
 @media (max-width: 1439px) {
