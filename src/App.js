@@ -10,6 +10,7 @@ import './App.css';
 import Register from "./containers/Auth/Register";
 import Login from "./containers/Auth/Login";
 import ForgotPassword from "./containers/Auth/ForgotPassword";
+import Weights from "./containers/Weights/Weights";
 
 class App extends Component {
     
@@ -26,6 +27,7 @@ class App extends Component {
               <Route path="/forgotPassword" component={ForgotPassword} />
               <Route path="/login" component={Login} />
               <Route path="/about" component={About} />
+              <Route path="/weights" component={Weights} />
               <Route path="/" exact component={LiquidLab} />
               <Redirect to="/" />
           </Switch>;
@@ -33,6 +35,7 @@ class App extends Component {
           routes =
               <Switch>
                   <Route path="/about" component={About} />
+                  <Route path="/weights" component={Weights} />
                   <Route path="/logout" component={Logout} />
                   <Route path="/" component={LiquidLab} />
                   <Redirect to="/" />

@@ -8,6 +8,7 @@ const navigationItems = (props) => (
     <ul className={classes.NavigationItems}>
         <NavigationItem link="/Help">Help</NavigationItem>
         <NavigationItem link="/about">About</NavigationItem>
+        <NavigationItem link="/weights">Weights</NavigationItem>
         {props.isAuthenticated
             ? <NavigationItem link="/logout">Logout</NavigationItem>
             : <Auxil>

@@ -15,11 +15,27 @@ class LiquidLab extends Component {
         error: null
     };
 
+    //BUGS:
     //TODO: Inputting in a row with an empty row above it inputs in the wrong row!
-    //TODO: Warn when token is about to expire
-    //TODO: Inventory, Shopping List, Weights, "What can I make?"
+    //TODO LiquidLab Buttons are encroaching into flavor controls
+    //TODO: Weights components: make smaller so they don't scroll
+    //TODO: Weights buttons: format better
+
+    //FEATURES:
+    //TODO: Inventory
+    //TODO: Shopping List
+    //TODO: Weights
+    //TODO: What flavors am I UNable to make with current inventory?
+    //TODO: "I Made it" button with warning if not clicked
     //TODO: Global flavors
+    //TODO: What can I make from global flavors? Filter out local flavors
     //TODO: Browse global with intense search
+    //TODO: Global flavors; "Add to My List" / "Remove From My List"
+    //TODO: Associate pictures with recipes
+    //TODO: Warn when token is about to expire
+    //TODO: Error messages to Dialog windows
+    //TODO: About/Help pages
+    //TODO: Mobile Optimization
 
 
     componentWillUpdate() {
