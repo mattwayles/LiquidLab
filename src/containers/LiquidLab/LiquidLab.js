@@ -15,12 +15,10 @@ class LiquidLab extends Component {
         error: null
     };
 
-    //TODO: 'Save' Button should become 'Update'
-    //TODO: 'Clear' Button
-    //TODO: Delete recipe
+    //TODO: Inputting in a row with an empty row above it inputs in the wrong row!
     //TODO: Warn when token is about to expire
-    //TODO: Global flavors
     //TODO: Inventory, Shopping List, Weights, "What can I make?"
+    //TODO: Global flavors
     //TODO: Browse global with intense search
 
 
@@ -34,7 +32,7 @@ class LiquidLab extends Component {
         if (this.props.successMsg) {
             setTimeout(() => {
                 this.props.onClearSuccessMessage();
-            }, 3000);
+            }, 4000);
         }
     }
 
@@ -46,7 +44,7 @@ class LiquidLab extends Component {
 
     recipeSelectHandler(event) {
         const selectedRecipe = this.props.userRecipes[event.target.value];
-        this.props.onSelectUserRecipe(selectedRecipe);
+        this.props.onSelectUserRecipe(event.target.value, selectedRecipe);
     }
     
     displayResultsHandler = () => {
@@ -59,17 +57,7 @@ class LiquidLab extends Component {
 
     render() {
         const { results, error } = this.state;
-        const { isAuthenticated, userRecipes, inputs, successMsg } = this.props;
-
-
-        //Retrieve the selected recipe to populate the dropdown list
-        let selectedRecipe = '';
-        for (let index in userRecipes) {
-            if (userRecipes[index].name.value === inputs.name.value
-                && userRecipes[index].batch.value === inputs.batch.value) {
-                selectedRecipe = index;
-            }
-        }
+        const { isAuthenticated, userRecipes, inputs, recipeKey, successMsg } = this.props;
 
         return (
             <div className={classes.LiquidLab}>
@@ -77,12 +65,12 @@ class LiquidLab extends Component {
                     <p className={classes.Header}>ReactApp</p>
                     <div className={classes.MlToMake}>
                         <p>ML To Make:</p>
-                        <Input classes={classes.Input} valid={error ? !error.includes("ML") : true}
+                        <Input value={inputs.mlToMake.value} classes={classes.Input} valid={error ? !error.includes("ML") : true}
                                change={(e) => this.dataEnteredHandler(e)} type='number'
                                maxLength={5} placeholder="0" autoFocus/>
                         <p>ml</p>
                     </div>
-                    <select className={classes.Select} value={selectedRecipe} onChange={(event) => this.recipeSelectHandler(event)}>
+                    <select className={classes.Select} value={recipeKey} onChange={(event) => this.recipeSelectHandler(event)}>
                         {isAuthenticated ? <option value="" disabled>Select a Recipe...</option>
                             : <option value="" disabled>Register or Login to Save and Retrieve your Recipes!</option>}
                         {userRecipes ? Object.keys(userRecipes).map(recipeKey => {
@@ -114,12 +102,13 @@ const mapStateToProps = state => {
         userRecipes: state.database.userRecipes,
         successMsg: state.database.success,
         inputs: state.formula.inputs,
+        recipeKey: state.formula.key
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSelectUserRecipe: (recipe) => dispatch(actions.selectUserRecipe(recipe)),
+        onSelectUserRecipe: (key, recipe) => dispatch(actions.selectUserRecipe(key, recipe)),
         onDataEntered: (control, value, valid) => dispatch(actions.inputDataEntered(control, value, valid)),
         onClearSuccessMessage: () => dispatch(actions.clearSuccessMessage())
     }

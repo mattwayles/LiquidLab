@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 class Logout extends Component {
     componentDidMount() {
         this.props.onClearDbRedux();
+        this.props.onClearRecipe();
         this.props.onLogout();
     }
 
@@ -16,7 +17,8 @@ class Logout extends Component {
 const mapDispatchToProps = dispatch => {
     return {
         onLogout: () => dispatch(actions.logout()),
-        onClearDbRedux: () => dispatch(actions.clearDbRedux())
+        onClearDbRedux: () => dispatch(actions.clearDbRedux()),
+        onClearRecipe: () => dispatch(actions.clearRecipe())
     }
 };
 

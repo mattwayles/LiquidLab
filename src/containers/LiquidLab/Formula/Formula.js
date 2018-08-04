@@ -14,29 +14,43 @@ import {
 } from "../../../util/formulaUtil";
 
 class Formula extends Component {
+    handleClear = () => {
+        this.props.onClearRecipe();
+    };
+
+    handleDelete = () => {
+        this.props.onDeleteRecipe(this.props.token, this.props.dbEntryId,
+            this.props.recipeKey, this.props.inputs.name, this.props.inputs.batch);
+    };
+
     handleSave = () => {
         const name = this.props.inputs.name.value;
         const batch = this.props.inputs.batch.value;
 
         this.props.error(null);
-        if (duplicateRecipe(name, batch, this.props.userRecipes)) {
-            const nameBatch = batch ? name + " [" + batch + "]" : name;
-            this.props.error("The recipe " + nameBatch + " already exists in the database.");
+
+        if (this.props.recipeKey) {
+            this.props.onUpdateRecipe(this.props.token, this.props.dbEntryId, this.props.recipeKey,
+                {...this.props.inputs, flavors: [...this.props.flavors]
+            });
         }
         else {
-            this.props.onSaveRecipe(this.props.token, this.props.dbEntryId, {
-                ...this.props.inputs,
-                flavors: [...this.props.flavors]
-            });
+            if (duplicateRecipe(name, batch, this.props.userRecipes)) {
+                const nameBatch = batch ? name + " [" + batch + "]" : name;
+                this.props.error("The recipe " + nameBatch + " already exists in the database.");
+            }
+            else {
+                this.props.onSaveRecipe(this.props.token, this.props.dbEntryId, {
+                    ...this.props.inputs,
+                    flavors: [...this.props.flavors]
+                });
+            }
         }
     };
 
     handleCalculate = () => {
         //Clear any previous calculation errors
         this.props.error(null);
-
-        console.log(this.props.inputs);
-
 
         //Validate user input
         if (validateInputs(this.props.inputs, this.props.flavors, this.props.error)) {
@@ -73,6 +87,8 @@ class Formula extends Component {
             <div className={classes.Formula}>
                 <Target  />
                 <Recipe
+                    delete={this.handleDelete}
+                    clear={this.handleClear}
                     save={this.handleSave}
                     calculate={() => this.handleCalculate() ? this.props.displayResults() : null} />
             </div>
@@ -82,6 +98,7 @@ class Formula extends Component {
 
 const mapStateToProps = state => {
     return {
+        recipeKey: state.formula.key,
         inputs: state.formula.inputs,
         flavors: state.formula.flavors,
         weights: state.formula.weights,
@@ -93,7 +110,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onClearRecipe: () => dispatch(actions.clearRecipe()),
+        onDeleteRecipe: (token, db, key, name, batch) => dispatch(actions.deleteRecipe(token, db, key, name, batch)),
         onSaveRecipe: (token, db, recipeData) => dispatch(actions.saveRecipe(token, db, recipeData)),
+        onUpdateRecipe: (token, db, key, recipeData) => dispatch(actions.updateRecipe(token, db, key, recipeData)),
         onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
         onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value))
     }

@@ -18,6 +18,12 @@ const reducer = (state = initialState, action) => {
         case actionTypes.SAVE_RECIPE_START:return saveRecipeStart(state, action);
         case actionTypes.SAVE_RECIPE_SUCCESS:return saveRecipeSuccess(state, action);
         case actionTypes.SAVE_RECIPE_FAILED:return saveRecipeFailed(state, action);
+        case actionTypes.UPDATE_RECIPE_START:return updateRecipeStart(state, action);
+        case actionTypes.UPDATE_RECIPE_SUCCESS:return updateRecipeSuccess(state, action);
+        case actionTypes.UPDATE_RECIPE_FAILED:return updateRecipeFailed(state, action);
+        case actionTypes.DELETE_RECIPE_START:return deleteRecipeStart(state, action);
+        case actionTypes.DELETE_RECIPE_SUCCESS:return deleteRecipeSuccess(state, action);
+        case actionTypes.DELETE_RECIPE_FAILED:return deleteRecipeFailed(state, action);
         case actionTypes.GET_USER_RECIPES_START:return getUserRecipesStart(state, action);
         case actionTypes.GET_USER_RECIPES_SUCCESS:return getUserRecipesSuccess(state, action);
         case actionTypes.GET_USER_RECIPES_FAILED:return getUserRecipesFailed(state, action);
@@ -87,6 +93,45 @@ const saveRecipeFailed = (state, action) => {
         loading: false });
 };
 
+
+const updateRecipeStart = (state) => {
+    return updateObject(state, {
+        error: null,
+        loading: true });
+};
+
+const updateRecipeSuccess = (state, action) => {
+    return updateObject(state, {
+        success: action.success,
+        error: null,
+        loading: false });
+};
+
+const updateRecipeFailed = (state, action) => {
+    return updateObject(state, {
+        error: action.error,
+        loading: false });
+};
+
+
+const deleteRecipeStart = (state) => {
+    return updateObject(state, {
+        error: null,
+        loading: true });
+};
+
+const deleteRecipeSuccess = (state, action) => {
+    return updateObject(state, {
+        success: action.success,
+        error: null,
+        loading: false });
+};
+
+const deleteRecipeFailed = (state, action) => {
+    return updateObject(state, {
+        error: action.error,
+        loading: false });
+};
 
 const getUserRecipesStart = (state) => {
     return updateObject(state, {

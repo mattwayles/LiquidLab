@@ -2,6 +2,7 @@ import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../../util/shared.js';
 
 const initialState = {
+    key: '',
     inputs: {
         name: {
             value: '',
@@ -41,7 +42,7 @@ const initialState = {
         pgWeight: 1.04,
         vgWeight: 1.26
     },
-    flavors: []
+    flavors: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -54,6 +55,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.USER_RECIPE_SELECTED: return userRecipeSelected(state, action);
         case actionTypes.UPDATE_INGREDIENTS: return {...state};
         case actionTypes.UPDATE_RECIPE_INFO: return {...state};
+        case actionTypes.USER_RECIPE_CLEARED: return {...initialState};
         case actionTypes.CLEAR_FORMULA_ERROR: return updateObject(state, {error: null});
         default: return {...state}
     }
@@ -104,7 +106,8 @@ const userRecipeSelected = (state, action) => {
             batch: {value: action.recipe.batch ? action.recipe.batch.value : initialState.batch.value, touched: false},
             notes: {value: action.recipe.notes ? action.recipe.notes.value : initialState.notes.value, touched: false},
         },
-            flavors: loadedFlavors
+            flavors: loadedFlavors,
+            key: action.key
     })
 };
 

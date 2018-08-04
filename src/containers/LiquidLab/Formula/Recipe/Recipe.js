@@ -7,6 +7,7 @@ import RecipeControl from '../../../../components/RecipeControl/RecipeControl';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
 import Button from '../../../../components/ui/Button/Button';
 import classes from './Recipe.css';
+import {formulaIsEmpty} from "../../../../util/formulaUtil";
 
 
 class Recipe extends Component {
@@ -73,7 +74,7 @@ class Recipe extends Component {
 
     render () {
         const { col1Controls, col2Controls } = this.state;
-        const { input, flavors, token } = this.props;
+        const { input, flavors, token, recipeKey } = this.props;
         
         let recipeControl1 = null;
         let controls = col1Controls.map(control => {
@@ -136,6 +137,9 @@ class Recipe extends Component {
             }
         });
 
+        console.log(recipeKey);
+
+
         return(
             <div className={classes.Recipe}>
                 <div className={classes.RecipeInner}> 
@@ -157,9 +161,10 @@ class Recipe extends Component {
                         {controls2}
                     </div>
                     <div className={classes.RecipeButtons}>
-                        <Button disabled clicked={null} >Delete</Button>
+                        <Button disabled={recipeKey === ''} clicked={this.props.delete} >Delete</Button>
                         <Button disabled={!token || input.name.value === ""}
-                                clicked={this.props.save} >Save</Button>
+                                clicked={this.props.save} >{recipeKey ? "Update" : "Save"}</Button>
+                        <Button disabled={formulaIsEmpty(this.props.input, this.props.flavors)} clicked={this.props.clear} >Clear</Button>
                         <Button clicked={this.props.calculate} >Calculate</Button>
                     </div>
                 </div>
@@ -169,8 +174,9 @@ class Recipe extends Component {
 
 const mapStateToProps = state => {
     return {
+        recipeKey: state.formula.key,
         input: state.formula.inputs,
-       flavors: state.formula.flavors,
+        flavors: state.formula.flavors,
         token: state.auth.userId
     }
 };

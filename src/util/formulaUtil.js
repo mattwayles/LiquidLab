@@ -30,6 +30,29 @@ export const validateInputs = (inputs, flavors, error) => {
     }
 };
 
+export const formulaIsEmpty = (inputs, flavors) => {
+    for (let prop in inputs) {
+        if (inputs[prop].value !== '') {
+            return false;
+        }
+    }
+
+    if (flavors.length > 0) {
+        for (let i in flavors) {
+            if (flavors[i].ven && flavors[i].ven.value !== '') {
+                return false;
+            }
+            if (flavors[i].flavor && flavors[i].flavor.value !== '') {
+                return false;
+            }
+            if (flavors[i].percent && flavors[i].percent.value !== '') {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
 export const mapInputs = (inputs, weights) => {
     return {
         mlToMake: parseInt(inputs.mlToMake.value, 10),
@@ -83,7 +106,6 @@ export const calculateFlavorResults = (inputs, weights, flavor) => {
 };
 
 export const validateBaseResults = (baseResults, update, error) => {
-    console.log(baseResults);
     if (baseResults.pgPercent >= 0) {
         update('pg', {ml: baseResults.pgMl, grams: baseResults.pgGrams, percent: baseResults.pgPercent})
     }

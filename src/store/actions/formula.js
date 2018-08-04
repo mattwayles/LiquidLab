@@ -16,9 +16,16 @@ export const recipeDataEntered = (arr) => {
     }
 };
 
-export const selectUserRecipe = (recipe) => {
+export const selectUserRecipe = (key, recipe) => {
     return {
         type: actionTypes.USER_RECIPE_SELECTED,
+        key,
         recipe
+    }
+};
+
+export const clearRecipe = () => {
+    return {
+        type: actionTypes.USER_RECIPE_CLEARED
     }
 };

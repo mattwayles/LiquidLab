@@ -1,4 +1,4 @@
 export { auth, authFailed, authCheckState, logout} from './auth';
-export { inputDataEntered, recipeDataEntered, selectUserRecipe } from './formula';
+export { inputDataEntered, recipeDataEntered, selectUserRecipe, clearRecipe } from './formula';
 export { updateIngredients, updateRecipeInfo } from './result';
-export { saveRecipe, getUserRecipes, clearDbRedux, clearSuccessMessage } from './database';
+export { saveRecipe, updateRecipe, deleteRecipe, getUserRecipes, clearDbRedux, clearSuccessMessage } from './database';

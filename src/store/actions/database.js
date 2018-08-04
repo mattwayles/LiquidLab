@@ -1,7 +1,7 @@
 import axios from '../../axios-ll';
 import ErrorMessage from './error/errorMessage';
 import * as actionTypes from './actionTypes';
-import {selectUserRecipe} from "./formula";
+import {clearRecipe, selectUserRecipe} from "./formula";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,13 +90,13 @@ export const saveRecipe = (token, dbEntryId, recipe) => {
     return dispatch => {
         dispatch(saveRecipeStart());
         axios.post('/users/' + dbEntryId + '/recipes.json?auth=' + token, recipe)
-            .then(() => {
+            .then(response => {
                 const successMessage = recipe.batch.value ? "Successfully saved " + recipe.name.value + " [" +
                 recipe.batch.value + "] to the database"
                     : "Successfully saved " + recipe.name.value + " to the database";
                 dispatch(saveRecipeSuccess(successMessage));
                 dispatch(getUserRecipes(token, dbEntryId));
-                dispatch(selectUserRecipe(recipe));
+                dispatch(selectUserRecipe(response.data.name, recipe));
             }).catch(error => {
             dispatch(saveRecipeFailed(ErrorMessage(error.response.data.error.message)));
 
@@ -126,6 +126,96 @@ export const saveRecipeFailed = (error) => {
         error: error
     };
 };
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////// UPDATE RECIPE ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const updateRecipe = (token, dbEntryId, key, recipe) => {
+    return dispatch => {
+        dispatch(updateRecipeStart());
+        axios.patch('/users/' + dbEntryId + '/recipes/' + key + '.json?auth=' + token, recipe)
+            .then(() => {
+                const successMessage = recipe.batch.value ? "Successfully updated " + recipe.name.value + " [" +
+                    recipe.batch.value + "] in the database"
+                    : "Successfully updated " + recipe.name.value + " in the database";
+                dispatch(updateRecipeSuccess(successMessage));
+                dispatch(getUserRecipes(token, dbEntryId));
+            }).catch(error => {
+            dispatch(updateRecipeFailed(ErrorMessage(error.response.data.error.message)));
+
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const updateRecipeStart = () => {
+    return {
+        type: actionTypes.UPDATE_RECIPE_START
+    }
+};
+
+export const updateRecipeSuccess = (success) => {
+    return {
+        type: actionTypes.UPDATE_RECIPE_SUCCESS,
+        success
+    }
+};
+
+export const updateRecipeFailed = (error) => {
+    return {
+        type: actionTypes.UPDATE_RECIPE_FAILED,
+        error: error
+    };
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////// DELETE RECIPE ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const deleteRecipe = (token, dbEntryId, key, name, batch) => {
+    return dispatch => {
+        dispatch(deleteRecipeStart());
+        axios.delete('/users/' + dbEntryId + '/recipes/' + key + '.json?auth=' + token)
+            .then(() => {
+                const successMessage = batch.value ? "Successfully removed " + name.value + " [" +
+                    batch.value + "] from the database"
+                    : "Successfully removed " + name.value + " from the database";
+                dispatch(deleteRecipeSuccess(successMessage));
+                dispatch(clearRecipe());
+                dispatch(getUserRecipes(token, dbEntryId));
+            }).catch(error => {
+            dispatch(deleteRecipeFailed(ErrorMessage(error.response.data.error.message)));
+
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const deleteRecipeStart = () => {
+    return {
+        type: actionTypes.DELETE_RECIPE_START
+    }
+};
+
+export const deleteRecipeSuccess = (success) => {
+    return {
+        type: actionTypes.DELETE_RECIPE_SUCCESS,
+        success
+    }
+};
+
+export const deleteRecipeFailed = (error) => {
+    return {
+        type: actionTypes.DELETE_RECIPE_FAILED,
+        error: error
+    };
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// GET USER RECIPES ///////////////////////////////////////////////////////////////

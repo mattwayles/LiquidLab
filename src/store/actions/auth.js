@@ -71,7 +71,8 @@ export const checkAuthTimeout = (expirationTime) => {
     return dispatch => {
         setTimeout(() => {
             dispatch(clearDbRedux());
-            dispatch(logout());}, expirationTime * 1000)
+            dispatch(logout());
+            }, expirationTime * 1000)
     };
 };
 
@@ -81,6 +82,7 @@ export const authCheckState = () => {
         if (!token) {
             dispatch(clearDbRedux());
             return dispatch(logout());
+
         }
         else {
             const expirationDate = new Date(localStorage.getItem('expirationDate'));
@@ -102,6 +104,7 @@ export const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('expirationDate');
     localStorage.removeItem('userId');
+    localStorage.removeItem('dbEntryId');
     localStorage.removeItem('dbEntryId');
     return {
         type: actionTypes.AUTH_LOGOUT
