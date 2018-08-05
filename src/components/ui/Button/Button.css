@@ -1,8 +1,8 @@
-.Button {
+.Button, .MainButton, .WeightsButton{
     margin: 2vw auto;
     background-color: var(--accent-color);
     border: none;
-    color: var(--background-color);
+    color: #fff;
     outline: none;
     border-radius: 25px;
     cursor: pointer;
@@ -15,6 +15,16 @@
 .Button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+.MainButton {
+    margin-bottom: 0;
+    font-size: 0.8vw;
+}
+
+.WeightsButton {
+    margin-top: 0;
+    width: 5vw;
 }
 
 .Success {

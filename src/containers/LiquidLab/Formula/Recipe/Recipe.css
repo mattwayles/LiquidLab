@@ -56,7 +56,7 @@
 .PlusButton {
     background-color: var(--accent-color);
     border: none;
-    color: var(--background-color);
+    color: #fff;
     outline: none;
     border-radius: 25px;
     cursor: pointer;

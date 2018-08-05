@@ -56,6 +56,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.UPDATE_INGREDIENTS: return {...state};
         case actionTypes.UPDATE_RECIPE_INFO: return {...state};
         case actionTypes.USER_RECIPE_CLEARED: return {...initialState};
+        case actionTypes.SET_WEIGHTS_REDUX: return updateObject(state, { weights: action.weights });
         case actionTypes.CLEAR_FORMULA_ERROR: return updateObject(state, {error: null});
         default: return {...state}
     }

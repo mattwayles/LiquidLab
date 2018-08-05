@@ -29,3 +29,10 @@ export const clearRecipe = () => {
         type: actionTypes.USER_RECIPE_CLEARED
     }
 };
+
+export const setWeightsRedux = (weights) => {
+    return {
+        type: actionTypes.SET_WEIGHTS_REDUX,
+        weights
+    }
+}

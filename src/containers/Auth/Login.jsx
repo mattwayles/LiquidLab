@@ -1,12 +1,12 @@
 import React from 'react'
 import classes from './Auth.css';
-import Button from "../../components/ui/Button/Button";
 import { NavLink } from 'react-router-dom';
 import UserInput from "../../components/ui/UserInput/UserInput";
 import {connect} from "react-redux";
 import * as actions from "../../store/actions";
 import Spinner from "../../components/ui/Spinner/Spinner";
 import Auxil from "../../hoc/Auxil";
+import LoginButton from "../../components/ui/Button/LoginButton";
 
 
 class Login extends React.Component {
@@ -50,7 +50,7 @@ class Login extends React.Component {
                         change={(e) => this.handleUserInput(e, "password")}
                         placeholder="Password"
                     />
-                    <Button clicked={this.handleSubmit}>Submit</Button><br />
+                    <LoginButton clicked={this.handleSubmit}>Login</LoginButton><br />
                     <NavLink to="/forgotPassword"><p style={{marginBottom: '10px'}}>Forgot Password?</p></NavLink>
                     <NavLink to="/register">Register New Account</NavLink>
                 </Auxil>}

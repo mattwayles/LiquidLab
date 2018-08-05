@@ -5,9 +5,9 @@ import { enforceMaxLength } from '../../../../util/shared';
 import * as actions from '../../../../store/actions/index';
 import RecipeControl from '../../../../components/RecipeControl/RecipeControl';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
-import Button from '../../../../components/ui/Button/Button';
 import classes from './Recipe.css';
 import {formulaIsEmpty} from "../../../../util/formulaUtil";
+import MainButton from "../../../../components/ui/Button/MainButton";
 
 
 class Recipe extends Component {
@@ -137,9 +137,6 @@ class Recipe extends Component {
             }
         });
 
-        console.log(recipeKey);
-
-
         return(
             <div className={classes.Recipe}>
                 <div className={classes.RecipeInner}> 
@@ -161,11 +158,11 @@ class Recipe extends Component {
                         {controls2}
                     </div>
                     <div className={classes.RecipeButtons}>
-                        <Button disabled={recipeKey === ''} clicked={this.props.delete} >Delete</Button>
-                        <Button disabled={!token || input.name.value === ""}
-                                clicked={this.props.save} >{recipeKey ? "Update" : "Save"}</Button>
-                        <Button disabled={formulaIsEmpty(this.props.input, this.props.flavors)} clicked={this.props.clear} >Clear</Button>
-                        <Button clicked={this.props.calculate} >Calculate</Button>
+                        <MainButton disabled={recipeKey === ''} clicked={this.props.delete} >Delete</MainButton>
+                        <MainButton disabled={!token || input.name.value === ""}
+                                clicked={this.props.save} >{recipeKey ? "Update" : "Save"}</MainButton>
+                        <MainButton disabled={formulaIsEmpty(this.props.input, this.props.flavors)} clicked={this.props.clear} >Clear</MainButton>
+                        <MainButton clicked={this.props.calculate} >Calculate</MainButton>
                     </div>
                 </div>
             </div>

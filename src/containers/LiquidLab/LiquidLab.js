@@ -17,14 +17,12 @@ class LiquidLab extends Component {
 
     //BUGS:
     //TODO: Inputting in a row with an empty row above it inputs in the wrong row!
-    //TODO LiquidLab Buttons are encroaching into flavor controls
-    //TODO: Weights components: make smaller so they don't scroll
-    //TODO: Weights buttons: format better
+    //TODO: Spinner for all actions
+    //TODO: Negative number protection
 
     //FEATURES:
     //TODO: Inventory
     //TODO: Shopping List
-    //TODO: Weights
     //TODO: What flavors am I UNable to make with current inventory?
     //TODO: "I Made it" button with warning if not clicked
     //TODO: Global flavors
@@ -34,6 +32,7 @@ class LiquidLab extends Component {
     //TODO: Associate pictures with recipes
     //TODO: Warn when token is about to expire
     //TODO: Error messages to Dialog windows
+    //TODO: Firebase SMTP
     //TODO: About/Help pages
     //TODO: Mobile Optimization
 

@@ -1,0 +1,25 @@
+.Header {
+    font-size: 3vw;
+    font-family: 'Cabin', sans-serif;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.SubHeader {
+    font-family: 'Cabin', sans-serif;
+}
+
+.WeightControl {
+    margin-left: 1vw;
+    display: grid;
+    grid-template-columns: 60% 15% 20%;
+    grid-gap: 1vw;
+}
+
+.WeightControl p {
+    font-size: 14px;
+}
+
+.Input {
+    margin-top: 10px;
+}

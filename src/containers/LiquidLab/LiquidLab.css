@@ -25,16 +25,17 @@
     text-align: right;
     margin: 0 0 0 1vw;
     display: grid;
-    grid-template-columns: 70% 25% 5%;
+    grid-template-columns: 70% 20% 20%;
     grid-gap: 1vw;
 }
 
 .MlToMake p {
     font-size: 1.6vw;
+    margin-left: 1%;
 }
 
 .Input {
-    margin-top: 1.7vw;
+    margin-top: 1.6vw;
     width: 5vw;
 }
 

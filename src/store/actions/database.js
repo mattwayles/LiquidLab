@@ -1,7 +1,7 @@
 import axios from '../../axios-ll';
 import ErrorMessage from './error/errorMessage';
 import * as actionTypes from './actionTypes';
-import {clearRecipe, selectUserRecipe} from "./formula";
+import {clearRecipe, selectUserRecipe, setWeightsRedux} from "./formula";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +54,7 @@ export const getDatabaseUser = (userId, token) => {
                 const dbEntryId = Object.keys(response.data)[0];
                 dispatch(getDbUserSuccess(dbEntryId));
                 dispatch(getUserRecipes(token, dbEntryId));
+                dispatch(getDatabaseWeights(token, dbEntryId));
             }).catch(error => {
             dispatch(getDbUserFailed(ErrorMessage(error.response.data.error.message)));
         });
@@ -212,6 +213,87 @@ export const deleteRecipeSuccess = (success) => {
 export const deleteRecipeFailed = (error) => {
     return {
         type: actionTypes.DELETE_RECIPE_FAILED,
+        error: error
+    };
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////// SET WEIGHTS ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const setDbWeights = (token, dbEntryId, weights) => {
+    return dispatch => {
+        dispatch(setDbWeightsStart());
+        axios.put('/users/' + dbEntryId + '/weights.json?auth=' + token, weights)
+            .then(() => {
+                const successMessage = "Successfully set ingredient weights in database";
+                dispatch(setWeightsRedux(weights));
+                dispatch(setDbWeightsSuccess(successMessage));
+            }).catch(error => {
+            dispatch(setDbWeightsFailed(ErrorMessage(error.response.data.error.message)));
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const setDbWeightsStart = () => {
+    return {
+        type: actionTypes.SET_DATABASE_WEIGHTS_START,
+    }
+};
+
+export const setDbWeightsSuccess = (success) => {
+    return {
+        type: actionTypes.SET_DATABASE_WEIGHTS_SUCCESS,
+        success,
+    }
+};
+
+export const setDbWeightsFailed = (error) => {
+    return {
+        type: actionTypes.SET_DATABASE_WEIGHTS_FAILED,
+        error: error
+    };
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// GET USER DATABASE WEIGHTS ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const getDatabaseWeights = (token, dbEntryId) => {
+    return dispatch => {
+        dispatch(getDatabaseWeightsStart());
+        axios.get('/users/' + dbEntryId + '/weights.json?auth=' + token)
+            .then(response => {
+                dispatch(setWeightsRedux(response.data));
+                dispatch(getDatabaseWeightsSuccess());
+            }).catch(error => {
+            dispatch(getDatabaseWeightsFailed(ErrorMessage(error.response.data.error.message)));
+
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const getDatabaseWeightsStart = () => {
+    return {
+        type: actionTypes.GET_DATABASE_WEIGHTS_START
+    }
+};
+
+export const getDatabaseWeightsSuccess = () => {
+    return {
+        type: actionTypes.GET_DATABASE_WEIGHTS_SUCCESS,
+    }
+};
+
+export const getDatabaseWeightsFailed = (error) => {
+    return {
+        type: actionTypes.GET_DATABASE_WEIGHTS_FAILED,
         error: error
     };
 };
