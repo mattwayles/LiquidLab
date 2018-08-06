@@ -1,0 +1,39 @@
+.Grid {
+    background-color: #fff;
+    margin: 10% auto;
+    width: 90%;
+}
+
+.Table {
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    background-color: transparent;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.Header {
+    font-size: 3vw;
+    font-family: 'Cabin', sans-serif;
+    font-weight: bold;
+    color: var(--main-color);
+}
+
+.SubHeader {
+    font-family: 'Cabin', sans-serif;
+}
+
+.FlexRow {
+    display: flex;
+    flex-flow: row;
+}
+
+.IconBtn {
+    cursor: pointer;
+}
+
+.Input {
+    text-align: left;
+    font-size: inherit;
+}

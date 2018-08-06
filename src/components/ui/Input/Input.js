@@ -47,7 +47,7 @@ const input = (props) => {
 
     }
     return (
-        <div style={{height: '0'}}>
+        <div>
             <label>{props.label}</label>
             {inputElement}
         </div>

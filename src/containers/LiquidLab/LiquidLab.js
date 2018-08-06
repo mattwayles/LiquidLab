@@ -22,6 +22,9 @@ class LiquidLab extends Component {
 
     //FEATURES:
     //TODO: Inventory
+    //TODO: Sortable inventory list
+    //TODO: Switch Edit button to checkmark, make row items editable, and save to redux on checkmark click!
+    //TODO: "Are you sure you want to delete <Flavor>?
     //TODO: Shopping List
     //TODO: What flavors am I UNable to make with current inventory?
     //TODO: "I Made it" button with warning if not clicked

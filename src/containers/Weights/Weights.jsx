@@ -58,7 +58,7 @@ class Weights extends React.Component {
 
         return(
             <Dialog open={true} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle><span className={classes.Header}>Set Weights</span></DialogTitle>
+                <DialogTitle style={{marginTop: '1vw'}}><span className={classes.Header}>Set Weights</span></DialogTitle>
                 <DialogContent>
                     <DialogContentText style={{marginBottom: '2vw'}}>
                         <span className={classes.SubHeader}>Configure weights for each recipe ingredient</span>
