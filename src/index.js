@@ -8,6 +8,7 @@ import authReducer from './store/reducers/auth';
 import formulaReducer from './store/reducers/formula';
 import databaseReducer from './store/reducers/database';
 import resultsReducer from './store/reducers/result';
+import inventoryReducer from './store/reducers/inventory';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
     auth: authReducer,
     formula: formulaReducer,
     results: resultsReducer,
-    database: databaseReducer
+    database: databaseReducer,
+    inventory: inventoryReducer
 });
 
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));

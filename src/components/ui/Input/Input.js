@@ -34,6 +34,7 @@ const input = (props) => {
             break;
         default:
             inputElement = <input
+                autoFocus={props.autoFocus}
                 className={inputClasses.join(' ')}
                 id={props.id}
                 name={props.name}
@@ -41,6 +42,7 @@ const input = (props) => {
                 {...props.elementConfig}
                 value={props.value}
                 onChange={props.change}
+                onBlur={props.blur}
                 placeholder={props.placeholder}
                 maxLength={props.maxLength}
             />;

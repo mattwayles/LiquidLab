@@ -33,6 +33,12 @@ const reducer = (state = initialState, action) => {
         case actionTypes.GET_USER_RECIPES_START:return getUserRecipesStart(state, action);
         case actionTypes.GET_USER_RECIPES_SUCCESS:return getUserRecipesSuccess(state, action);
         case actionTypes.GET_USER_RECIPES_FAILED:return getUserRecipesFailed(state, action);
+        case actionTypes.SAVE_FLAVOR_DATA_DATABASE_START:return saveFlavorDataStart(state, action);
+        case actionTypes.SAVE_FLAVOR_DATA_DATABASE_SUCCESS:return saveFlavorDataSuccess(state, action);
+        case actionTypes.SAVE_FLAVOR_DATA_DATABASE_FAILED:return saveFlavorDataFailed(state, action);
+        case actionTypes.SAVE_SHOPPING_LIST_DATABASE_START:return saveShoppingListStart(state, action);
+        case actionTypes.SAVE_SHOPPING_LIST_DATABASE_SUCCESS:return saveShoppingListSuccess(state, action);
+        case actionTypes.SAVE_SHOPPING_LIST_DATABASE_FAILED:return saveShoppingListFailed(state, action);
         case actionTypes.CLEAR_DB_REDUX: return clearDatabaseRedux(state);
         case actionTypes.CLEAR_DATABASE_ERROR: return clearError(state, action);
         case actionTypes.CLEAR_SUCCESS: return clearSuccess(state, action);
@@ -194,6 +200,46 @@ const getUserRecipesFailed = (state, action) => {
         error: action.error,
         loading: false });
 };
+
+const saveFlavorDataStart = (state) => {
+    return updateObject(state, {
+        error: null,
+        loading: true });
+};
+
+const saveFlavorDataSuccess = (state, action) => {
+    return updateObject(state, {
+        success: action.success,
+        error: null,
+        loading: false });
+};
+
+const saveFlavorDataFailed = (state, action) => {
+    return updateObject(state, {
+        error: action.error,
+        loading: false });
+};
+
+
+const saveShoppingListStart = (state) => {
+    return updateObject(state, {
+        error: null,
+        loading: true });
+};
+
+const saveShoppingListSuccess = (state, action) => {
+    return updateObject(state, {
+        success: action.success,
+        error: null,
+        loading: false });
+};
+
+const saveShoppingListFailed = (state, action) => {
+    return updateObject(state, {
+        error: action.error,
+        loading: false });
+};
+
 
 const clearDatabaseRedux = (state) => {
     return updateObject(state, initialState);

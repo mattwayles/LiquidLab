@@ -12,6 +12,7 @@ const navigationItems = (props) => (
         {props.isAuthenticated
             ? <Auxil>
                 <NavigationItem link="/inventory">Inventory</NavigationItem>
+                <NavigationItem link="/shopping">Shopping List</NavigationItem>
                 <NavigationItem link="/logout">Logout</NavigationItem>
             </Auxil>
             : <Auxil>

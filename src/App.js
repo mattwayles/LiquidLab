@@ -12,6 +12,7 @@ import Login from "./containers/Auth/Login";
 import ForgotPassword from "./containers/Auth/ForgotPassword";
 import Weights from "./containers/Weights/Weights";
 import Inventory from "./containers/Inventory/Inventory";
+import ShoppingList from "./containers/Inventory/ShoppingList";
 
 class App extends Component {
     
@@ -37,6 +38,7 @@ class App extends Component {
               <Switch>
                   <Route path="/about" component={About} />
                   <Route path="/inventory" component={Inventory} />
+                  <Route path="/shopping" component={ShoppingList} />
                   <Route path="/weights" component={Weights} />
                   <Route path="/logout" component={Logout} />
                   <Route path="/" component={LiquidLab} />

@@ -19,15 +19,17 @@ class LiquidLab extends Component {
     //TODO: Inputting in a row with an empty row above it inputs in the wrong row!
     //TODO: Spinner for all actions
     //TODO: Negative number protection
+    //TODO: Recipe drop-down is way too big
+    //TODO: Inventory header item highlighted after login
+    //TODO: Inventory: Tab to next field
 
     //FEATURES:
-    //TODO: Inventory
-    //TODO: Sortable inventory list
-    //TODO: Switch Edit button to checkmark, make row items editable, and save to redux on checkmark click!
-    //TODO: "Are you sure you want to delete <Flavor>?
     //TODO: Shopping List
+    //TODO: Auto-Populate shopping list based on Inventory values
+    //TODO: Add to shopping list when quantity reaches X
     //TODO: What flavors am I UNable to make with current inventory?
     //TODO: "I Made it" button with warning if not clicked
+    //TODO: Calculate correct 'Number of Recipes included' value
     //TODO: Global flavors
     //TODO: What can I make from global flavors? Filter out local flavors
     //TODO: Browse global with intense search

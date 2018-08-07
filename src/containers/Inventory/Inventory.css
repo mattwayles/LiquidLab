@@ -24,16 +24,16 @@
     font-family: 'Cabin', sans-serif;
 }
 
-.FlexRow {
-    display: flex;
-    flex-flow: row;
-}
-
 .IconBtn {
     cursor: pointer;
 }
 
-.Input {
+.Input, .NameInput {
+    width: 3vw;
     text-align: left;
     font-size: inherit;
+}
+
+.NameInput {
+    width: 12.5vw;
 }

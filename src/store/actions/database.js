@@ -2,6 +2,7 @@ import axios from '../../axios-ll';
 import ErrorMessage from './error/errorMessage';
 import * as actionTypes from './actionTypes';
 import {clearRecipe, selectUserRecipe, setWeightsRedux} from "./formula";
+import {saveFlavorDataRedux, saveShoppingListRedux} from "./inventory";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +56,8 @@ export const getDatabaseUser = (userId, token) => {
                 dispatch(getDbUserSuccess(dbEntryId));
                 dispatch(getUserRecipes(token, dbEntryId));
                 dispatch(getDatabaseWeights(token, dbEntryId));
+                dispatch(getUserInventory(token, dbEntryId));
+                dispatch(getUserShoppingList(token, dbEntryId));
             }).catch(error => {
             dispatch(getDbUserFailed(ErrorMessage(error.response.data.error.message)));
         });
@@ -348,4 +351,171 @@ export const clearSuccessMessage = () => {
     return {
         type: actionTypes.CLEAR_SUCCESS
     }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////// SAVE USER FLAVOR INVENTORY /////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const saveFlavorData = (token, dbEntryId, inventory) => {
+    return dispatch => {
+        dispatch(saveFlavorDataStart());
+        axios.put('/users/' + dbEntryId + '/inventory.json?auth=' + token, inventory)
+            .then(() => {
+                const successMessage = "Successfully saved inventory to database";
+                dispatch(saveFlavorDataRedux(inventory));
+                dispatch(saveFlavorDataSuccess(successMessage));
+            }).catch(error => {
+            dispatch(saveFlavorDataFailed(ErrorMessage(error.response.data.error.message)));
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const saveFlavorDataStart = () => {
+    return {
+        type: actionTypes.SAVE_FLAVOR_DATA_DATABASE_START,
+    }
+};
+
+export const saveFlavorDataSuccess = (success) => {
+    return {
+        type: actionTypes.SAVE_FLAVOR_DATA_DATABASE_SUCCESS,
+        success,
+    }
+};
+
+export const saveFlavorDataFailed = (error) => {
+    return {
+        type: actionTypes.SAVE_FLAVOR_DATA_DATABASE_FAILED,
+        error: error
+    };
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////// SAVE USER SHOPPING LIST // /////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const saveShoppingList = (token, dbEntryId, shoppingList) => {
+    return dispatch => {
+        dispatch(saveShoppingListStart());
+        axios.put('/users/' + dbEntryId + '/shoppingList.json?auth=' + token, shoppingList)
+            .then(() => {
+                const successMessage = "Successfully saved Shopping List to database";
+                dispatch(saveShoppingListRedux(shoppingList));
+                dispatch(saveShoppingListSuccess(successMessage));
+            }).catch(error => {
+            dispatch(saveShoppingListFailed(ErrorMessage(error.response.data.error.message)));
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const saveShoppingListStart = () => {
+    return {
+        type: actionTypes.SAVE_SHOPPING_LIST_DATABASE_START,
+    }
+};
+
+export const saveShoppingListSuccess = (success) => {
+    return {
+        type: actionTypes.SAVE_SHOPPING_LIST_DATABASE_SUCCESS,
+        success,
+    }
+};
+
+export const saveShoppingListFailed = (error) => {
+    return {
+        type: actionTypes.SAVE_SHOPPING_LIST_DATABASE_FAILED,
+        error: error
+    };
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////// GET USER INVENTORY ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const getUserInventory = (token, dbEntryId) => {
+    return dispatch => {
+        dispatch(getUserInventoryStart());
+        axios.get('/users/' + dbEntryId + '/inventory.json?auth=' + token)
+            .then(response => {
+                if (!response.data) {
+                    response.data = [];
+                }
+                dispatch(getUserInventorySuccess(response.data));
+            }).catch(error => {
+            dispatch(getUserInventoryFailed(ErrorMessage(error.response.data.error.message)));
+
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const getUserInventoryStart = () => {
+    return {
+        type: actionTypes.GET_USER_INVENTORY_START
+    }
+};
+
+export const getUserInventorySuccess = (flavors) => {
+    return {
+        type: actionTypes.GET_USER_INVENTORY_SUCCESS,
+        flavors
+    }
+};
+
+export const getUserInventoryFailed = (error) => {
+    return {
+        type: actionTypes.GET_USER_INVENTORY_FAILED,
+        error
+    };
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// GET USER SHOPPING LIST ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const getUserShoppingList = (token, dbEntryId) => {
+    return dispatch => {
+        dispatch(getUserShoppingListStart());
+        axios.get('/users/' + dbEntryId + '/shoppingList.json?auth=' + token)
+            .then(response => {
+                if (!response.data) {
+                    response.data = [];
+                }
+                dispatch(getUserShoppingListSuccess(response.data));
+            }).catch(error => {
+            dispatch(getUserShoppingListFailed(ErrorMessage(error.response.data.error.message)));
+
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const getUserShoppingListStart = () => {
+    return {
+        type: actionTypes.GET_USER_SHOPPING_LIST_START
+    }
+};
+
+export const getUserShoppingListSuccess = (shoppingList) => {
+    return {
+        type: actionTypes.GET_USER_SHOPPING_LIST_SUCCESS,
+        shoppingList
+    }
+};
+
+export const getUserShoppingListFailed = (error) => {
+    return {
+        type: actionTypes.GET_USER_SHOPPING_LIST_FAILED,
+        error
+    };
 };
