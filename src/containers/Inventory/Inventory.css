@@ -37,3 +37,18 @@
 .NameInput {
     width: 12.5vw;
 }
+
+.AmtLeftInput {
+    width: 4vw;
+    text-align: left;
+    font-size: inherit;
+    margin-top: 1vw;
+}
+
+.AmtLeft {
+    display: flex;
+    flex-flow: row;
+    width: 60%;
+    margin: 0 auto;
+    justify-content: space-between;
+}

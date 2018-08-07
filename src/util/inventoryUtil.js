@@ -22,7 +22,6 @@ export const sortTable = (flavors, column, sort) => {
 
 
     if (newSort.asc) {
-        console.log(preSort);
         preSort = preSort.sort((a, b) => {
             let aVal = a[column];
             let bVal = b[column];
@@ -56,4 +55,29 @@ export const sortTable = (flavors, column, sort) => {
     postSort = [...preSort, ...emptyCell];
     return {flavors: postSort, sort: newSort};
 
+};
+
+
+export const populateShoppingList = (shoppingList, flavors, cutoff) => {
+    let list = shoppingList ? [...shoppingList] : [];
+    for (let i in flavors) {
+        const flavor = flavors[i];
+
+        if (flavor.amount && parseFloat(flavor.amount.toString()) <= parseFloat(cutoff) && !duplicateFlavor(flavor.vendor, flavor.name, list)) {
+            list = [...list,
+                {id: Math.random(), vendor: flavor.vendor, name: flavor.name, auto: true}];
+        }
+    }
+    return list.sort((a, b) => {
+        return (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0)
+    });
+};
+
+export const duplicateFlavor = (vendor, name, flavors) => {
+    for (let i in flavors) {
+        if (flavors[i].name === name && flavors[i].vendor === vendor) {
+            return true;
+        }
+    }
+    return false;
 };

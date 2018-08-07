@@ -7,9 +7,10 @@ export const saveFlavorDataRedux = (flavors) => {
     }
 };
 
-export const saveShoppingListRedux = (shoppingList) => {
+export const saveShoppingListRedux = (cutoff, shoppingList) => {
     return {
         type: actionTypes.SAVE_SHOPPING_LIST_REDUX,
+        cutoff,
         shoppingList
     }
 };

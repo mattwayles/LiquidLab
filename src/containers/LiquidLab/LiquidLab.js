@@ -22,11 +22,10 @@ class LiquidLab extends Component {
     //TODO: Recipe drop-down is way too big
     //TODO: Inventory header item highlighted after login
     //TODO: Inventory: Tab to next field
+    //TODO: Inventory & Shopping List: make grid rows smaller, fit more in the page!
+    //TODO: Inventory and shopping list, what happens when list gets huge?
 
     //FEATURES:
-    //TODO: Shopping List
-    //TODO: Auto-Populate shopping list based on Inventory values
-    //TODO: Add to shopping list when quantity reaches X
     //TODO: What flavors am I UNable to make with current inventory?
     //TODO: "I Made it" button with warning if not clicked
     //TODO: Calculate correct 'Number of Recipes included' value

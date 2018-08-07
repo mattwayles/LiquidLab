@@ -10,10 +10,11 @@ import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
 import {enforceMaxLength} from "../../util/shared";
-import {sortTable} from "../../util/inventoryUtil";
+import {populateShoppingList, sortTable} from "../../util/inventoryUtil";
 
 class ShoppingList extends React.Component {
     state = {
+        cutoff: 3,
         deleteDialog: false,
         deleteRow: {},
         edit: {},
@@ -22,11 +23,9 @@ class ShoppingList extends React.Component {
     };
 
     componentWillMount() {
-        console.log(this.props.shoppingList);
-        let shoppingList  = this.props.shoppingList.sort((a, b) => {
-            return (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0)
-        });
-        this.setState({ shoppingList: shoppingList });
+        console.log(this.props.cutoff);
+        let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.flavors, this.props.cutoff);
+        this.setState({ cutoff: this.props.cutoff, shoppingList: shoppingList });
     }
 
     handleClose = () => {
@@ -40,12 +39,17 @@ class ShoppingList extends React.Component {
     handleUserInput = (e, row, control) => {
         e.target.value = enforceMaxLength(e.target.value, e.target.maxLength);
         let data = [...this.state.shoppingList];
-        for (let flavor in data) {
-            if (data[flavor].id === row.id) {
-                data[flavor] = {...data[flavor], [control]: e.target.value};
+            for (let flavor in data) {
+                if (data[flavor].id === row.id) {
+                    data[flavor] = {...data[flavor], [control]: e.target.value};
+                }
             }
-        }
-        this.setState({ shoppingList: data })
+            this.setState({ shoppingList: data })
+    };
+
+    handleCutoffInput = (e) => {
+        let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.flavors, e.target.value);
+        this.setState({ cutoff: e.target.value, shoppingList: shoppingList});
     };
 
     handleEditFinish = () => {
@@ -68,12 +72,19 @@ class ShoppingList extends React.Component {
 
     handleAdd = () => {
         let data = [...this.state.shoppingList];
-        data.push({id: data.length + 1, vendor: '', name:'New Flavor'});
+        data.push({id: Math.random(), vendor: '', name:'New Flavor'});
         this.setState({shoppingList: data});
     };
 
     handleSaveShoppingList = () => {
-        this.props.onSaveShoppingList(this.props.token, this.props.dbEntryId, this.state.shoppingList);
+        console.log(this.state.shoppingList);
+        let shoppingList = [];
+        for (let i in this.state.shoppingList) {
+            if (!this.state.shoppingList[i].auto) {
+                shoppingList.push(this.state.shoppingList[i]);
+            }
+        }
+        this.props.onSaveShoppingList(this.props.token, this.props.dbEntryId, this.state.cutoff, shoppingList);
         this.props.history.push("/");
     };
 
@@ -112,17 +123,17 @@ class ShoppingList extends React.Component {
                         <TableBody>
                             {shoppingList.map(flav => {
                                 return <TableRow key={flav.id}>
-                                        {edit.row === flav.id && edit.cell === "vendor" ?
+                                        {!flav.auto && edit.row === flav.id && edit.cell === "vendor" ?
                                             <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
                                                               change={(e) => this.handleUserInput(e, flav, 'vendor')} value={flav.vendor} maxLength="4"/></TableCell>
                                             : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
-                                    {edit.row === flav.id && edit.cell === "name" ?
+                                    {!flav.auto && edit.row === flav.id && edit.cell === "name" ?
                                         <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.NameInput}
                                                           change={(e) => this.handleUserInput(e, flav, 'name')} value={flav.name} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
-                                    <TableCell>
+                                        {!flav.auto ?<TableCell>
                                         <Delete className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
-                                    </TableCell>
+                                    </TableCell> : null }
                                 </TableRow>
                             })}
                             <TableRow><TableCell span={4}><Add className={classes.IconBtn}
@@ -130,6 +141,12 @@ class ShoppingList extends React.Component {
                         </TableBody>
                     </Table>
                 </DialogContent>
+                    <div className={classes.AmtLeft}>
+                        <p>Amount Left Cutoff:</p>
+                        <Input blur={this.handleEditFinish} autoFocus={true} type="number" classes={classes.AmtLeftInput}
+                               change={(e) => this.handleCutoffInput(e)} value={this.state.cutoff} />
+                        <p>ML</p>
+                    </div>
                 <DialogActions>
                     <Button clicked={this.handleClose} color="primary">
                         Close
@@ -148,6 +165,8 @@ class ShoppingList extends React.Component {
 
 const mapStateToProps = state => {
     return {
+        cutoff: state.inventory.cutoff,
+        flavors: state.inventory.flavors,
         shoppingList: state.inventory.shoppingList,
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,
@@ -156,7 +175,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSaveShoppingList: (token, dbEntryId, list) => dispatch(actions.saveShoppingList(token, dbEntryId, list))
+        onSaveShoppingList: (token, dbEntryId, cutoff, list) => dispatch(actions.saveShoppingList(token, dbEntryId, cutoff, list))
     }
 };
 

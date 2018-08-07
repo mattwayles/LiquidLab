@@ -397,13 +397,13 @@ export const saveFlavorDataFailed = (error) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// SAVE USER SHOPPING LIST // /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const saveShoppingList = (token, dbEntryId, shoppingList) => {
+export const saveShoppingList = (token, dbEntryId, cutoff, shoppingList) => {
     return dispatch => {
         dispatch(saveShoppingListStart());
-        axios.put('/users/' + dbEntryId + '/shoppingList.json?auth=' + token, shoppingList)
+        axios.put('/users/' + dbEntryId + '/shoppingList.json?auth=' + token, {cutoff: cutoff, flavors: shoppingList})
             .then(() => {
                 const successMessage = "Successfully saved Shopping List to database";
-                dispatch(saveShoppingListRedux(shoppingList));
+                dispatch(saveShoppingListRedux(cutoff, shoppingList));
                 dispatch(saveShoppingListSuccess(successMessage));
             }).catch(error => {
             dispatch(saveShoppingListFailed(ErrorMessage(error.response.data.error.message)));
@@ -489,7 +489,7 @@ export const getUserShoppingList = (token, dbEntryId) => {
                 if (!response.data) {
                     response.data = [];
                 }
-                dispatch(getUserShoppingListSuccess(response.data));
+                dispatch(getUserShoppingListSuccess(response.data.cutoff, response.data.flavors));
             }).catch(error => {
             dispatch(getUserShoppingListFailed(ErrorMessage(error.response.data.error.message)));
 
@@ -506,9 +506,10 @@ export const getUserShoppingListStart = () => {
     }
 };
 
-export const getUserShoppingListSuccess = (shoppingList) => {
+export const getUserShoppingListSuccess = (cutoff, shoppingList) => {
     return {
         type: actionTypes.GET_USER_SHOPPING_LIST_SUCCESS,
+        cutoff,
         shoppingList
     }
 };
