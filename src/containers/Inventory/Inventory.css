@@ -25,7 +25,12 @@
 }
 
 .IconBtn {
+    margin: 0 auto;
     cursor: pointer;
+}
+
+.TableCell {
+    font-size: .5vw !important;
 }
 
 .Input, .NameInput {

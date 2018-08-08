@@ -9,7 +9,7 @@ import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
-import {enforceMaxLength} from "../../util/shared";
+import {enforceInputConstraints} from "../../util/shared";
 import {sortTable} from "../../util/inventoryUtil";
 
 class Inventory extends React.Component {
@@ -32,12 +32,16 @@ class Inventory extends React.Component {
         this.props.history.push("/")
     };
 
+    handleFocus = (event) => {
+        event.target.select();
+    };
+
     handleEditBegin = (e, row, cell) => {
         this.setState({ edit: {row: row.id, cell: cell}})
     };
 
     handleUserInput = (e, row, control) => {
-        e.target.value = enforceMaxLength(e.target.value, e.target.maxLength);
+        e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
         let data = [...this.state.flavors];
         for (let flavor in data) {
             if (data[flavor].id === row.id) {
@@ -79,7 +83,7 @@ class Inventory extends React.Component {
     handleTableSort = (e, column) => {
         const sortedTable = sortTable(this.state.flavors, column, this.state.sort);
         this.setState({ flavors: sortedTable.flavors, sort: sortedTable.sort });
-    }
+    };
 
 
     render() {
@@ -89,7 +93,8 @@ class Inventory extends React.Component {
             { name: "vendor", label: "Vendor" },
             { name: "name", label: "Flavor Name" },
             { name: "amount", label: "Amount Left" },
-            { name: "recipes", label: "# of Recipes" }
+            { name: "recipes", label: "# of Recipes" },
+            { name: "remove", label: "Remove" }
         ];
 
         return(
@@ -102,9 +107,9 @@ class Inventory extends React.Component {
                     </DialogContentText>
                     <Table className={classes.Table}>
                         <TableHead>
-                            <TableRow>
+                            <TableRow style={{height: '10px'}}>
                                 {columns.map(column => (
-                                    <TableCell onClick={(e) => this.handleTableSort(e, column.name, sort)}
+                                    <TableCell onClick={column.name !== 'remove' ? (e) => this.handleTableSort(e, column.name, sort) : null}
                                                key={column.name}>{sort.col === column.name ? sort.asc ?
                                                     <ArrowDropUp fontSize='inherit' /> : <ArrowDropDown fontSize='inherit' /> : null} {column.label}</TableCell>
                                 ))}
@@ -112,22 +117,25 @@ class Inventory extends React.Component {
                         </TableHead>
                         <TableBody>
                             {flavors.map(flav => {
-                                return <TableRow key={flav.id}>
+                                return <TableRow style={{height: '10px'}} key={flav.id}>
                                         {edit.row === flav.id && edit.cell === "vendor" ?
                                             <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
-                                                              change={(e) => this.handleUserInput(e, flav, 'vendor')} value={flav.vendor} maxLength="4"/></TableCell>
+                                                              change={(e) => this.handleUserInput(e, flav, 'vendor')} value={flav.vendor}
+                                                              focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
                                             : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
                                     {edit.row === flav.id && edit.cell === "name" ?
                                         <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.NameInput}
-                                                          change={(e) => this.handleUserInput(e, flav, 'name')} value={flav.name} /></TableCell>
+                                                          change={(e) => this.handleUserInput(e, flav, 'name')}
+                                                          value={flav.name} focus={(e) => this.handleFocus(e)} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
                                     {edit.row === flav.id && edit.cell === "amount" ?
                                         <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
-                                                          change={(e) => this.handleUserInput(e, flav, 'amount')} value={flav.amount} type="number" maxLength="4"/></TableCell>
+                                                          change={(e) => this.handleUserInput(e, flav, 'amount')} value={flav.amount}
+                                                          type="number" min="0" focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
                                         : <TableCell  onClick={(e) => this.handleEditBegin(e, flav, "amount")} >{flav.amount}</TableCell>}
                                         <TableCell >{flav.recipes}</TableCell>
                                     <TableCell>
-                                        <Delete className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
+                                        <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
                                     </TableCell>
                                 </TableRow>
                             })}

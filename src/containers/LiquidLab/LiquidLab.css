@@ -40,9 +40,9 @@
 }
 
 .Select {
-    margin-top: 1vw;
+    margin-top: 1.5vw;
     width: 35vw;
-    height: 3vw;
+    height: 2vw;
     background-color: var(--main-color);
     color: var(--background-color);
     border-radius: 5px;

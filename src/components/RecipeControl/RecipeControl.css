@@ -1,7 +1,9 @@
 .RecipeControl {
+    z-index: 99;
     display: grid;
     grid-template-columns: 15% 47% 17% 2%;
     grid-column-gap: 10px;
+
 }
 
 .RecipeControl p {

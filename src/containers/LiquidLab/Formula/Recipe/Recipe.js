@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { enforceMaxLength } from '../../../../util/shared';
+import { enforceInputConstraints } from '../../../../util/shared';
 import * as actions from '../../../../store/actions/index';
 import RecipeControl from '../../../../components/RecipeControl/RecipeControl';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
@@ -49,7 +49,7 @@ class Recipe extends Component {
     };
 
     flavorDataEnteredHandler = (event) => {
-        event.target.value = enforceMaxLength(event.target.value, event.target.maxLength);
+        event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
 
         let exists = false;
         let updatedFlavors = [...this.props.flavors];
@@ -74,22 +74,44 @@ class Recipe extends Component {
 
     render () {
         const { col1Controls, col2Controls } = this.state;
-        const { input, flavors, token, recipeKey } = this.props;
-        
+        const { input, flavors, token, recipeKey, recipes } = this.props;
+
+        //TODO: Move to util
         let recipeControl1 = null;
         let controls = col1Controls.map(control => {
             let valid = null;
 
-            if (flavors) {
+            if (recipeKey) {
+                let recipe = null;
+                for (let r in recipes) {
+                    if (r === recipeKey) {
+                        recipe = recipes[r];
+                    }
+                }
+                if (recipe) {
+                    for (let f in recipe.flavors) {
+                        if (parseInt(recipe.flavors[f].control,10) === control.id) {
+                            valid = recipe.flavors[f].valid !== false;
+                        }
+                    }
+                }
+            }
+            else if (flavors) {
                 for (let i = 0; i < flavors.length; i++) {
                     if (+flavors[i].control === control.id) {
                         valid = flavors[i].percent && flavors[i].percent.value > 0;
                     }
                 }
             }
+
+            let readOnly = false;
+            if (flavors && flavors.length < control.id) {
+                readOnly = true;
+            }
+
             recipeControl1 =
                 <RecipeControl
-                    className={classes.RecipeControl}
+                    readOnly={readOnly}
                     values={flavors ? flavors[control.id] : null}
                     key={control.id}
                     id={control.id}
@@ -107,7 +129,8 @@ class Recipe extends Component {
                 return (
                     <button
                         key="plusBtn"
-                        className={classes.PlusButton}
+                        disabled={flavors && flavors.length < 8}
+                        className={flavors && flavors.length < 8 ? classes.PlusButtonDisabled : classes.PlusButton}
                         onClick={this.plusClickedHandler}
                     >+</button>
                 )
@@ -115,7 +138,22 @@ class Recipe extends Component {
             else {
                 let valid = null;
 
-                if (flavors) {
+                if (recipeKey) {
+                    let recipe = null;
+                    for (let r in recipes) {
+                        if (r === recipeKey) {
+                            recipe = recipes[r];
+                        }
+                    }
+                    if (recipe) {
+                        for (let f in recipe.flavors) {
+                            if (parseInt(recipe.flavors[f].control,10) === control.id) {
+                                valid = recipe.flavors[f].valid !== false;
+                            }
+                        }
+                    }
+                }
+                else if (flavors) {
                     for (let i = 0; i < flavors.length; i++) {
                         if (+flavors[i].control === control.id) {
                             valid = flavors[i].percent && flavors[i].percent.value > 0;
@@ -123,9 +161,15 @@ class Recipe extends Component {
                     }
                 }
 
+                let readOnly = false;
+                if (flavors && flavors.length < control.id) {
+                    readOnly = true;
+                }
+
                 recipeControl2 =
-                    <RecipeControl className={classes.RecipeControl}
-                                   values={flavors ? flavors[control.id] : null}
+                    <RecipeControl
+                        readOnly={readOnly}
+                        values={flavors ? flavors[control.id] : null}
                         key={control.id}
                         id={control.id}
                         valid={valid}
@@ -136,6 +180,7 @@ class Recipe extends Component {
                     return recipeControl2;
             }
         });
+
 
         return(
             <div className={classes.Recipe}>
@@ -158,10 +203,10 @@ class Recipe extends Component {
                         {controls2}
                     </div>
                     <div className={classes.RecipeButtons}>
+                        <MainButton disabled={formulaIsEmpty(this.props.input, this.props.flavors)} clicked={this.props.clear} >Clear</MainButton>
                         <MainButton disabled={recipeKey === ''} clicked={this.props.delete} >Delete</MainButton>
                         <MainButton disabled={!token || input.name.value === ""}
                                 clicked={this.props.save} >{recipeKey ? "Update" : "Save"}</MainButton>
-                        <MainButton disabled={formulaIsEmpty(this.props.input, this.props.flavors)} clicked={this.props.clear} >Clear</MainButton>
                         <MainButton clicked={this.props.calculate} >Calculate</MainButton>
                     </div>
                 </div>

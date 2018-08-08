@@ -58,13 +58,15 @@ class Formula extends Component {
             let flavorMlTotal = 0;
 
             //Calculate flavor ML/Gram/%
-            for (let i = 0; i < this.props.flavors.length; i++) {
-                const flavorResult = calculateFlavorResults(this.props.inputs, this.props.weights, this.props.flavors[i]);
-                flavorMlTotal = flavorMlTotal + flavorResult.ml;
-                flavorResults.push(flavorResult);
-            }
+            if (this.props.flavors) {
+                for (let i = 0; i < this.props.flavors.length; i++) {
+                    const flavorResult = calculateFlavorResults(this.props.inputs, this.props.weights, this.props.flavors[i]);
+                    flavorMlTotal = flavorMlTotal + flavorResult.ml;
+                    flavorResults.push(flavorResult);
+                }
 
-            this.props.onUpdateIngredients('flavors', flavorResults);
+                this.props.onUpdateIngredients('flavors', flavorResults);
+            }
 
             //Calculate base ML/Gram/%
             const baseResults = calcBaseResults(this.props.inputs, this.props.weights, flavorMlTotal);
@@ -87,6 +89,7 @@ class Formula extends Component {
             <div className={classes.Formula}>
                 <Target  />
                 <Recipe
+                    recipes={this.props.recipes}
                     delete={this.handleDelete}
                     clear={this.handleClear}
                     save={this.handleSave}

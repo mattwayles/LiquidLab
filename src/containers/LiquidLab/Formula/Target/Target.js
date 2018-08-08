@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as actions from '../../../../store/actions/index';
 import { connect } from 'react-redux';
-import { enforceMaxLength } from '../../../../util/shared';
+import { enforceInputConstraints } from '../../../../util/shared';
 
 
 import Auxil from '../../../../hoc/Auxil';
@@ -11,7 +11,7 @@ import classes from './Target.css';
 class Target extends Component {
 
     dataEnteredHandler = (event, control) => {
-        event.target.value = enforceMaxLength(event.target.value, event.target.maxLength);
+        event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
 
         let valid = event.target.value >= 0;
         if (control === 'targetPg') {
@@ -36,13 +36,13 @@ class Target extends Component {
                 <div className={classes.TargetGrid}>
                     <TargetControl autoPopulate={!this.props.targetNic.touched && this.props.targetNic.value > 0} value={this.props.targetNic.value !== undefined ? this.props.targetNic.value : ''}
                                    valid={this.props.targetNic.valid} change={(event) => this.dataEnteredHandler(event, 'targetNic')}
-                                   label="Target Nic:" type="number" suffix="mg" maxLength="3" />
+                                   label="Target Nic:" type="number" suffix="mg" min="0" maxLength="3" />
                     <TargetControl autoPopulate={!this.props.targetPg.touched && this.props.targetPg.value > 0}  value={this.props.targetPg.value} valid={this.props.targetPg.valid}
                                    change={(event) => this.dataEnteredHandler(event, 'targetPg')}
-                                   label="Target PG:" type="number" suffix="%" maxLength="3" />
+                                   label="Target PG:" type="number" suffix="%" min="0" maxLength="3" />
                     <TargetControl autoPopulate={!this.props.targetVg.touched &&this.props.targetVg.value > 0}  value={this.props.targetVg.value} valid={this.props.targetVg.valid}
                                    change={(event) => this.dataEnteredHandler(event, 'targetVg')}
-                                   label="Target VG:" type="number" suffix="%" maxLength="3" />
+                                   label="Target VG:" type="number" suffix="%" min="0" maxLength="3" />
                 </div>
                 <textarea value={this.props.notes.value}
                           className={!this.props.notes.touched && this.props.notes.value !== '' ? classes.TextAreaAuto : classes.TextArea} onChange={(event) => this.dataEnteredHandler(event, 'notes')} placeholder="Notes" />

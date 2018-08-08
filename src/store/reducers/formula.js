@@ -64,7 +64,7 @@ const reducer = (state = initialState, action) => {
 
 
 const userRecipeSelected = (state, action) => {
-    let loadedFlavors = action.recipe && action.recipe.flavors ? [...action.recipe.flavors] : null;
+    let loadedFlavors = action.recipe && action.recipe.flavors ? [...action.recipe.flavors] : [];
     for (let index in loadedFlavors) {
         if (loadedFlavors[index].ven) {
             loadedFlavors[index].ven.touched = false;
@@ -79,13 +79,9 @@ const userRecipeSelected = (state, action) => {
 
     return updateObject(state,
         {inputs: {
+            mlToMake: state.inputs.mlToMake,
             name: {
                 value: action.recipe.name ? action.recipe.name.value : initialState.inputs.name,
-                valid: true,
-                touched: false
-            },
-            mlToMake: {
-                value: action.recipe.mlToMake ? action.recipe.mlToMake.value : initialState.inputs.mlToMake,
                 valid: true,
                 touched: false
             },

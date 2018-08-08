@@ -53,7 +53,7 @@
     background-color: #fcffa5;
 }
 
-.PlusButton {
+.PlusButton, .PlusButtonDisabled {
     background-color: var(--accent-color);
     border: none;
     color: #fff;
@@ -64,6 +64,11 @@
     font-size: 1em;
     width: 10%;
     height: 8%;
+}
+
+.PlusButtonDisabled {
+    background-color: gray;
+    cursor: not-allowed;
 }
 
 .RecipeButtons {

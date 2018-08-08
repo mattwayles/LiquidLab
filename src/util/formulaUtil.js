@@ -20,14 +20,16 @@ export const validateInputs = (inputs, flavors, error) => {
         return false;
     }
     else {
-        for (let i = 0; i < flavors.length; i++) {
-            if (!flavors[i].percent.value > 0) {
-                error("Each added flavor must contain a percentage greater than zero");
-                return false;
+        if (flavors) {
+            for (let i = 0; i < flavors.length; i++) {
+                if (!flavors[i].percent || !flavors[i].percent.value > 0) {
+                    error("Each added flavor must contain a percentage greater than zero");
+                    return false;
+                }
             }
         }
-        return true;
     }
+    return true;
 };
 
 export const formulaIsEmpty = (inputs, flavors) => {
@@ -56,7 +58,7 @@ export const formulaIsEmpty = (inputs, flavors) => {
 export const mapInputs = (inputs, weights) => {
     return {
         mlToMake: parseInt(inputs.mlToMake.value, 10),
-        inputNic: parseInt(inputs.targetNic.value, 10),
+        inputNic: inputs.targetNic.value ? parseInt( inputs.targetNic.value, 10) : 0,
         inputPg: inputs.targetPg.value / 100,
         inputVg: inputs.targetVg.value / 100,
         nicStrength: weights.nicStrength,
@@ -97,7 +99,7 @@ export const calculateFlavorResults = (inputs, weights, flavor) => {
     const flavorGrams = round(flavorMl * input.flavorWeight);
 
     return {
-        ven: flavor.ven.value,
+        ven: flavor.ven ? flavor.ven.value : '',
         flavor: flavor.flavor.value,
         ml: flavorMl,
         grams: flavorGrams,
@@ -135,4 +137,33 @@ export const duplicateRecipe = (name, batch, recipes) => {
         }
     }
     return false;
+};
+
+export const setInvalidRecipes = (recipes, inputs, weights, inventory, mlToMake) => {
+    let filteredRecipes = {...recipes};
+
+    for (let r in recipes) {
+        let recipe = recipes[r];
+        //For each flavor in recipe
+        for (let f in recipe.flavors) {
+            let flavor = recipe.flavors[f];
+
+            //calculateFlavorResults
+            let mlRequired = calculateFlavorResults({...inputs, mlToMake: {value: mlToMake}}, weights, flavor).ml;
+
+            let mlInventory = 0;
+            for (let i in inventory) {
+                if (flavor.ven && flavor.ven.value === inventory[i].vendor
+                    && flavor.flavor && flavor.flavor.value === inventory[i].name) {
+                    mlInventory = inventory[i].amount;
+                }
+            }
+            if (parseFloat(mlRequired) > parseFloat(mlInventory.toString())) {
+                flavor = {...flavor, valid: false};
+                recipe = {...recipe, invalid: true, flavors: [...recipe.flavors, flavor]};
+                filteredRecipes = {...filteredRecipes, [r]: recipe};
+            }
+        }
+    }
+    return filteredRecipes;
 };

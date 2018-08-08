@@ -5,7 +5,7 @@ import classes from './Weights.css';
 import * as actions from "../../store/actions";
 import Input from "../../components/ui/Input/Input";
 import WeightsButton from "../../components/ui/Button/WeightsButton";
-import {enforceMaxLength} from "../../util/shared";
+import {enforceInputConstraints} from "../../util/shared";
 
 class Weights extends React.Component {
     state = {
@@ -19,7 +19,7 @@ class Weights extends React.Component {
     };
 
     handleUserInput = (e, control) => {
-        e.target.value = enforceMaxLength(e.target.value, e.target.maxLength);
+        e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
         this.setState({ [control]: e.target.value});
     };
 
@@ -74,42 +74,42 @@ class Weights extends React.Component {
                         <p>Vegetable Glycerine (VG):</p>
                         <Input value={this.state.vgWeight} classes={classes.Input}
                                change={(e) => this.handleUserInput(e, 'vgWeight')} type='number'
-                               maxLength={5} placeholder={weights.vgWeight} autoFocus/>
+                               maxLength={5} placeholder={weights.vgWeight} />
                         <p>g/ml</p>
                     </div>
                     <div className={classes.WeightControl}>
                         <p>Flavor:</p>
                         <Input value={this.state.flavorWeight} classes={classes.Input}
                                change={(e) => this.handleUserInput(e, 'flavorWeight')} type='number'
-                               maxLength={5} placeholder={weights.flavorWeight} autoFocus/>
+                               maxLength={5} placeholder={weights.flavorWeight} />
                         <p>g/ml</p>
                     </div>
                     <div className={classes.WeightControl}>
                         <p>Nicotine:</p>
                         <Input value={this.state.nicWeight} classes={classes.Input}
                                change={(e) => this.handleUserInput(e, 'nicWeight')} type='number'
-                               maxLength={5} placeholder={weights.nicWeight} autoFocus/>
+                               maxLength={5} placeholder={weights.nicWeight} />
                         <p>g/ml</p>
                     </div>
                     <div className={classes.WeightControl}>
                         <p>Nicotine Strength:</p>
                         <Input value={this.state.nicStrength} classes={classes.Input}
                                change={(e) => this.handleUserInput(e, 'nicStrength')} type='number'
-                               maxLength={5} placeholder={weights.nicStrength} autoFocus/>
+                               maxLength={5} placeholder={weights.nicStrength} />
                         <p>mg</p>
                     </div>
                     <div className={classes.WeightControl}>
                         <p>Nicotine Base (PG):</p>
                         <Input value={this.state.nicBasePg} classes={classes.Input}
                                change={(e) => this.handleUserInput(e, 'nicBasePg')} type='number'
-                               maxLength={3} placeholder={weights.nicBasePg} autoFocus/>
+                               maxLength={3} placeholder={weights.nicBasePg} />
                         <p>%</p>
                     </div>
                     <div className={classes.WeightControl}>
                         <p>Nicotine Base (VG):</p>
                         <Input value={this.state.nicBaseVg} classes={classes.Input}
                                change={(e) => this.handleUserInput(e, 'nicBaseVg')} type='number'
-                               maxLength={3} placeholder={weights.nicBaseVg} autoFocus/>
+                               maxLength={3} placeholder={weights.nicBaseVg} />
                         <p>%</p>
                     </div>
                 </DialogContent>

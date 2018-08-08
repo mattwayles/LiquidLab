@@ -9,7 +9,7 @@ import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
-import {enforceMaxLength} from "../../util/shared";
+import {enforceInputConstraints} from "../../util/shared";
 import {populateShoppingList, sortTable} from "../../util/inventoryUtil";
 
 class ShoppingList extends React.Component {
@@ -23,7 +23,6 @@ class ShoppingList extends React.Component {
     };
 
     componentWillMount() {
-        console.log(this.props.cutoff);
         let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.flavors, this.props.cutoff);
         this.setState({ cutoff: this.props.cutoff, shoppingList: shoppingList });
     }
@@ -37,7 +36,7 @@ class ShoppingList extends React.Component {
     };
 
     handleUserInput = (e, row, control) => {
-        e.target.value = enforceMaxLength(e.target.value, e.target.maxLength);
+        e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
         let data = [...this.state.shoppingList];
             for (let flavor in data) {
                 if (data[flavor].id === row.id) {
@@ -48,6 +47,7 @@ class ShoppingList extends React.Component {
     };
 
     handleCutoffInput = (e) => {
+        e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
         let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.flavors, e.target.value);
         this.setState({ cutoff: e.target.value, shoppingList: shoppingList});
     };
@@ -77,7 +77,6 @@ class ShoppingList extends React.Component {
     };
 
     handleSaveShoppingList = () => {
-        console.log(this.state.shoppingList);
         let shoppingList = [];
         for (let i in this.state.shoppingList) {
             if (!this.state.shoppingList[i].auto) {
@@ -99,7 +98,8 @@ class ShoppingList extends React.Component {
 
         const columns = [
             { name: "vendor", label: "Vendor" },
-            { name: "name", label: "Flavor Name" }
+            { name: "name", label: "Flavor Name" },
+            { name: 'remove', label: "Remove" }
         ];
 
         return(
@@ -112,9 +112,9 @@ class ShoppingList extends React.Component {
                     </DialogContentText>
                     <Table className={classes.Table}>
                         <TableHead>
-                            <TableRow>
+                            <TableRow style={{height: '10px'}}>
                                 {columns.map(column => (
-                                    <TableCell onClick={(e) => this.handleTableSort(e, column.name, sort)}
+                                    <TableCell onClick={column.name !== 'remove' ? (e) => this.handleTableSort(e, column.name, sort) : null}
                                                key={column.name}>{sort.col === column.name ? sort.asc ?
                                                     <ArrowDropUp fontSize='inherit' /> : <ArrowDropDown fontSize='inherit' /> : null} {column.label}</TableCell>
                                 ))}
@@ -122,7 +122,7 @@ class ShoppingList extends React.Component {
                         </TableHead>
                         <TableBody>
                             {shoppingList.map(flav => {
-                                return <TableRow key={flav.id}>
+                                return <TableRow style={{height: '10px'}} key={flav.id}>
                                         {!flav.auto && edit.row === flav.id && edit.cell === "vendor" ?
                                             <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
                                                               change={(e) => this.handleUserInput(e, flav, 'vendor')} value={flav.vendor} maxLength="4"/></TableCell>
@@ -132,8 +132,8 @@ class ShoppingList extends React.Component {
                                                           change={(e) => this.handleUserInput(e, flav, 'name')} value={flav.name} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
                                         {!flav.auto ?<TableCell>
-                                        <Delete className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
-                                    </TableCell> : null }
+                                        <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
+                                    </TableCell> : <TableCell /> }
                                 </TableRow>
                             })}
                             <TableRow><TableCell span={4}><Add className={classes.IconBtn}
@@ -143,8 +143,8 @@ class ShoppingList extends React.Component {
                 </DialogContent>
                     <div className={classes.AmtLeft}>
                         <p>Amount Left Cutoff:</p>
-                        <Input blur={this.handleEditFinish} autoFocus={true} type="number" classes={classes.AmtLeftInput}
-                               change={(e) => this.handleCutoffInput(e)} value={this.state.cutoff} />
+                        <Input blur={this.handleEditFinish} autoFocus={true} type="number" min="0" classes={classes.AmtLeftInput}
+                               change={(e) => this.handleCutoffInput(e)} value={this.state.cutoff} maxLength="5"/>
                         <p>ML</p>
                     </div>
                 <DialogActions>

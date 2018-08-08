@@ -8,12 +8,13 @@ import {saveFlavorDataRedux, saveShoppingListRedux} from "./inventory";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// CREATE USER DATABASE ENTRY ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const createDatabaseUser = (email, userId, token) => {
+export const createDatabaseUser = (email, userId, token, weights) => {
     return dispatch => {
         dispatch(createDbUserStart());
         const payload = {email: email, id: userId};
         axios.post('/users.json?auth=' + token, payload)
             .then(response => {
+                dispatch(setDbWeights(token, response.data.name, weights));
                 dispatch(createDbUserSuccess(response.data.name));
             }).catch(error => {
                 dispatch(createDbUserFailed(ErrorMessage(error.response.data.error.message)));

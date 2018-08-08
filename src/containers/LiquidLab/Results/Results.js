@@ -9,29 +9,34 @@ class Results extends Component {
     render () {
         let results = Object.keys(this.props.results.ingredients).map((item, index) => {
             if (item === 'flavors') {
-                let flavors = this.props.results.ingredients.flavors.map((flavor, flavorIndex) => {
-                    let flavorName = 'No-Name Flavor';
-                    if (flavor.flavor) {
-                        flavorName = flavor.flavor;
-                    }
-                    return <ResultsControl
-                        key={flavorIndex}
-                        ven={flavor.ven}
-                        flavor={flavorName}
-                        ml={flavor.ml}
-                        grams={flavor.grams}
-                        percent={flavor.percent + '%'}
+                return this.props.results.ingredients.flavors.map((flavor, flavorIndex) => {
+                    if (flavor.percent > 0) {
+                        let flavorName = 'No-Name Flavor';
+                        if (flavor.flavor) {
+                            flavorName = flavor.flavor;
+                        }
+                        return <ResultsControl
+                            key={flavorIndex}
+                            ven={flavor.ven}
+                            flavor={flavorName}
+                            ml={flavor.ml}
+                            grams={flavor.grams}
+                            percent={flavor.percent + '%'}
                         />
+                    } else {
+                        return null;
+                    }
                 });
-                return flavors;
             }
             else {
-                return <ResultsControl
-                    key={index}
-                    flavor={item.toUpperCase()}
-                    ml={this.props.results.ingredients[item].ml}
-                    grams={this.props.results.ingredients[item].grams}
-                    percent={this.props.results.ingredients[item].percent + '%'}/>
+                if (this.props.results.ingredients[item].percent > 0) {
+                    return <ResultsControl
+                        key={index}
+                        flavor={item.toUpperCase()}
+                        ml={this.props.results.ingredients[item].ml}
+                        grams={this.props.results.ingredients[item].grams}
+                        percent={this.props.results.ingredients[item].percent + '%'}/>
+                } else { return null }
             }
         });
 

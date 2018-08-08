@@ -6,7 +6,7 @@ export const sortTable = (flavors, column, sort) => {
 
     for (let i = 0; i < preSort.length; i++) {
         if (!preSort[i][column]) {
-            if (!(column === "amount" && preSort[i][column] === 0)) {
+            if (column !== "amount" && preSort[i][column] !== 0) {
                 let row = preSort.splice(i, 1);
                 emptyCell.push(row[0]);
             }
@@ -20,12 +20,11 @@ export const sortTable = (flavors, column, sort) => {
         newSort = {col: sort.col, asc: !sort.asc };
     }
 
-
     if (newSort.asc) {
         preSort = preSort.sort((a, b) => {
             let aVal = a[column];
             let bVal = b[column];
-            if (column !== "amount") {
+            if (column !== "amount" && column !== 'recipes') {
                 aVal = aVal.toLowerCase();
                 bVal = bVal.toLowerCase();
             }
@@ -40,7 +39,7 @@ export const sortTable = (flavors, column, sort) => {
         preSort = preSort.sort((a, b) => {
             let aVal = a[column];
             let bVal = b[column];
-            if (column !== "amount") {
+            if (column !== "amount" && column !== 'recipes') {
                 aVal = aVal.toLowerCase();
                 bVal = bVal.toLowerCase();
             }
@@ -63,7 +62,7 @@ export const populateShoppingList = (shoppingList, flavors, cutoff) => {
     for (let i in flavors) {
         const flavor = flavors[i];
 
-        if (flavor.amount && parseFloat(flavor.amount.toString()) <= parseFloat(cutoff) && !duplicateFlavor(flavor.vendor, flavor.name, list)) {
+        if ((flavor.amount || flavor.amount === 0) && parseFloat(flavor.amount.toString()) <= parseFloat(cutoff) && !duplicateFlavor(flavor.vendor, flavor.name, list)) {
             list = [...list,
                 {id: Math.random(), vendor: flavor.vendor, name: flavor.name, auto: true}];
         }

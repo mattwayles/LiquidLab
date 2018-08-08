@@ -6,7 +6,7 @@ import {clearDbRedux, createDatabaseUser, getDatabaseUser} from "./database";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////// AUTHENTICATE A USER /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const auth = (email, password, register) => {
+export const auth = (email, password, register, weights) => {
     return dispatch => {
         dispatch(authStart());
         const authData = {
@@ -30,7 +30,7 @@ export const auth = (email, password, register) => {
                     dispatch(getDatabaseUser(response.data.localId, response.data.idToken));
                 }
                 else {
-                    dispatch(createDatabaseUser(email, response.data.localId, response.data.idToken));
+                    dispatch(createDatabaseUser(email, response.data.localId, response.data.idToken, weights));
                 }
                 dispatch(authSuccess(response.data.idToken, response.data.localId));
                 dispatch(checkAuthTimeout(response.data.expiresIn));

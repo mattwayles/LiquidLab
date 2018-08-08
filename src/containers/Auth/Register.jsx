@@ -21,7 +21,7 @@ class Register extends React.Component {
     };
 
     handleSubmit = () => {
-        this.props.onAuth(this.state.email, this.state.password, true);
+        this.props.onAuth(this.state.email, this.state.password, true, this.props.weights);
     };
 
 
@@ -38,6 +38,7 @@ class Register extends React.Component {
                 {loading ? <Spinner/> :
                     <Auxil>
                         <UserInput
+                            autofocus={true}
                             type="string"
                             id="email"
                             value={email}
@@ -64,6 +65,7 @@ class Register extends React.Component {
 
 const mapStateToProps = state => {
     return {
+        weights: state.formula.weights,
         error: state.auth.error,
         loading: state.auth.loading
     }
@@ -71,7 +73,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAuth: (email, password, register) => dispatch(actions.auth(email, password, register)),
+        onAuth: (email, password, register, weights) => dispatch(actions.auth(email, password, register, weights)),
     }
 };
 

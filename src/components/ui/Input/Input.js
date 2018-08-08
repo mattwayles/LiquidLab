@@ -10,11 +10,10 @@ const input = (props) => {
         inputClasses.push(props.classes);
     }
 
-    if (props.autoPopulate) {
+    if (props.autoPopulate && props.valid !== false) {
         inputClasses.push(classes.AutoPopulated);
     }
-
-    if (props.valid === false) {
+    else if (props.valid === false) {
         inputClasses.push(classes.Invalid);
     }
 
@@ -34,6 +33,8 @@ const input = (props) => {
             break;
         default:
             inputElement = <input
+                onFocus={props.focus}
+                readOnly={props.readOnly}
                 autoFocus={props.autoFocus}
                 className={inputClasses.join(' ')}
                 id={props.id}
@@ -44,6 +45,7 @@ const input = (props) => {
                 onChange={props.change}
                 onBlur={props.blur}
                 placeholder={props.placeholder}
+                min={props.min}
                 maxLength={props.maxLength}
             />;
 

@@ -1,4 +1,5 @@
 .Button, .MainButton, .WeightsButton{
+    z-index: 3;
     margin: 2vw auto;
     background-color: var(--accent-color);
     border: none;
@@ -18,7 +19,7 @@
 }
 
 .MainButton {
-    margin-bottom: 0;
+    margin: 0 auto;
     font-size: 0.8vw;
 }
 

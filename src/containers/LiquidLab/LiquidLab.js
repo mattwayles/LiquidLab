@@ -7,28 +7,30 @@ import errorImg from '../../assets/error.png';
 import classes from './LiquidLab.css';
 import * as actions from "../../store/actions";
 import Input from "../../components/ui/Input/Input";
-import {enforceMaxLength} from "../../util/shared";
+import {enforceInputConstraints} from "../../util/shared";
+import {setInvalidRecipes} from "../../util/formulaUtil";
+import {CircularProgress} from "@material-ui/core";
 
 class LiquidLab extends Component {
     state = {
         results: false,
-        error: null
+        error: null,
+        recipes: null
     };
 
     //BUGS:
-    //TODO: Inputting in a row with an empty row above it inputs in the wrong row!
-    //TODO: Spinner for all actions
-    //TODO: Negative number protection
-    //TODO: Recipe drop-down is way too big
-    //TODO: Inventory header item highlighted after login
     //TODO: Inventory: Tab to next field
-    //TODO: Inventory & Shopping List: make grid rows smaller, fit more in the page!
-    //TODO: Inventory and shopping list, what happens when list gets huge?
+    //TODO: Sorting recipes totally messed up the drop-down retrieval and saving :(
+    //TODO: Move Recipe logic in render to util
+    //TODO: Changing Recipe percentages should tell reset Invalid class in real-time
 
     //FEATURES:
-    //TODO: What flavors am I UNable to make with current inventory?
-    //TODO: "I Made it" button with warning if not clicked
     //TODO: Calculate correct 'Number of Recipes included' value
+    //TODO: When saving recipe, "The following flavors included in inventory, would you like to add them?" with redirect
+    //TODO: When entering VEN or FLAV data, provide drop-down with available inventory items
+    //TODO: When entering flavor %, instantly tell me if my inventory won't support it
+    //TODO: Material-UI grid for calculated results
+    //TODO: "I Made it" button with warning if not clicked
     //TODO: Global flavors
     //TODO: What can I make from global flavors? Filter out local flavors
     //TODO: Browse global with intense search
@@ -37,12 +39,18 @@ class LiquidLab extends Component {
     //TODO: Warn when token is about to expire
     //TODO: Error messages to Dialog windows
     //TODO: Firebase SMTP
+    //TODO: Peformance testing: what happens when recipes, inventory, shoppingList get massive?
     //TODO: About/Help pages
     //TODO: Mobile Optimization
 
+    componentWillMount() {
+        if (this.props.inputs.mlToMake.value) {
+            this.props.onDataEntered('mlToMake', '', true);
+        }
+    }
 
     componentWillUpdate() {
-        if (this.props.history.location.pathname === "/login") {
+        if (this.props.history.location.pathname === "/login" || this.props.history.location.pathname === "/register") {
             this.props.history.push("/");
         }
     }
@@ -56,14 +64,22 @@ class LiquidLab extends Component {
     }
 
     dataEnteredHandler = (event) => {
-        event.target.value = enforceMaxLength(event.target.value, event.target.maxLength);
+        event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
         let valid = event.target.value >= 1;
         this.props.onDataEntered('mlToMake', event.target.value, valid);
+        //For each recipe
+        let recipes = {...this.state.recipes};
+        if (!recipes.length > 0) {
+            recipes = {...this.props.userRecipes}
+        }
+        let filteredRecipes = setInvalidRecipes(recipes, this.props.inputs, this.props.weights, this.props.inventory, event.target.value);
+        this.setState({ recipes: filteredRecipes});
     };
 
     recipeSelectHandler(event) {
         const selectedRecipe = this.props.userRecipes[event.target.value];
         this.props.onSelectUserRecipe(event.target.value, selectedRecipe);
+        this.setState({ results: null });
     }
     
     displayResultsHandler = () => {
@@ -75,13 +91,26 @@ class LiquidLab extends Component {
     };
 
     render() {
-        const { results, error } = this.state;
-        const { isAuthenticated, userRecipes, inputs, recipeKey, successMsg } = this.props;
+        const { results, error, recipes } = this.state;
+        const { isAuthenticated, inputs, userRecipes, recipeKey, successMsg, loading } = this.props;
+
+
+        let displayedRecipes = recipes;
+        if (!recipes) {
+            displayedRecipes = userRecipes;
+        }
+        //TODO: Fix
+        //displayedRecipes = Object.values(displayedRecipes).sort((a,b) => {
+        //    return (a.name.value.toLowerCase() > b.name.value.toLowerCase()) ? 1 : ((b.name.value.toLowerCase() > a.name.value.toLowerCase()) ? -1 : 0)
+        //});
 
         return (
             <div className={classes.LiquidLab}>
                 <header className={classes.HeaderDiv}>
                     <p className={classes.Header}>ReactApp</p>
+                    <div>
+                        {loading ? <CircularProgress size={60} /> : null}
+                    </div>
                     <div className={classes.MlToMake}>
                         <p>ML To Make:</p>
                         <Input value={inputs.mlToMake.value} classes={classes.Input} valid={error ? !error.includes("ML") : true}
@@ -92,18 +121,19 @@ class LiquidLab extends Component {
                     <select className={classes.Select} value={recipeKey} onChange={(event) => this.recipeSelectHandler(event)}>
                         {isAuthenticated ? <option value="" disabled>Select a Recipe...</option>
                             : <option value="" disabled>Register or Login to Save and Retrieve your Recipes!</option>}
-                        {userRecipes ? Object.keys(userRecipes).map(recipeKey => {
-                            const recipe = userRecipes[recipeKey];
+                        {displayedRecipes ? Object.keys(displayedRecipes).sort().map(recipeKey => {
+                            const recipe = displayedRecipes[recipeKey];
                             let recName = recipe.name.value;
                             recName = recipe.batch.value ? recName + " [" + recipe.batch.value + "]" : recName;
-                            return <option key={recipeKey} value={recipeKey}>{recName}</option>
+                            return recipe.invalid ? <option style={{color: 'darkred', backgroundColor: 'salmon'}} key={recipeKey} value={recipeKey}>{recName}</option>
+                                : <option key={recipeKey} value={recipeKey}>{recName}</option>
                         }) : null}
                     </select>
                 </header>
                 {error ? <p className={classes.Error}><img className={classes.ErrorImg} src={errorImg} alt="!!!" /> {error}</p>
                     : successMsg ? <p className={classes.Success}>{successMsg}</p> : null}
                 <div className={classes.Views}>
-                    <Formula displayResults={this.displayResultsHandler} error={this.errorHandler}/>
+                    <Formula recipes={recipes} displayResults={this.displayResultsHandler} error={this.errorHandler}/>
                     <div className={classes.Results}>
                         {results ? <Results /> : <p className={classes.Placeholder}>Results</p>}
                     </div>
@@ -121,7 +151,10 @@ const mapStateToProps = state => {
         userRecipes: state.database.userRecipes,
         successMsg: state.database.success,
         inputs: state.formula.inputs,
-        recipeKey: state.formula.key
+        weights: state.formula.weights,
+        recipeKey: state.formula.key,
+        inventory: state.inventory.flavors,
+        loading: state.auth.loading || state.database.loading || state.formula.loading || state.inventory.loading
     }
 };
 
