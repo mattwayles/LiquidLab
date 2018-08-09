@@ -203,10 +203,10 @@ class Recipe extends Component {
                         {controls2}
                     </div>
                     <div className={classes.RecipeButtons}>
-                        <MainButton disabled={formulaIsEmpty(this.props.input, this.props.flavors)} clicked={this.props.clear} >Clear</MainButton>
                         <MainButton disabled={recipeKey === ''} clicked={this.props.delete} >Delete</MainButton>
                         <MainButton disabled={!token || input.name.value === ""}
                                 clicked={this.props.save} >{recipeKey ? "Update" : "Save"}</MainButton>
+                        <MainButton disabled={formulaIsEmpty(this.props.input, this.props.flavors)} clicked={this.props.clear} >Clear</MainButton>
                         <MainButton clicked={this.props.calculate} >Calculate</MainButton>
                     </div>
                 </div>

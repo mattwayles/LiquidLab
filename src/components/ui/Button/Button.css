@@ -13,10 +13,7 @@
     font-weight: bold;
 }
 
-.Button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
+
 
 .MainButton {
     margin: 0 auto;
@@ -26,6 +23,11 @@
 .WeightsButton {
     margin-top: 0;
     width: 5vw;
+}
+
+.Button:disabled, .MainButton:disabled, .WeightsButton:disabled {
+    background-color: gray;
+    cursor: not-allowed;
 }
 
 .Success {

@@ -2,7 +2,8 @@ import axios from '../../axios-ll';
 import ErrorMessage from './error/errorMessage';
 import * as actionTypes from './actionTypes';
 import {clearRecipe, selectUserRecipe, setWeightsRedux} from "./formula";
-import {saveFlavorDataRedux, saveShoppingListRedux} from "./inventory";
+import {modifyFlavorRecipeCountRedux, saveFlavorDataRedux, saveShoppingListRedux} from "./inventory";
+import {compareFlavors} from "../../util/shared";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +92,7 @@ export const getDbUserFailed = (error) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////// SAVE RECIPE ///////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const saveRecipe = (token, dbEntryId, recipe) => {
+export const saveRecipe = (token, dbEntryId, inventory, recipe) => {
     return dispatch => {
         dispatch(saveRecipeStart());
         axios.post('/users/' + dbEntryId + '/recipes.json?auth=' + token, recipe)
@@ -100,6 +101,7 @@ export const saveRecipe = (token, dbEntryId, recipe) => {
                 recipe.batch.value + "] to the database"
                     : "Successfully saved " + recipe.name.value + " to the database";
                 dispatch(saveRecipeSuccess(successMessage));
+                dispatch(modifyFlavorRecipeCount(token, dbEntryId, recipe.flavors, inventory, 1));
                 dispatch(getUserRecipes(token, dbEntryId));
                 dispatch(selectUserRecipe(response.data.name, recipe));
             }).catch(error => {
@@ -136,8 +138,24 @@ export const saveRecipeFailed = (error) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////// UPDATE RECIPE ///////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const updateRecipe = (token, dbEntryId, key, recipe) => {
+export const updateRecipe = (token, dbEntryId, key, recipe, inventory, original) => {
     return dispatch => {
+        for (let f in recipe.flavors) {
+            const origFlavor = original.flavors[f];
+            const updFlavor = recipe.flavors[f];
+
+            if (!origFlavor) {
+                dispatch(modifyFlavorRecipeCount(token, dbEntryId, {flavors: updFlavor}, inventory, 1));
+            }
+            else if (((origFlavor.ven && origFlavor.ven.value !== updFlavor.ven.value)  || (origFlavor.flavor && origFlavor.flavor.value !== updFlavor.flavor.value))
+                || (!origFlavor.ven && origFlavor.flavor && origFlavor.flavor.value !== updFlavor.flavor.value)) {
+                dispatch(modifyFlavorRecipeCount(token, dbEntryId, {flavors: origFlavor}, inventory, 0));
+                dispatch(modifyFlavorRecipeCount(token, dbEntryId, {flavors: updFlavor}, inventory, 1));
+            }
+        }
+
+
+
         dispatch(updateRecipeStart());
         axios.patch('/users/' + dbEntryId + '/recipes/' + key + '.json?auth=' + token, recipe)
             .then(() => {
@@ -180,7 +198,7 @@ export const updateRecipeFailed = (error) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////// DELETE RECIPE ///////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const deleteRecipe = (token, dbEntryId, key, name, batch) => {
+export const deleteRecipe = (token, dbEntryId, key, name, batch, flavors, inventory) => {
     return dispatch => {
         dispatch(deleteRecipeStart());
         axios.delete('/users/' + dbEntryId + '/recipes/' + key + '.json?auth=' + token)
@@ -189,6 +207,7 @@ export const deleteRecipe = (token, dbEntryId, key, name, batch) => {
                     batch.value + "] from the database"
                     : "Successfully removed " + name.value + " from the database";
                 dispatch(deleteRecipeSuccess(successMessage));
+                dispatch(modifyFlavorRecipeCount(token, dbEntryId, flavors, inventory, 0));
                 dispatch(clearRecipe());
                 dispatch(getUserRecipes(token, dbEntryId));
             }).catch(error => {
@@ -369,8 +388,6 @@ export const saveFlavorData = (token, dbEntryId, inventory) => {
             }).catch(error => {
             dispatch(saveFlavorDataFailed(ErrorMessage(error.response.data.error.message)));
         });
-
-
     }
 };
 
@@ -519,5 +536,57 @@ export const getUserShoppingListFailed = (error) => {
     return {
         type: actionTypes.GET_USER_SHOPPING_LIST_FAILED,
         error
+    };
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////// MODIFY FLAVOR RECIPE COUNT //////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const modifyFlavorRecipeCount = (token, dbEntryId, flavors, inventory, dir) => {
+    return dispatch => {
+        dispatch(modifyFlavorRecipeCountStart());
+
+        for (let f in flavors) {
+            for (let i in inventory) {
+                if (compareFlavors(flavors[f], inventory[i])) {
+                    if (dir) {
+                        inventory[i].recipes++;
+                    } else {
+                        inventory[i].recipes--;
+                    }
+                }
+            }
+        }
+        axios.put('/users/' + dbEntryId + '/inventory.json?auth=' + token, inventory)
+            .then(() => {
+                dispatch(modifyFlavorRecipeCountRedux(inventory));
+                dispatch(modifyFlavorRecipeCountSuccess());
+            }).catch(error => {
+            dispatch(modifyFlavorRecipeCountFailed(ErrorMessage(error.response.data.error.message)));
+
+        });
+
+
+    }
+};
+
+//Synchronous actions
+export const modifyFlavorRecipeCountStart = () => {
+    return {
+        type: actionTypes.MODIFY_FLAVOR_RECIPE_COUNT_START
+    }
+};
+
+export const modifyFlavorRecipeCountSuccess = (success) => {
+    return {
+        type: actionTypes.MODIFY_FLAVOR_RECIPE_COUNT_SUCCESS,
+        success
+    }
+};
+
+export const modifyFlavorRecipeCountFailed = (error) => {
+    return {
+        type: actionTypes.MODIFY_FLAVOR_RECIPE_COUNT_FAILED,
+        error: error
     };
 };

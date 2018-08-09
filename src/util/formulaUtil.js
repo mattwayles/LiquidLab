@@ -1,3 +1,5 @@
+import {compareFlavors} from "./shared";
+
 export const round = (formula) => {
     return Math.round((formula) * 100) /100;
 };
@@ -95,7 +97,7 @@ export const calcBaseResults = (inputs, weights, flavorMlTotal) => {
 
 export const calculateFlavorResults = (inputs, weights, flavor) => {
     const input = mapInputs(inputs, weights);
-    const flavorMl = round(input.mlToMake * flavor.percent.value / 100);
+    const flavorMl = flavor.percent ? round(input.mlToMake * flavor.percent.value / 100) : 0;
     const flavorGrams = round(flavorMl * input.flavorWeight);
 
     return {
@@ -103,7 +105,7 @@ export const calculateFlavorResults = (inputs, weights, flavor) => {
         flavor: flavor.flavor.value,
         ml: flavorMl,
         grams: flavorGrams,
-        percent: flavor.percent.value
+        percent: flavor.percent ? flavor.percent.value : 0
     }
 };
 
@@ -153,11 +155,13 @@ export const setInvalidRecipes = (recipes, inputs, weights, inventory, mlToMake)
 
             let mlInventory = 0;
             for (let i in inventory) {
-                if (flavor.ven && flavor.ven.value === inventory[i].vendor
-                    && flavor.flavor && flavor.flavor.value === inventory[i].name) {
+                if(compareFlavors(flavor, inventory[i])) {
                     mlInventory = inventory[i].amount;
                 }
+
             }
+
+
             if (parseFloat(mlRequired) > parseFloat(mlInventory.toString())) {
                 flavor = {...flavor, valid: false};
                 recipe = {...recipe, invalid: true, flavors: [...recipe.flavors, flavor]};

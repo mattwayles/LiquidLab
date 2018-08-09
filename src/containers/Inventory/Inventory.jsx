@@ -92,7 +92,7 @@ class Inventory extends React.Component {
         const columns = [
             { name: "vendor", label: "Vendor" },
             { name: "name", label: "Flavor Name" },
-            { name: "amount", label: "Amount Left" },
+            { name: "amount", label: "Amount Left (ml)" },
             { name: "recipes", label: "# of Recipes" },
             { name: "remove", label: "Remove" }
         ];
@@ -165,6 +165,7 @@ const mapStateToProps = state => {
         flavors: state.inventory.flavors,
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,
+        recipes: state.database.userRecipes
     }
 };
 

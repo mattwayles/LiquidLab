@@ -25,8 +25,6 @@ class LiquidLab extends Component {
     //TODO: Changing Recipe percentages should tell reset Invalid class in real-time
 
     //FEATURES:
-    //TODO: Calculate correct 'Number of Recipes included' value
-    //TODO: When saving recipe, "The following flavors included in inventory, would you like to add them?" with redirect
     //TODO: When entering VEN or FLAV data, provide drop-down with available inventory items
     //TODO: When entering flavor %, instantly tell me if my inventory won't support it
     //TODO: Material-UI grid for calculated results

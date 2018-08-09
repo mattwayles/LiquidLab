@@ -20,3 +20,8 @@ export const enforceInputConstraints = (value, maxLength) => {
         return value;
     }
 };
+
+export const compareFlavors = (flavor1, flavor2) => {
+    return ((!flavor1.ven && flavor1.flavor && flavor1.flavor.value === flavor2.name) || (flavor1.ven && flavor1.ven.value === flavor2.vendor
+        && flavor1.flavor && flavor1.flavor.value === flavor2.name));
+};

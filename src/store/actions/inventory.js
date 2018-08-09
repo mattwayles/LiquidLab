@@ -14,3 +14,10 @@ export const saveShoppingListRedux = (cutoff, shoppingList) => {
         shoppingList
     }
 };
+
+export const modifyFlavorRecipeCountRedux = (inventory) => {
+    return {
+        type: actionTypes.MODIFY_FLAVOR_RECIPE_COUNT_REDUX,
+        inventory
+    }
+};

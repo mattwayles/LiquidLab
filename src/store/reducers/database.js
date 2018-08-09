@@ -36,6 +36,9 @@ const reducer = (state = initialState, action) => {
         case actionTypes.SAVE_FLAVOR_DATA_DATABASE_START:return saveFlavorDataStart(state, action);
         case actionTypes.SAVE_FLAVOR_DATA_DATABASE_SUCCESS:return saveFlavorDataSuccess(state, action);
         case actionTypes.SAVE_FLAVOR_DATA_DATABASE_FAILED:return saveFlavorDataFailed(state, action);
+        case actionTypes.MODIFY_FLAVOR_RECIPE_COUNT_START:return modifyFlavorRecipeCountStart(state, action);
+        case actionTypes.MODIFY_FLAVOR_RECIPE_COUNT_SUCCESS:return modifyFlavorRecipeCountSuccess(state, action);
+        case actionTypes.MODIFY_FLAVOR_RECIPE_COUNT_FAILED:return modifyFlavorRecipeCountFailed(state, action);
         case actionTypes.SAVE_SHOPPING_LIST_DATABASE_START:return saveShoppingListStart(state, action);
         case actionTypes.SAVE_SHOPPING_LIST_DATABASE_SUCCESS:return saveShoppingListSuccess(state, action);
         case actionTypes.SAVE_SHOPPING_LIST_DATABASE_FAILED:return saveShoppingListFailed(state, action);
@@ -215,6 +218,25 @@ const saveFlavorDataSuccess = (state, action) => {
 };
 
 const saveFlavorDataFailed = (state, action) => {
+    return updateObject(state, {
+        error: action.error,
+        loading: false });
+};
+
+
+const modifyFlavorRecipeCountStart = (state) => {
+    return updateObject(state, {
+        error: null,
+        loading: true });
+};
+
+const modifyFlavorRecipeCountSuccess = (state) => {
+    return updateObject(state, {
+        error: null,
+        loading: false });
+};
+
+const modifyFlavorRecipeCountFailed = (state, action) => {
     return updateObject(state, {
         error: action.error,
         loading: false });
