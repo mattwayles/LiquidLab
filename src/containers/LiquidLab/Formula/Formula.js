@@ -14,7 +14,7 @@ import {
 } from "../../../util/formulaUtil";
 import Auxil from "../../../hoc/Auxil";
 import ConfirmSaveDialog from "../../../components/Dialog/ConfirmSaveDialog";
-import {compareFlavors} from "../../../util/shared";
+import {compareFlavors, createNextId} from "../../../util/shared";
 
 class Formula extends Component {
     state = {
@@ -63,7 +63,7 @@ class Formula extends Component {
         else {
             let inventory = [...this.props.inventory];
             for (let f in nonInventoriedFlavors) {
-                inventory.push({amount: 0, id: inventory.length + 1, name: nonInventoriedFlavors[f].flavor.value, vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0})
+                inventory.push({amount: 0, id: createNextId(...this.props.flavors), name: nonInventoriedFlavors[f].flavor.value, vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0})
             }
             if (this.props.recipeKey) {
                 this.props.onSaveFlavorData(this.props.token, this.props.dbEntryId, inventory);

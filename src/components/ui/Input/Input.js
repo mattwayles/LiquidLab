@@ -33,6 +33,7 @@ const input = (props) => {
             break;
         default:
             inputElement = <input
+                onKeyDown={props.keyDown}
                 onFocus={props.focus}
                 readOnly={props.readOnly}
                 autoFocus={props.autoFocus}
@@ -47,6 +48,8 @@ const input = (props) => {
                 placeholder={props.placeholder}
                 min={props.min}
                 maxLength={props.maxLength}
+                onPaste={props.paste}
+                onCopy={props.copy}
             />;
 
     }

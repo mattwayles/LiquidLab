@@ -8,25 +8,25 @@ import classes from './LiquidLab.css';
 import * as actions from "../../store/actions";
 import Input from "../../components/ui/Input/Input";
 import {enforceInputConstraints} from "../../util/shared";
-import {setInvalidRecipes} from "../../util/formulaUtil";
+import {setInvalidFlavor, setInvalidRecipes} from "../../util/formulaUtil";
 import {CircularProgress} from "@material-ui/core";
 
 class LiquidLab extends Component {
     state = {
         results: false,
         error: null,
-        recipes: null
+        recipes: null,
     };
 
     //BUGS:
-    //TODO: Inventory: Tab to next field
+    //TODO: Drop-down removal when clicked outside of the control
+    //TODO: Actual flavor data in options menu
     //TODO: Sorting recipes totally messed up the drop-down retrieval and saving :(
+    //TODO: Make percent boxes red if "Each flavor added must contain..." error
     //TODO: Move Recipe logic in render to util
-    //TODO: Changing Recipe percentages should tell reset Invalid class in real-time
+    //TODO: Move Formula.js handleSave logic to util
 
     //FEATURES:
-    //TODO: When entering VEN or FLAV data, provide drop-down with available inventory items
-    //TODO: When entering flavor %, instantly tell me if my inventory won't support it
     //TODO: Material-UI grid for calculated results
     //TODO: "I Made it" button with warning if not clicked
     //TODO: Global flavors
@@ -70,6 +70,15 @@ class LiquidLab extends Component {
         if (!recipes.length > 0) {
             recipes = {...this.props.userRecipes}
         }
+
+        let flavors = [...this.props.flavors];
+        for(let f in flavors) {
+            flavors[f] = setInvalidFlavor(flavors[f], this.props.inputs, this.props.weights, this.props.inventory, event.target.value);
+        }
+        this.props.onRecipeDataEntered(flavors);
+
+
+
         let filteredRecipes = setInvalidRecipes(recipes, this.props.inputs, this.props.weights, this.props.inventory, event.target.value);
         this.setState({ recipes: filteredRecipes});
     };
@@ -151,6 +160,7 @@ const mapStateToProps = state => {
         inputs: state.formula.inputs,
         weights: state.formula.weights,
         recipeKey: state.formula.key,
+        flavors: state.formula.flavors,
         inventory: state.inventory.flavors,
         loading: state.auth.loading || state.database.loading || state.formula.loading || state.inventory.loading
     }
@@ -160,7 +170,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onSelectUserRecipe: (key, recipe) => dispatch(actions.selectUserRecipe(key, recipe)),
         onDataEntered: (control, value, valid) => dispatch(actions.inputDataEntered(control, value, valid)),
-        onClearSuccessMessage: () => dispatch(actions.clearSuccessMessage())
+        onClearSuccessMessage: () => dispatch(actions.clearSuccessMessage()),
+        onRecipeDataEntered: (arr) => dispatch(actions.recipeDataEntered(arr)),
     }
 };
 

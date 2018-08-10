@@ -148,26 +148,32 @@ export const setInvalidRecipes = (recipes, inputs, weights, inventory, mlToMake)
         let recipe = recipes[r];
         //For each flavor in recipe
         for (let f in recipe.flavors) {
-            let flavor = recipe.flavors[f];
-
-            //calculateFlavorResults
-            let mlRequired = calculateFlavorResults({...inputs, mlToMake: {value: mlToMake}}, weights, flavor).ml;
-
-            let mlInventory = 0;
-            for (let i in inventory) {
-                if(compareFlavors(flavor, inventory[i])) {
-                    mlInventory = inventory[i].amount;
-                }
-
-            }
-
-
-            if (parseFloat(mlRequired) > parseFloat(mlInventory.toString())) {
-                flavor = {...flavor, valid: false};
+            const flavor = setInvalidFlavor(recipe.flavors[f], inputs, weights, inventory, mlToMake);
+            if (!flavor.valid) {
                 recipe = {...recipe, invalid: true, flavors: [...recipe.flavors, flavor]};
-                filteredRecipes = {...filteredRecipes, [r]: recipe};
             }
+            else {
+                recipe = {...recipe, flavors: [...recipe.flavors, flavor]}
+            }
+            filteredRecipes = {...filteredRecipes, [r]: recipe};
         }
     }
     return filteredRecipes;
+};
+
+export const setInvalidFlavor = (flavor, inputs, weights, inventory, mlToMake) => {
+    let mlRequired = calculateFlavorResults({...inputs, mlToMake: {value: mlToMake}}, weights, flavor).ml;
+    let mlInventory = 0;
+    for (let i in inventory) {
+        if(compareFlavors(flavor, inventory[i])) {
+            mlInventory = inventory[i].amount;
+        }
+    }
+
+    if (parseFloat(mlRequired.toString()) > parseFloat(mlInventory.toString())) {
+       return {...flavor, valid: false};
+    }
+    else {
+        return {...flavor, valid: true};
+    }
 };

@@ -6,7 +6,7 @@ import * as actions from '../../../../store/actions/index';
 import RecipeControl from '../../../../components/RecipeControl/RecipeControl';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
 import classes from './Recipe.css';
-import {formulaIsEmpty} from "../../../../util/formulaUtil";
+import {formulaIsEmpty, setInvalidFlavor} from "../../../../util/formulaUtil";
 import MainButton from "../../../../components/ui/Button/MainButton";
 
 
@@ -14,7 +14,8 @@ class Recipe extends Component {
     state = {
         col1Controls: [],
         col2Controls: [],
-        index: 0
+        index: 0,
+        selectedOption: null
     };
 
     componentWillMount () {
@@ -42,7 +43,6 @@ class Recipe extends Component {
             this.setState({col2Controls: col2ControlArray})
         }
         else {
-            //col2ControlArray.unshift({id: this.state.index});
             col2ControlArray.splice(col2ControlArray.length - 1, 0, {id: this.state.index});
             this.setState({col2Controls: col2ControlArray, index: this.state.index + 1});
         }
@@ -60,6 +60,10 @@ class Recipe extends Component {
                     ...updatedFlavors[i],
                     [event.target.name]: {value: event.target.value, touched: true}};
                 exists = true;
+                if (event.target.name === 'percent') {
+                    const valid = setInvalidFlavor(updatedFlavor, this.props.input, this.props.weights, this.props.inventory, this.props.input.mlToMake.value).valid;
+                    updatedFlavor = {...updatedFlavor, valid: valid};
+                }
                 updatedFlavors[i] = updatedFlavor;
             }
         }
@@ -68,15 +72,28 @@ class Recipe extends Component {
                 control: event.target.id,
                 [event.target.name]: {value: event.target.value, touched: true}})
         }
+
         this.props.onDataEntered(updatedFlavors);
         
     };
+
+
+    optionClickedHandler = (e, id, control, selection) => {
+        let flavors = [...this.props.flavors];
+        for (let f in flavors) {
+            if (parseInt(flavors[f].control,10) === id) {
+                flavors[f][control] = {value: selection, touched: false};
+            }
+        }
+        this.props.onDataEntered(flavors);
+    };
+
 
     render () {
         const { col1Controls, col2Controls } = this.state;
         const { input, flavors, token, recipeKey, recipes } = this.props;
 
-        //TODO: Move to util
+        //TODO: Move to util, this can be optimized!
         let recipeControl1 = null;
         let controls = col1Controls.map(control => {
             let valid = null;
@@ -89,17 +106,19 @@ class Recipe extends Component {
                     }
                 }
                 if (recipe) {
-                    for (let f in recipe.flavors) {
-                        if (parseInt(recipe.flavors[f].control,10) === control.id) {
-                            valid = recipe.flavors[f].valid !== false;
+                    for (let i = 0; i < flavors.length; i++) {
+                        if (parseInt(recipe.flavors[i].control,10) === control.id) {
+                            valid = flavors[i].valid !== false ?
+                                setInvalidFlavor(flavors[i], this.props.input, this.props.weights, this.props.inventory, this.props.input.mlToMake.value).valid : false;
                         }
                     }
                 }
             }
             else if (flavors) {
+
                 for (let i = 0; i < flavors.length; i++) {
                     if (+flavors[i].control === control.id) {
-                        valid = flavors[i].percent && flavors[i].percent.value > 0;
+                        valid = flavors[i].valid !== false;
                     }
                 }
             }
@@ -116,6 +135,7 @@ class Recipe extends Component {
                     key={control.id}
                     id={control.id}
                     valid={valid}
+                    optionClick={this.optionClickedHandler}
                     plusClicked={this.plusClickedHandler}
                     change={this.flavorDataEnteredHandler}
                     calculate={this.props.clicked}
@@ -146,17 +166,19 @@ class Recipe extends Component {
                         }
                     }
                     if (recipe) {
-                        for (let f in recipe.flavors) {
-                            if (parseInt(recipe.flavors[f].control,10) === control.id) {
-                                valid = recipe.flavors[f].valid !== false;
+                        for (let i = 0; i < flavors.length; i++) {
+                            if (parseInt(recipe.flavors[i].control,10) === control.id) {
+                                valid = flavors[i].valid !== false ?
+                                    setInvalidFlavor(flavors[i], this.props.input, this.props.weights, this.props.inventory, this.props.input.mlToMake.value).valid : false;
                             }
                         }
                     }
                 }
                 else if (flavors) {
+
                     for (let i = 0; i < flavors.length; i++) {
                         if (+flavors[i].control === control.id) {
-                            valid = flavors[i].percent && flavors[i].percent.value > 0;
+                            valid = flavors[i].valid !== false;
                         }
                     }
                 }
@@ -168,13 +190,16 @@ class Recipe extends Component {
 
                 recipeControl2 =
                     <RecipeControl
+                        classes={classes}
                         readOnly={readOnly}
                         values={flavors ? flavors[control.id] : null}
                         key={control.id}
                         id={control.id}
                         valid={valid}
                         plusClicked={this.plusClickedHandler}
-                        change={this.flavorDataEnteredHandler}
+                        change={this.testChange}
+                        selectedOption={this.state.selectedOption}
+                        //change={this.flavorDataEnteredHandler}
                         calculate={this.props.clicked}
                     />;
                     return recipeControl2;
@@ -219,7 +244,9 @@ const mapStateToProps = state => {
         recipeKey: state.formula.key,
         input: state.formula.inputs,
         flavors: state.formula.flavors,
-        token: state.auth.userId
+        token: state.auth.userId,
+        weights: state.formula.weights,
+        inventory: state.inventory.flavors,
     }
 };
 

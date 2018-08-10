@@ -9,8 +9,8 @@ import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
-import {enforceInputConstraints} from "../../util/shared";
-import {sortTable} from "../../util/inventoryUtil";
+import { createNextId, getNextId } from "../../util/shared";
+import {sortTable, userInput} from "../../util/inventoryUtil";
 
 class Inventory extends React.Component {
     state = {
@@ -36,19 +36,45 @@ class Inventory extends React.Component {
         event.target.select();
     };
 
-    handleEditBegin = (e, row, cell) => {
-        this.setState({ edit: {row: row.id, cell: cell}})
+    handleKeyDown = (event, row, control) => {
+        if (event.keyCode === 9 && this.state.edit) {
+            event.preventDefault();
+            if (this.state.edit.cell === 'vendor') {
+                this.setState({edit: {...this.state.edit, cell: 'name'}})
+            }
+            else if (this.state.edit.cell === 'name') {
+                this.setState({edit: {...this.state.edit, cell: 'amount'}})
+            }
+            else if (this.state.edit.cell === 'amount') {
+                if (this.state.edit.row + 1 > this.state.flavors.length) {
+                    this.handleAdd();
+                    this.setState({ edit: {row: createNextId(this.state.flavors), cell: "vendor"}})
+                }
+                else {
+                    this.setState({edit: {row: getNextId(this.state.flavors, this.state.edit.row), cell: "vendor"}})
+                }
+            }
+        }
+        else {
+            const data = userInput(event, row, control, this.state.flavors);
+            this.setState({ flavors: data })
+        }
     };
 
-    handleUserInput = (e, row, control) => {
-        e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
+    handlePaste = (e, row, control) => {
         let data = [...this.state.flavors];
         for (let flavor in data) {
             if (data[flavor].id === row.id) {
-                data[flavor] = {...data[flavor], [control]: e.target.value};
+                const clipboardText = e.clipboardData.getData("Text");
+                data[flavor] = {...data[flavor], [control]: clipboardText};
             }
         }
         this.setState({ flavors: data })
+    };
+
+
+    handleEditBegin = (e, row, cell) => {
+        this.setState({ edit: {row: row.id, cell: cell}})
     };
 
     handleEditFinish = () => {
@@ -71,7 +97,7 @@ class Inventory extends React.Component {
 
     handleAdd = () => {
         let data = [...this.state.flavors];
-        data.push({id: data.length + 1, vendor: '', name:'New Flavor', amount: 0, recipes: 0});
+        data.push({id: createNextId(data), vendor: '', name:'New Flavor', amount: 0, recipes: 0});
         this.setState({flavors: data});
     };
 
@@ -119,19 +145,22 @@ class Inventory extends React.Component {
                             {flavors.map(flav => {
                                 return <TableRow style={{height: '10px'}} key={flav.id}>
                                         {edit.row === flav.id && edit.cell === "vendor" ?
-                                            <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
-                                                              change={(e) => this.handleUserInput(e, flav, 'vendor')} value={flav.vendor}
-                                                              focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
+                                            <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
+                                                              paste={(e) => this.handlePaste(e, flav, 'vendor')}
+                                                              blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
+                                                              value={flav.vendor} focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
                                             : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
                                     {edit.row === flav.id && edit.cell === "name" ?
-                                        <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.NameInput}
-                                                          change={(e) => this.handleUserInput(e, flav, 'name')}
+                                        <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
+                                                          paste={(e) => this.handlePaste(e, flav, 'name')}
+                                                          blur={this.handleEditFinish} autoFocus={true} classes={classes.NameInput}
                                                           value={flav.name} focus={(e) => this.handleFocus(e)} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
                                     {edit.row === flav.id && edit.cell === "amount" ?
-                                        <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
-                                                          change={(e) => this.handleUserInput(e, flav, 'amount')} value={flav.amount}
-                                                          type="number" min="0" focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
+                                        <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'amount')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
+                                                          paste={(e) => this.handlePaste(e, flav, 'amount')}
+                                                          blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
+                                                          value={flav.amount} type="number" min="0" focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
                                         : <TableCell  onClick={(e) => this.handleEditBegin(e, flav, "amount")} >{flav.amount}</TableCell>}
                                         <TableCell >{flav.recipes}</TableCell>
                                     <TableCell>

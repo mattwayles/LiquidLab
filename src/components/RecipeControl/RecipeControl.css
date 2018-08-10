@@ -11,6 +11,40 @@
     margin-top: 0;
 }
 
+.InputOptionVen, .InputOptionFlavor {
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #fff;
+    width: 150px;
+    height: 100px;
+    position: absolute;
+    margin-top: 25px;
+}
+
+.InputOptionFlavor {
+    margin-left: 8%
+}
+
+
+.InputElement {
+    outline: none;
+    text-align: center;
+    border-radius: 5px;
+    width: 90%;
+    height: 25px;
+    font: inherit;
+    font-size: 0.65em;
+    padding: 6px;
+    box-sizing: border-box;
+    z-index: 99;
+}
+
+
+
+
+
+
+
 @media (max-width: 1439px) {
     .RecipeControl {
         grid-template-columns: 15% 55% 17% 5%;

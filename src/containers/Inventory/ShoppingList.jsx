@@ -9,8 +9,8 @@ import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
-import {enforceInputConstraints} from "../../util/shared";
-import {populateShoppingList, sortTable} from "../../util/inventoryUtil";
+import {enforceInputConstraints, createNextId, getNextId} from "../../util/shared";
+import {populateShoppingList, sortTable, userInput} from "../../util/inventoryUtil";
 
 class ShoppingList extends React.Component {
     state = {
@@ -31,21 +31,48 @@ class ShoppingList extends React.Component {
         this.props.history.push("/")
     };
 
+
+    handleKeyDown = (event, row, control) => {
+        if (event.keyCode === 9 && this.state.edit) {
+            event.preventDefault();
+            if (this.state.edit.cell === 'vendor') {
+                this.setState({edit: {...this.state.edit, cell: 'name'}})
+            }
+            else if (this.state.edit.cell === 'name') {
+                if (this.state.edit.row + 1 > this.state.shoppingList.length - 1) {
+                    this.handleAdd();
+                    this.setState({ edit: {row: createNextId(this.state.shoppingList), cell: "vendor"}})
+                }
+                else {
+                    this.setState({edit: {row: getNextId(this.state.shoppingList, this.state.edit.row), cell: "vendor"}})
+                }
+            }
+        }
+        else {
+            const data = userInput(event, row, control, this.state.shoppingList);
+            this.setState({ shoppingList: data })
+        }
+    };
+
+    handlePaste = (e, row, control) => {
+        let data = [...this.state.shoppingList];
+        for (let flavor in data) {
+            if (data[flavor].id === row.id) {
+                const clipboardText = e.clipboardData.getData("Text");
+                data[flavor] = {...data[flavor], [control]: clipboardText};
+            }
+        }
+        this.setState({ shoppingList: data })
+    };
+
+    handleFocus = (event) => {
+        event.target.select();
+    };
+
     handleEditBegin = (e, row, cell) => {
         this.setState({ edit: {row: row.id, cell: cell}})
     };
-
-    handleUserInput = (e, row, control) => {
-        e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
-        let data = [...this.state.shoppingList];
-            for (let flavor in data) {
-                if (data[flavor].id === row.id) {
-                    data[flavor] = {...data[flavor], [control]: e.target.value};
-                }
-            }
-            this.setState({ shoppingList: data })
-    };
-
+    
     handleCutoffInput = (e) => {
         e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
         let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.flavors, e.target.value);
@@ -72,7 +99,7 @@ class ShoppingList extends React.Component {
 
     handleAdd = () => {
         let data = [...this.state.shoppingList];
-        data.push({id: Math.random(), vendor: '', name:'New Flavor'});
+        data.push({id: createNextId(data), vendor: '', name:'New Flavor'});
         this.setState({shoppingList: data});
     };
 
@@ -124,12 +151,14 @@ class ShoppingList extends React.Component {
                             {shoppingList.map(flav => {
                                 return <TableRow style={{height: '10px'}} key={flav.id}>
                                         {!flav.auto && edit.row === flav.id && edit.cell === "vendor" ?
-                                            <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
-                                                              change={(e) => this.handleUserInput(e, flav, 'vendor')} value={flav.vendor} maxLength="4"/></TableCell>
+                                            <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
+                                                              blur={this.handleEditFinish} paste={(e) => this.handlePaste(e, flav, 'vendor')}
+                                                              autoFocus={true} classes={classes.Input} focus={(e) => this.handleFocus(e)} value={flav.vendor} maxLength="4"/></TableCell>
                                             : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
                                     {!flav.auto && edit.row === flav.id && edit.cell === "name" ?
-                                        <TableCell><Input blur={this.handleEditFinish} autoFocus={true} classes={classes.NameInput}
-                                                          change={(e) => this.handleUserInput(e, flav, 'name')} value={flav.name} /></TableCell>
+                                        <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'name')}
+                                                          blur={this.handleEditFinish} paste={(e) => this.handlePaste(e, flav, 'vendor')}
+                                                          autoFocus={true} classes={classes.NameInput} focus={(e) => this.handleFocus(e)} value={flav.name} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
                                         {!flav.auto ?<TableCell>
                                         <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
@@ -143,7 +172,7 @@ class ShoppingList extends React.Component {
                 </DialogContent>
                     <div className={classes.AmtLeft}>
                         <p>Amount Left Cutoff:</p>
-                        <Input blur={this.handleEditFinish} autoFocus={true} type="number" min="0" classes={classes.AmtLeftInput}
+                        <Input  focus={(e) => this.handleFocus(e)} blur={this.handleEditFinish} autoFocus={true} type="number" min="0" classes={classes.AmtLeftInput}
                                change={(e) => this.handleCutoffInput(e)} value={this.state.cutoff} maxLength="5"/>
                         <p>ML</p>
                     </div>

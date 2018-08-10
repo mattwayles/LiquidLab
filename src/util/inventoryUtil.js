@@ -1,3 +1,5 @@
+import {createNextId, enforceInputConstraints} from "./shared";
+
 export const sortTable = (flavors, column, sort) => {
     let preSort = [...flavors];
     let emptyCell = [];
@@ -64,7 +66,7 @@ export const populateShoppingList = (shoppingList, flavors, cutoff) => {
 
         if ((flavor.amount || flavor.amount === 0) && parseFloat(flavor.amount.toString()) <= parseFloat(cutoff) && !duplicateFlavor(flavor.vendor, flavor.name, list)) {
             list = [...list,
-                {id: Math.random(), vendor: flavor.vendor, name: flavor.name, auto: true}];
+                {id: createNextId(list), vendor: flavor.vendor, name: flavor.name, auto: true}];
         }
     }
     return list.sort((a, b) => {
@@ -79,4 +81,28 @@ export const duplicateFlavor = (vendor, name, flavors) => {
         }
     }
     return false;
+};
+
+export const userInput = (e, row, control, list) => {
+    e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
+    let data = [...list];
+    for (let flavor in data) {
+        if (data[flavor].id === row.id) {
+            if ((e.keyCode > 47 && e.keyCode < 91 && !e.ctrlKey) || (e.keyCode > 95 && e.keyCode < 106) ||
+                e.keyCode === 8 || e.keyCode === 32) {
+                if (window.getSelection().toString().length) {
+                    const newStr = e.target.value.slice(0, e.target.value.length - window.getSelection().toString().length);
+                    data[flavor] = {...data[flavor], [control]: newStr};
+                }
+                else if (e.keyCode === 8) {
+                    data[flavor] = {...data[flavor], [control]: e.target.value.slice(0, -1)};
+                }
+
+                let newVal = (e.keyCode === 8) ? data[flavor][control] : data[flavor][control] + e.key;
+
+                data[flavor] = {...data[flavor], [control]: newVal};
+            }
+        }
+    }
+    return data;
 };
