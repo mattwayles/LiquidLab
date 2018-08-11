@@ -13,7 +13,7 @@
     cursor: pointer;
 }
 
-.Option:hover {
+.Option:hover, .ActiveOption {
     background-color: var(--main-color);
     color: #fff;
 }

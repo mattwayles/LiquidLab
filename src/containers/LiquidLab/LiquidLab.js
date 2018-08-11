@@ -8,7 +8,7 @@ import classes from './LiquidLab.css';
 import * as actions from "../../store/actions";
 import Input from "../../components/ui/Input/Input";
 import {enforceInputConstraints} from "../../util/shared";
-import {setInvalidFlavor, setInvalidRecipes} from "../../util/formulaUtil";
+import {setInvalidFlavor, setInvalidRecipes} from "../../util/recipeUtil";
 import {CircularProgress} from "@material-ui/core";
 
 class LiquidLab extends Component {
@@ -19,19 +19,16 @@ class LiquidLab extends Component {
     };
 
     //BUGS:
-    //TODO: Duplicate row ID in inventory
-    //TODO: Sorting recipes totally messed up the drop-down retrieval and saving :(
-    //TODO: Make percent boxes red if "Each flavor added must contain..." error
-    //TODO: Move Recipe logic in render to util
-    //TODO: Move Formula.js handleSave logic to util
+    //TODO: When feeling burnt out, comment!
+    //TODO: Error notification on main screen
 
     //FEATURES:
     //TODO: Material-UI grid for calculated results
     //TODO: "I Made it" button with warning if not clicked
-    //TODO: Global flavors
-    //TODO: What can I make from global flavors? Filter out local flavors
-    //TODO: Browse global with intense search
-    //TODO: Global flavors; "Add to My List" / "Remove From My List"
+    //TODO: Global Recipes
+        //TODO: What can I make from global recipes? Filter out local flavors
+        //TODO: Browse global with intense search
+        //TODO: Global flavors; "Add to My List" / "Remove From My List"
     //TODO: Associate pictures with recipes
     //TODO: Warn when token is about to expire
     //TODO: Error messages to Dialog windows
@@ -39,6 +36,7 @@ class LiquidLab extends Component {
     //TODO: Peformance testing: what happens when recipes, inventory, shoppingList get massive?
     //TODO: About/Help pages
     //TODO: Mobile Optimization
+    //TODO: LiquidLab Logo
 
     componentWillMount() {
         if (this.props.inputs.mlToMake.value) {
@@ -105,10 +103,6 @@ class LiquidLab extends Component {
         if (!recipes) {
             displayedRecipes = userRecipes;
         }
-        //TODO: Fix
-        //displayedRecipes = Object.values(displayedRecipes).sort((a,b) => {
-        //    return (a.name.value.toLowerCase() > b.name.value.toLowerCase()) ? 1 : ((b.name.value.toLowerCase() > a.name.value.toLowerCase()) ? -1 : 0)
-        //});
 
         return (
             <div className={classes.LiquidLab}>

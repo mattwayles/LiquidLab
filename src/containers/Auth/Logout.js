@@ -6,6 +6,7 @@ class Logout extends Component {
     componentDidMount() {
         this.props.onClearDbRedux();
         this.props.onClearRecipe();
+        this.props.onClearInventory();
         this.props.onLogout();
     }
 
@@ -18,7 +19,8 @@ const mapDispatchToProps = dispatch => {
     return {
         onLogout: () => dispatch(actions.logout()),
         onClearDbRedux: () => dispatch(actions.clearDbRedux()),
-        onClearRecipe: () => dispatch(actions.clearRecipe())
+        onClearRecipe: () => dispatch(actions.clearRecipe()),
+        onClearInventory: () => dispatch(actions.clearInventory()),
     }
 };
 

@@ -15,7 +15,7 @@ export const auth = (email, password, register, weights) => {
             returnSecureToken: true
         };
 
-        //TODO: Remove key
+        //TODO: Remove key if submitting to public version control
         let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU";
         if (!register) {
             url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU";
@@ -35,7 +35,7 @@ export const auth = (email, password, register, weights) => {
                 dispatch(authSuccess(response.data.idToken, response.data.localId));
                 dispatch(checkAuthTimeout(response.data.expiresIn));
             }).catch(error => {
-                dispatch(authFailed(ErrorMessage(error.response.data.error.message)));
+                dispatch(authFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
 

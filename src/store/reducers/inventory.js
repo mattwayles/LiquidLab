@@ -22,6 +22,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.GET_USER_SHOPPING_LIST_SUCCESS: return updateObject(state, { cutoff: action.cutoff ? action.cutoff : initialState.cutoff,
             shoppingList: action.shoppingList, loading: false });
         case actionTypes.GET_USER_SHOPPING_LIST_FAILED: return updateObject(state, { error: action.error, loading: false });
+        case actionTypes.CLEAR_INVENTORY_REDUX: return updateObject(state, initialState);
         default: return {...state}
     }
 };

@@ -33,7 +33,6 @@ const initialState = {
         notes: {value: '', touched: false}
     },
     weights: {
-        //TODO: Remove hard-coded weights
         nicStrength: 100,
         nicBasePg: 0,
         nicBaseVg: 100,

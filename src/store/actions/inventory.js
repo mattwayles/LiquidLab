@@ -21,3 +21,9 @@ export const modifyFlavorRecipeCountRedux = (inventory) => {
         inventory
     }
 };
+
+export const clearInventory = () => {
+    return {
+        type: actionTypes.CLEAR_INVENTORY_REDUX
+    }
+}

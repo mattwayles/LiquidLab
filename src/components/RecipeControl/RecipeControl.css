@@ -12,6 +12,7 @@
 }
 
 .InputOptionVen, .InputOptionFlavor {
+    box-shadow: 4px 4px 5px grey;
     border: 1px solid black;
     border-radius: 5px;
     background-color: #fff;

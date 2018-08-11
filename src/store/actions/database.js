@@ -18,7 +18,7 @@ export const createDatabaseUser = (email, userId, token, weights) => {
                 dispatch(setDbWeights(token, response.data.name, weights));
                 dispatch(createDbUserSuccess(response.data.name));
             }).catch(error => {
-                dispatch(createDbUserFailed(ErrorMessage(error.response.data.error.message)));
+                dispatch(createDbUserFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
     };
 };
@@ -61,7 +61,7 @@ export const getDatabaseUser = (userId, token) => {
                 dispatch(getUserInventory(token, dbEntryId));
                 dispatch(getUserShoppingList(token, dbEntryId));
             }).catch(error => {
-            dispatch(getDbUserFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(getDbUserFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
     };
 };
@@ -105,7 +105,7 @@ export const saveRecipe = (token, dbEntryId, inventory, recipe) => {
                 dispatch(getUserRecipes(token, dbEntryId));
                 dispatch(selectUserRecipe(response.data.name, recipe));
             }).catch(error => {
-            dispatch(saveRecipeFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(saveRecipeFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
 
@@ -165,7 +165,7 @@ export const updateRecipe = (token, dbEntryId, key, recipe, inventory, original)
                 dispatch(updateRecipeSuccess(successMessage));
                 dispatch(getUserRecipes(token, dbEntryId));
             }).catch(error => {
-            dispatch(updateRecipeFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(updateRecipeFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
 
@@ -211,7 +211,7 @@ export const deleteRecipe = (token, dbEntryId, key, name, batch, flavors, invent
                 dispatch(clearRecipe());
                 dispatch(getUserRecipes(token, dbEntryId));
             }).catch(error => {
-            dispatch(deleteRecipeFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(deleteRecipeFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
 
@@ -253,7 +253,7 @@ export const setDbWeights = (token, dbEntryId, weights) => {
                 dispatch(setWeightsRedux(weights));
                 dispatch(setDbWeightsSuccess(successMessage));
             }).catch(error => {
-            dispatch(setDbWeightsFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(setDbWeightsFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
 
 
@@ -293,7 +293,7 @@ export const getDatabaseWeights = (token, dbEntryId) => {
                 dispatch(setWeightsRedux(response.data));
                 dispatch(getDatabaseWeightsSuccess());
             }).catch(error => {
-            dispatch(getDatabaseWeightsFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(getDatabaseWeightsFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
 
@@ -332,8 +332,7 @@ export const getUserRecipes = (token, dbEntryId) => {
             .then(response => {
                 dispatch(getUserRecipesSuccess(response.data));
             }).catch(error => {
-            dispatch(getUserRecipesFailed(ErrorMessage(error.response.data.error.message)));
-
+                dispatch(getUserRecipesFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
 
 
@@ -386,7 +385,7 @@ export const saveFlavorData = (token, dbEntryId, inventory) => {
                 dispatch(saveFlavorDataRedux(inventory));
                 dispatch(saveFlavorDataSuccess(successMessage));
             }).catch(error => {
-            dispatch(saveFlavorDataFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(saveFlavorDataFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
     }
 };
@@ -424,7 +423,7 @@ export const saveShoppingList = (token, dbEntryId, cutoff, shoppingList) => {
                 dispatch(saveShoppingListRedux(cutoff, shoppingList));
                 dispatch(saveShoppingListSuccess(successMessage));
             }).catch(error => {
-            dispatch(saveShoppingListFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(saveShoppingListFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
 
 
@@ -466,7 +465,7 @@ export const getUserInventory = (token, dbEntryId) => {
                 }
                 dispatch(getUserInventorySuccess(response.data));
             }).catch(error => {
-            dispatch(getUserInventoryFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(getUserInventoryFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
 
@@ -509,7 +508,7 @@ export const getUserShoppingList = (token, dbEntryId) => {
                 }
                 dispatch(getUserShoppingListSuccess(response.data.cutoff, response.data.flavors));
             }).catch(error => {
-            dispatch(getUserShoppingListFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(getUserShoppingListFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
 
@@ -562,7 +561,7 @@ export const modifyFlavorRecipeCount = (token, dbEntryId, flavors, inventory, di
                 dispatch(modifyFlavorRecipeCountRedux(inventory));
                 dispatch(modifyFlavorRecipeCountSuccess());
             }).catch(error => {
-            dispatch(modifyFlavorRecipeCountFailed(ErrorMessage(error.response.data.error.message)));
+            dispatch(modifyFlavorRecipeCountFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
 

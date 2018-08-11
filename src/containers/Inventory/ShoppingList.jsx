@@ -39,12 +39,13 @@ class ShoppingList extends React.Component {
                 this.setState({edit: {...this.state.edit, cell: 'name'}})
             }
             else if (this.state.edit.cell === 'name') {
-                if (this.state.edit.row + 1 > this.state.shoppingList.length - 1) {
+                let index = this.state.shoppingList.indexOf(row);
+                if (index + 1 >= this.state.shoppingList.length) {
                     this.handleAdd();
                     this.setState({ edit: {row: createNextId(this.state.shoppingList), cell: "vendor"}})
                 }
                 else {
-                    this.setState({edit: {row: getNextId(this.state.shoppingList, this.state.edit.row), cell: "vendor"}})
+                    this.setState({edit: {row: index + 1, cell: "vendor"}})
                 }
             }
         }
@@ -150,12 +151,12 @@ class ShoppingList extends React.Component {
                         <TableBody>
                             {shoppingList.map(flav => {
                                 return <TableRow style={{height: '10px'}} key={flav.id}>
-                                        {!flav.auto && edit.row === flav.id && edit.cell === "vendor" ?
+                                        {!flav.auto && edit.row === this.state.shoppingList.indexOf(flav) && edit.cell === "vendor" ?
                                             <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                               blur={this.handleEditFinish} paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                               autoFocus={true} classes={classes.Input} focus={(e) => this.handleFocus(e)} value={flav.vendor} maxLength="4"/></TableCell>
                                             : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
-                                    {!flav.auto && edit.row === flav.id && edit.cell === "name" ?
+                                    {!flav.auto && edit.row === this.state.shoppingList.indexOf(flav) && edit.cell === "name" ?
                                         <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'name')}
                                                           blur={this.handleEditFinish} paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                           autoFocus={true} classes={classes.NameInput} focus={(e) => this.handleFocus(e)} value={flav.name} /></TableCell>

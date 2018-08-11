@@ -192,8 +192,12 @@ const getUserRecipesStart = (state) => {
 };
 
 const getUserRecipesSuccess = (state, action) => {
+    let recipes = Object.values(action.recipes).sort((a,b) => {
+        return (a.name.value.toLowerCase() > b.name.value.toLowerCase()) ? 1 :
+            ((b.name.value.toLowerCase() > a.name.value.toLowerCase()) ? -1 : 0)
+    });
     return updateObject(state, {
-        userRecipes: action.recipes,
+        userRecipes: recipes,
         error: null,
         loading: false });
 };

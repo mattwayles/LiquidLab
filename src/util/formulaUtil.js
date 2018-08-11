@@ -1,4 +1,4 @@
-import {compareFlavors} from "./shared";
+import {compareFlavors, createNextId} from "./shared";
 
 export const round = (formula) => {
     return Math.round((formula) * 100) /100;
@@ -141,39 +141,48 @@ export const duplicateRecipe = (name, batch, recipes) => {
     return false;
 };
 
-export const setInvalidRecipes = (recipes, inputs, weights, inventory, mlToMake) => {
-    let filteredRecipes = {...recipes};
-
-    for (let r in recipes) {
-        let recipe = recipes[r];
-        //For each flavor in recipe
-        for (let f in recipe.flavors) {
-            const flavor = setInvalidFlavor(recipe.flavors[f], inputs, weights, inventory, mlToMake);
-            if (!flavor.valid) {
-                recipe = {...recipe, invalid: true, flavors: [...recipe.flavors, flavor]};
+export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) => {
+    let nonInventoriedFlavors = [...nonInventory];
+    if (nonInventoriedFlavors.length === 0) {
+        for (let f in flavors) {
+            let found = false;
+            for (let i in inventory) {
+                if (compareFlavors(flavors[f], inventory[i])) {
+                    found = true;
+                }
             }
-            else {
-                recipe = {...recipe, flavors: [...recipe.flavors, flavor]}
+            if (!found && flavors[f].flavor && flavors[f].flavor.value !== "") {
+                nonInventoriedFlavors.push(flavors[f]);
             }
-            filteredRecipes = {...filteredRecipes, [r]: recipe};
         }
     }
-    return filteredRecipes;
+    return nonInventoriedFlavors;
 };
 
-export const setInvalidFlavor = (flavor, inputs, weights, inventory, mlToMake) => {
-    let mlRequired = calculateFlavorResults({...inputs, mlToMake: {value: mlToMake}}, weights, flavor).ml;
-    let mlInventory = 0;
-    for (let i in inventory) {
-        if(compareFlavors(flavor, inventory[i])) {
-            mlInventory = inventory[i].amount;
-        }
+export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, flavors, inputs, userRecipes, recipeKey, token, dbEntryId,
+                                   error, saveFlavorData, updateRecipe, saveRecipe) => {
+    let inventory = [...inventoryProps];
+    for (let f in nonInventoriedFlavors) {
+        inventory.push({amount: 0, id: createNextId([...inventory]), name: nonInventoriedFlavors[f].flavor.value,
+            vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0})
     }
-
-    if (parseFloat(mlRequired.toString()) > parseFloat(mlInventory.toString())) {
-       return {...flavor, valid: false};
+    if (recipeKey) {
+        saveFlavorData(token, dbEntryId, inventory);
+        updateRecipe(token, dbEntryId, recipeKey,
+            {...inputs, flavors: [...flavors]
+            }, inventory, userRecipes[recipeKey]);
     }
     else {
-        return {...flavor, valid: true};
+        if (duplicateRecipe(inputs.name.value, inputs.batch.value, userRecipes)) {
+            const nameBatch = inputs.batch.value ? inputs.name.value + " [" + inputs.batch.value + "]" : inputs.name.value;
+            error("The recipe " + nameBatch + " already exists in the database.");
+        }
+        else {
+            saveFlavorData(token, dbEntryId, inventory);
+            saveRecipe(token, dbEntryId, inventory, {
+                ...inputs,
+                flavors: [...flavors]
+            });
+        }
     }
 };

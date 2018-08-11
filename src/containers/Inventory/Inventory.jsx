@@ -9,7 +9,7 @@ import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
-import { createNextId, getNextId } from "../../util/shared";
+import { createNextId } from "../../util/shared";
 import {sortTable, userInput} from "../../util/inventoryUtil";
 
 class Inventory extends React.Component {
@@ -46,12 +46,13 @@ class Inventory extends React.Component {
                 this.setState({edit: {...this.state.edit, cell: 'amount'}})
             }
             else if (this.state.edit.cell === 'amount') {
-                if (this.state.edit.row + 1 > this.state.flavors.length) {
+                let index = this.state.flavors.indexOf(row);
+                if (index + 1 >= this.state.flavors.length) {
                     this.handleAdd();
                     this.setState({ edit: {row: createNextId(this.state.flavors), cell: "vendor"}})
                 }
                 else {
-                    this.setState({edit: {row: getNextId(this.state.flavors, this.state.edit.row), cell: "vendor"}})
+                    this.setState({edit: {row: index + 1, cell: "vendor"}})
                 }
             }
         }
@@ -74,7 +75,7 @@ class Inventory extends React.Component {
 
 
     handleEditBegin = (e, row, cell) => {
-        this.setState({ edit: {row: row.id, cell: cell}})
+        this.setState({ edit: {row: this.state.flavors.indexOf(row), cell: cell}})
     };
 
     handleEditFinish = () => {
@@ -144,19 +145,19 @@ class Inventory extends React.Component {
                         <TableBody>
                             {flavors.map(flav => {
                                 return <TableRow style={{height: '10px'}} key={flav.id}>
-                                        {edit.row === flav.id && edit.cell === "vendor" ?
+                                        {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "vendor" ?
                                             <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                               paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                               blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
                                                               value={flav.vendor} focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
                                             : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
-                                    {edit.row === flav.id && edit.cell === "name" ?
+                                    {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "name" ?
                                         <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                           paste={(e) => this.handlePaste(e, flav, 'name')}
                                                           blur={this.handleEditFinish} autoFocus={true} classes={classes.NameInput}
                                                           value={flav.name} focus={(e) => this.handleFocus(e)} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
-                                    {edit.row === flav.id && edit.cell === "amount" ?
+                                    {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "amount" ?
                                         <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'amount')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                           paste={(e) => this.handlePaste(e, flav, 'amount')}
                                                           blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}

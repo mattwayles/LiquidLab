@@ -8,13 +8,12 @@ import classes from './Formula.css';
 import {
     calcBaseResults,
     calculateFlavorResults,
-    duplicateRecipe,
+    populateNonInventoriedFlavors, saveOrUpdateRecipe,
     validateBaseResults,
     validateInputs
 } from "../../../util/formulaUtil";
 import Auxil from "../../../hoc/Auxil";
 import ConfirmSaveDialog from "../../../components/Dialog/ConfirmSaveDialog";
-import {compareFlavors, createNextId} from "../../../util/shared";
 
 class Formula extends Component {
     state = {
@@ -36,54 +35,15 @@ class Formula extends Component {
     };
 
     handleSave = () => {
-        const name = this.props.inputs.name.value;
-        const batch = this.props.inputs.batch.value;
-
         this.props.error(null);
 
-        //TODO: Extract to shared method
-        let nonInventoriedFlavors = [...this.state.nonInventory];
-        if (nonInventoriedFlavors.length === 0) {
-            for (let f in this.props.flavors) {
-                let found = false;
-                for (let i in this.props.inventory) {
-                    if (compareFlavors(this.props.flavors[f], this.props.inventory[i])) {
-                        found = true;
-                    }
-                }
-                if (!found && this.props.flavors[f].flavor && this.props.flavors[f].flavor.value !== "") {
-                    nonInventoriedFlavors.push(this.props.flavors[f]);
-                }
-            }
-        }
-
+        let nonInventoriedFlavors = populateNonInventoriedFlavors(this.state.nonInventory, this.props.flavors, this.props.inventory);
         if (!this.state.saveConfirm && nonInventoriedFlavors.length > 0) {
             this.setState({ saveConfirm: true, nonInventory: nonInventoriedFlavors })
         }
         else {
-            let inventory = [...this.props.inventory];
-            for (let f in nonInventoriedFlavors) {
-                inventory.push({amount: 0, id: createNextId(...this.props.flavors), name: nonInventoriedFlavors[f].flavor.value, vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0})
-            }
-            if (this.props.recipeKey) {
-                this.props.onSaveFlavorData(this.props.token, this.props.dbEntryId, inventory);
-                this.props.onUpdateRecipe(this.props.token, this.props.dbEntryId, this.props.recipeKey,
-                    {...this.props.inputs, flavors: [...this.props.flavors]
-                    }, inventory, this.props.userRecipes[this.props.recipeKey]);
-            }
-            else {
-                if (duplicateRecipe(name, batch, this.props.userRecipes)) {
-                    const nameBatch = batch ? name + " [" + batch + "]" : name;
-                    this.props.error("The recipe " + nameBatch + " already exists in the database.");
-                }
-                else {
-                    this.props.onSaveFlavorData(this.props.token, this.props.dbEntryId, inventory);
-                    this.props.onSaveRecipe(this.props.token, this.props.dbEntryId, inventory, {
-                        ...this.props.inputs,
-                        flavors: [...this.props.flavors]
-                    });
-                }
-            }
+            saveOrUpdateRecipe(nonInventoriedFlavors, this.props.inventory, this.props.flavors, this.props.inputs, this.props.userRecipes,
+                this.props.recipeKey, this.props.token, this.props.dbEntryId, this.props.error, this.props.onSaveFlavorData, this.props.onUpdateRecipe, this.props.onSaveRecipe);
             this.setState({ saveConfirm: false, nonInventory: [] });
         }
     };
@@ -128,7 +88,8 @@ class Formula extends Component {
         return (
             <Auxil>
                 <ConfirmSaveDialog open={this.state.saveConfirm} close={this.handleClose} confirm={this.handleSave}
-                                   recipeKey={this.props.recipeKey} inventoryList={this.state.nonInventory} message={"The following flavors will be added to the Inventory:"} />
+                                   recipeKey={this.props.recipeKey} inventoryList={this.state.nonInventory}
+                                   message={"The following flavors will be added to the Inventory:"} />
                 <div className={classes.Formula}>
                     <Target  />
                     <Recipe
