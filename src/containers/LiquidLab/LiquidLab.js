@@ -19,8 +19,7 @@ class LiquidLab extends Component {
     };
 
     //BUGS:
-    //TODO: Drop-down removal when clicked outside of the control
-    //TODO: Actual flavor data in options menu
+    //TODO: Duplicate row ID in inventory
     //TODO: Sorting recipes totally messed up the drop-down retrieval and saving :(
     //TODO: Make percent boxes red if "Each flavor added must contain..." error
     //TODO: Move Recipe logic in render to util

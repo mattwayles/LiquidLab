@@ -15,7 +15,11 @@ class Recipe extends Component {
         col1Controls: [],
         col2Controls: [],
         index: 0,
-        selectedOption: null
+        selectedOption: null,
+        displayVen: {row: -1, display: false},
+        displayName: {row: -1, display: false},
+        filterVen: null,
+        filterName: null
     };
 
     componentWillMount () {
@@ -74,7 +78,21 @@ class Recipe extends Component {
         }
 
         this.props.onDataEntered(updatedFlavors);
-        
+        if (event.target.name === 'ven') {
+            this.setState({ filterVen: event.target.value});
+        }
+        else {
+            this.setState({ filterName: event.target.value})
+        }
+    };
+
+    optionHandler = (e, control) => {
+        if (control === 'ven') {
+            this.setState({ displayVen: {row: e.target.id, display: !this.state.displayVen.display }});
+        }
+        else {
+            this.setState({ displayName: {row: e.target.id, display: !this.state.displayName.display }});
+        }
     };
 
 
@@ -91,7 +109,23 @@ class Recipe extends Component {
 
     render () {
         const { col1Controls, col2Controls } = this.state;
-        const { input, flavors, token, recipeKey, recipes } = this.props;
+        const { input, flavors, token, recipeKey, recipes, inventory } = this.props;
+
+        //TODO: Move to util
+        let venList = [];
+        let flavorList = [];
+        for (let i in inventory) {
+            if (inventory[i].vendor) {
+                if (inventory[i].vendor.includes(this.state.filterVen)) {
+                    venList.push(inventory[i].vendor)
+                }
+            }
+            if (inventory[i].name.includes(this.state.filterName)) {
+                flavorList.push(inventory[i].name);
+            }
+        }
+
+
 
         //TODO: Move to util, this can be optimized!
         let recipeControl1 = null;
@@ -138,7 +172,13 @@ class Recipe extends Component {
                     optionClick={this.optionClickedHandler}
                     plusClicked={this.plusClickedHandler}
                     change={this.flavorDataEnteredHandler}
+                    displayVen={this.state.displayVen}
+                    displayName={this.state.displayName}
+                    focus={this.optionHandler}
+                    blur={this.optionHandler}
                     calculate={this.props.clicked}
+                    venList={venList}
+                    flavorList={flavorList}
                 />;
             return recipeControl1;
         });

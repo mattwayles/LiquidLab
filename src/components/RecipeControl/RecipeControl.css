@@ -16,7 +16,8 @@
     border-radius: 5px;
     background-color: #fff;
     width: 150px;
-    height: 100px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
     position: absolute;
     margin-top: 25px;
 }
