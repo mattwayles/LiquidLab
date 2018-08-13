@@ -98,7 +98,7 @@ export const calculateFlavorResults = (inputs, weights, flavor) => {
 
     return {
         ven: flavor.ven ? flavor.ven.value : '',
-        flavor: flavor.flavor.value,
+        flavor: flavor.flavor ? flavor.flavor.value : '',
         ml: flavorMl,
         grams: flavorGrams,
         percent: flavor.percent ? flavor.percent.value : 0

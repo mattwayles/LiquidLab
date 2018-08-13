@@ -22,9 +22,7 @@ class LiquidLab extends Component {
     };
 
     //BUGS:
-    //TODO: Clicking on a drop-down suggestion no longer works
     //TODO: If a flavor is added to inventory AFTER use in recipe, the "# of Recipes" should still calculate
-    //TODO: Error when entering a flavor percent with no flavor name
     //TODO: When feeling burnt out, comment!
     //TODO: Error notification on main screen
     //TODO: No confirmation window when exiting out w/o any changes made!

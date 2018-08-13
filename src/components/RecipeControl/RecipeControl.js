@@ -18,7 +18,7 @@ const RecipeControl = (props) => {
             <Input autoPopulate={props.values && props.values.flavor && !props.values.flavor.touched && props.values.flavor.value !== ''}
                    id={props.id} value={props.values && props.values.flavor ? props.values.flavor.value : ''} type="text" name='flavor' placeholder="Flavor Name" change={props.change} readOnly={props.readOnly} keyDown={props.keyDown}
                    focus={(e) => props.focus(e, 'name')} blur={(e) => props.blur(e, 'name')} />
-            {parseInt(props.display.name.row,10) === props.id && props.display.name.display && nameNotEmpty ? <InputOptions class={classes.InputOptionFlavor} row={props.id} name="name" keyDown={props.keyDown} mouseDown={props.optionClick} active={props.cursor} options={list} /> : null}
+            {parseInt(props.display.name.row,10) === props.id && props.display.name.display && nameNotEmpty ? <InputOptions class={classes.InputOptionFlavor} row={props.id} name="flavor" keyDown={props.keyDown} mouseDown={props.optionClick} active={props.cursor} options={list} /> : null}
             <Input autoPopulate={props.values && props.values.percent && !props.values.percent.touched && props.values.percent.value !== ''} valid={props.values && props.valid}
                    value={props.values && props.values.percent ? props.values.percent.value : ''} id={props.id} type="number" name='percent' placeholder="0" min="0" maxLength="5" change={props.change} readOnly={props.readOnly} />
             <p>%</p>
