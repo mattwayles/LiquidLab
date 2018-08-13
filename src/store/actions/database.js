@@ -141,7 +141,7 @@ export const saveRecipeFailed = (error) => {
 export const updateRecipe = (token, dbEntryId, key, recipe, inventory, original) => {
     return dispatch => {
         for (let f in recipe.flavors) {
-            const origFlavor = original.flavors[f];
+            const origFlavor = original.flavors ? original.flavors[f] : null;
             const updFlavor = recipe.flavors[f];
 
             if (!origFlavor) {

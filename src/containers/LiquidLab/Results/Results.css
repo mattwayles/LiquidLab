@@ -21,6 +21,22 @@
     font-weight: bold;
 }
 
+.Grams {
+    font-weight: bold;
+    font-size: 1vw;
+}
+
+.Column, .ResultCell {
+    text-align: center;
+}
+
+.ResultsButton {
+    border: 1px solid red;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
 @media (max-width: 1439px) {
     .Results {
         height: 100%;

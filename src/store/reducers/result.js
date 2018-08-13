@@ -29,7 +29,8 @@ const initialState = {
     recipeInfo: {
         notes: null,
         name: null,
-        batch: null
+        batch: null,
+        mlToMake: null
     }
 };
 

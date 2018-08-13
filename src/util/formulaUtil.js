@@ -1,8 +1,4 @@
-import {compareFlavors, createNextId} from "./shared";
-
-export const round = (formula) => {
-    return Math.round((formula) * 100) /100;
-};
+import {compareFlavors, createNextId, round} from "./shared";
 
 export const validateInputs = (inputs, flavors, error) => {
     if (inputs.name.value === "") {
@@ -167,10 +163,16 @@ export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, flavor
             vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0})
     }
     if (recipeKey) {
+        let original = {};
+        for (let r in userRecipes) {
+            if (userRecipes[r].dbKey === recipeKey) {
+                original = userRecipes[r]
+            }
+        }
         saveFlavorData(token, dbEntryId, inventory);
         updateRecipe(token, dbEntryId, recipeKey,
             {...inputs, flavors: [...flavors]
-            }, inventory, userRecipes[recipeKey]);
+            }, inventory, original);
     }
     else {
         if (duplicateRecipe(inputs.name.value, inputs.batch.value, userRecipes)) {

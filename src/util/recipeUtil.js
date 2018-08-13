@@ -81,7 +81,7 @@ export const populateList = (displayOptions, filter, inventory) => {
     return list;
 };
 
-export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, list, cursor, displayOptions,
+export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
     optionClickedHandler, plusClickedHandler, flavorDataEnteredHandler, optionHandler,  keyDownHandler, clicked) => {
     return col1Controls.map(control => {
         if (control.type === 'button') {
@@ -99,16 +99,15 @@ export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, 
         if (recipeKey) {
             let recipe = null;
             for (let r in recipes) {
-                if (r === recipeKey) {
+                if (recipes[r].dbKey === recipeKey) {
                     recipe = recipes[r];
                 }
             }
             if (recipe) {
                 for (let i = 0; i < flavors.length; i++) {
                     if (parseInt(recipe.flavors[i].control, 10) === control.id) {
-                        valid = flavors[i].valid !== false ?
-                            setInvalidFlavor(flavors[i], this.props.input, this.props.weights, this.props.inventory,
-                                this.props.input.mlToMake.value).valid : false;
+                        valid = setInvalidFlavor(flavors[i], input, weights, inventory,
+                            input.mlToMake.value).valid;
                     }
                 }
             }

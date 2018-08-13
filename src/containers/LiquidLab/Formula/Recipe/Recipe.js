@@ -106,15 +106,15 @@ class Recipe extends Component {
 
     render () {
         const { col1Controls, col2Controls, displayOptions, filter, cursor } = this.state;
-        const { input, flavors, token, recipeKey, recipes, inventory } = this.props;
+        const { input, weights, flavors, token, recipeKey, recipes, inventory } = this.props;
 
         const list = populateList(displayOptions, filter, inventory);
 
 
-        const firstRowControls = mapControls(col1Controls, classes, recipeKey, recipes, flavors, list, cursor, displayOptions,
+        const firstRowControls = mapControls(col1Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
             this.optionClickedHandler, this.plusClickedHandler, this.flavorDataEnteredHandler, this.optionHandler,
             (e) => this.keyDownHandler(e, list), this.props.clicked);
-        const secondRowControls = mapControls(col2Controls, classes, recipeKey, recipes, flavors, list, cursor, displayOptions,
+        const secondRowControls = mapControls(col2Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
             this.keyDownHandler, this.optionClickedHandler, this.plusClickedHandler, this.flavorDataEnteredHandler, this.optionHandler, this.props.clicked);
 
 

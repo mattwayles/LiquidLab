@@ -192,7 +192,12 @@ const getUserRecipesStart = (state) => {
 };
 
 const getUserRecipesSuccess = (state, action) => {
-    let recipes = Object.values(action.recipes).sort((a,b) => {
+    let recipes = {...action.recipes}
+    for (let r in recipes) {
+        recipes[r] = {...recipes[r], dbKey: r}
+    }
+
+    recipes = Object.values(recipes).sort((a,b) => {
         return (a.name.value.toLowerCase() > b.name.value.toLowerCase()) ? 1 :
             ((b.name.value.toLowerCase() > a.name.value.toLowerCase()) ? -1 : 0)
     });

@@ -9,7 +9,7 @@ import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
-import { createNextId } from "../../util/shared";
+import {createNextId, round} from "../../util/shared";
 import {sortTable, userInput} from "../../util/inventoryUtil";
 
 class Inventory extends React.Component {
@@ -162,7 +162,7 @@ class Inventory extends React.Component {
                                                           paste={(e) => this.handlePaste(e, flav, 'amount')}
                                                           blur={this.handleEditFinish} autoFocus={true} classes={classes.Input}
                                                           value={flav.amount} type="number" min="0" focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
-                                        : <TableCell  onClick={(e) => this.handleEditBegin(e, flav, "amount")} >{flav.amount}</TableCell>}
+                                        : <TableCell  onClick={(e) => this.handleEditBegin(e, flav, "amount")} >{round(flav.amount)}</TableCell>}
                                         <TableCell >{flav.recipes}</TableCell>
                                     <TableCell>
                                         <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />

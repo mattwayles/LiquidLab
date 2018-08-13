@@ -26,6 +26,7 @@ class Formula extends Component {
     };
 
     handleClear = () => {
+        this.props.clear();
         this.props.onClearRecipe();
     };
 
@@ -74,6 +75,7 @@ class Formula extends Component {
             this.props.onUpdateRecipeInfo('name', this.props.inputs.name );
             this.props.onUpdateRecipeInfo('batch', this.props.inputs.batch );
             this.props.onUpdateRecipeInfo('notes', this.props.inputs.notes );
+            this.props.onUpdateRecipeInfo('mlToMake', this.props.inputs.mlToMake );
 
             //Validate results before display
             return validateBaseResults(baseResults, this.props.onUpdateIngredients, this.props.error);
@@ -113,7 +115,8 @@ const mapStateToProps = state => {
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,
         userRecipes: state.database.userRecipes,
-        inventory: state.inventory.flavors
+        inventory: state.inventory.flavors,
+        results: state.results
     }
 };
 

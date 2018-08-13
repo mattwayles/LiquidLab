@@ -1,4 +1,4 @@
-.Button, .MainButton, .WeightsButton{
+.Button, .MainButton, .WeightsButton, .ResultsButton{
     z-index: 3;
     margin: 2vw auto;
     background-color: var(--accent-color);
@@ -11,6 +11,7 @@
     font-size: 1.2vw;
     padding: 8px;
     font-weight: bold;
+    box-shadow: 1px 1px 8px #888;
 }
 
 
@@ -23,6 +24,12 @@
 .WeightsButton {
     margin-top: 0;
     width: 5vw;
+}
+
+.ResultsButton {
+    width: 100%;
+    margin: 2% auto;
+    font-size: 1vw;
 }
 
 .Button:disabled, .MainButton:disabled, .WeightsButton:disabled {
