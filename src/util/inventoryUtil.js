@@ -1,5 +1,12 @@
-import {createNextId, enforceInputConstraints} from "./shared";
+import {compareFlavors, createNextId, enforceInputConstraints} from "./shared";
 
+/**
+ * Sort the inventory table base on column and direction
+ * @param flavors   The list of inventory flavors
+ * @param column    The column to be sorted
+ * @param sort  The sort direction
+ * @returns {{flavors: (*[]|*), sort: {col: *, asc: boolean}}}
+ */
 export const sortTable = (flavors, column, sort) => {
     let preSort = [...flavors];
     let emptyCell = [];
@@ -58,7 +65,13 @@ export const sortTable = (flavors, column, sort) => {
 
 };
 
-
+/**
+ * Populate the shopping list on mount from low-inventory items
+ * @param shoppingList  The current shopping list
+ * @param flavors   A list of inventory flavors
+ * @param cutoff    The ML cutoff to stop accepting flavors as low-inventory
+ * @returns {*}
+ */
 export const populateShoppingList = (shoppingList, flavors, cutoff) => {
     let list = shoppingList ? [...shoppingList] : [];
     for (let i in flavors) {
@@ -83,6 +96,14 @@ export const duplicateFlavor = (vendor, name, flavors) => {
     return false;
 };
 
+/**
+ * Custom user input handling for inventory Input objects
+ * @param e The user input event
+ * @param row   The row receiving the event
+ * @param control   The control receiving the event
+ * @param list  The flavor/input list
+ * @returns {*[]}
+ */
 export const userInput = (e, row, control, list) => {
     e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
     let data = [...list];
@@ -105,4 +126,26 @@ export const userInput = (e, row, control, list) => {
         }
     }
     return data;
+};
+
+/**
+ * When creating a new inventory item, determine if its included in any existing database recipes
+ * @param newFlavors    The list of new Inventory flavors
+ * @param oldFlavors    The existing Inventory flavors
+ * @param recipes   The user recipes available in Redux
+ * @returns {*}
+ */
+export const detectRecipeInclusion = (newFlavors, oldFlavors, recipes) => {
+    for (let f in newFlavors) {
+        if (oldFlavors.indexOf(newFlavors[f]) === -1) {
+            for (let r in recipes) {
+                for (let rf in recipes[r].flavors) {
+                    if (compareFlavors(recipes[r].flavors[rf], newFlavors[f])) {
+                        newFlavors[f].recipes++;
+                    }
+                }
+            }
+        }
+    }
+    return newFlavors;
 };

@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import Formula from './Formula/Formula';
 import Results from './Results/Results';
-import errorImg from '../../assets/error.png';
 import classes from './LiquidLab.css';
 import * as actions from "../../store/actions";
 import Input from "../../components/ui/Input/Input";
 import {enforceInputConstraints} from "../../util/shared";
 import {setInvalidFlavor, setInvalidRecipes} from "../../util/recipeUtil";
 import {CircularProgress} from "@material-ui/core";
-import ResultsButton from "../../components/ui/Button/ResultsButton";
+import ErrorDialog from "../../components/Dialog/ErrorDialog";
 
 class LiquidLab extends Component {
     state = {
@@ -22,10 +20,6 @@ class LiquidLab extends Component {
     };
 
     //BUGS:
-    //TODO: If a flavor is added to inventory AFTER use in recipe, the "# of Recipes" should still calculate
-    //TODO: When feeling burnt out, comment!
-    //TODO: Error notification on main screen
-    //TODO: No confirmation window when exiting out w/o any changes made!
 
     //FEATURES:
     //TODO: Global Recipes
@@ -34,27 +28,38 @@ class LiquidLab extends Component {
         //TODO: Global flavors; "Add to My List" / "Remove From My List"
     //TODO: Associate pictures with recipes
     //TODO: Add Notes section to Inventory flavors
-    //TODO: Warn when token is about to expire
+    //TODO: Warn when token is support to expire
     //TODO: Add PG, VG, and Nic to the inventory
     //TODO: Error messages to Dialog windows
-    //TODO: Firebase SMTP
+    //TODO: Firebase SMTP (email verification)
+    //TODO: No confirmation window when exiting out w/o any changes made!
     //TODO: Peformance testing: what happens when recipes, inventory, shoppingList get massive?
-    //TODO: About/Help pages
+    //TODO: Support page with About section, Help section, Donate/Contact, and TOC
     //TODO: Mobile Optimization
     //TODO: LiquidLab Logo
 
+
+    /**
+     * Retain the MLToMake value across page visits
+     */
     componentWillMount() {
         if (this.props.inputs.mlToMake.value) {
             this.props.onDataEntered('mlToMake', '', true);
         }
     }
 
+    /**
+     * Redirect to root from Login or Register
+     */
     componentWillUpdate() {
         if (this.props.history.location.pathname === "/login" || this.props.history.location.pathname === "/register") {
             this.props.history.push("/");
         }
     }
 
+    /**
+     * Retain a success message on fade for 4 seconds
+     */
     componentDidUpdate() {
         if (this.props.successMsg) {
             setTimeout(() => {
@@ -63,18 +68,39 @@ class LiquidLab extends Component {
         }
     }
 
+    /**
+     * Display the results page
+     */
+    displayResultsHandler = () => {
+        this.setState({ results: true })
+    };
+
+    /**
+     * Clear the results page
+     */
     handleClearResults = () => {
         this.setState({ results: false });
     };
 
+    /**
+     * Mark a recipe as made, preventing a prompt when the recipe changes
+     * @param recipeMade    Boolean indicating made status
+     */
     handleRecipeMade = (recipeMade) => {
         this.setState({ results: false, navWarn: false, made: recipeMade });
     };
 
+    /**
+     * Set or unset NavWarn, which prompts a user if they're sure they want to navigate away from an unmade recipe
+     */
     handleNavWarn = () => {
         this.setState({results: false, navWarn: !this.state.navWarn });
     };
 
+    /**
+     * Handler user input data
+     * @param event The user input event
+     */
     dataEnteredHandler = (event) => {
         event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
         let valid = event.target.value >= 1;
@@ -98,6 +124,10 @@ class LiquidLab extends Component {
         this.setState({ recipes: filteredRecipes});
     };
 
+    /**
+     * Handler user recipe selection from the recipe drop-down
+     * @param event The recipe selection event
+     */
     recipeSelectHandler(event) {
         if (this.state.results && !this.state.made) {
             this.setState({ navWarn: true });
@@ -114,11 +144,11 @@ class LiquidLab extends Component {
         }
         this.props.onSelectUserRecipe(selectedRecipe.dbKey, selectedRecipe);
     }
-    
-    displayResultsHandler = () => {
-        this.setState({ results: true })
-    };
 
+    /**
+     * Set and display an error
+     * @param error
+     */
     errorHandler = (error) => {
         this.setState({ error: error });
     };
@@ -159,14 +189,14 @@ class LiquidLab extends Component {
                         }) : null}
                     </select>
                 </header>
-                {error ? <p className={classes.Error}><img className={classes.ErrorImg} src={errorImg} alt="!!!" /> {error}</p>
-                    : successMsg ? <p className={classes.Success}>{successMsg}</p> : null}
+                {successMsg ? <p className={classes.Success}>{successMsg}</p> : null}
                 <div className={classes.Views}>
                     <Formula clear={this.handleClearResults} recipes={recipes} displayResults={this.displayResultsHandler} error={this.errorHandler}/>
                     <div className={classes.Results}>
                         {results ? <Results navWarn={navWarn} made={made} navWarnHandler={this.handleNavWarn} madeHandler={this.handleRecipeMade}/> : <p className={classes.Placeholder}>Results</p>}
                     </div>
                 </div>
+                {error ? <ErrorDialog open={!!error} close={() => this.errorHandler(null)} message={error} /> : null}
             </div> 
         ); 
     }

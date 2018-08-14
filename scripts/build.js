@@ -60,7 +60,7 @@ measureFileSizesBeforeBuild(paths.appBuild)
         console.log(
           '\nSearch for the ' +
             chalk.underline(chalk.yellow('keywords')) +
-            ' to learn more about each warning.'
+            ' to learn more support each warning.'
         );
         console.log(
           'To ignore, add ' +

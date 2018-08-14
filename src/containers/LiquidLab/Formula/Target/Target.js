@@ -10,6 +10,11 @@ import classes from './Target.css';
 
 class Target extends Component {
 
+    /**
+     * Handle user input entered into Target components
+     * @param event The user input event
+     * @param control   The control receiving the user input
+     */
     dataEnteredHandler = (event, control) => {
         event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
 

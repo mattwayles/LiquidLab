@@ -6,6 +6,9 @@ import Auxil from '../../hoc/Auxil';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
 
+/**
+ * Controls the higher-order layout, including the toolbar, sdiedrawer, and main components
+ */
 class Layout extends Component {
     state = {
         sideDrawerOpen: false

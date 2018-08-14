@@ -2,18 +2,26 @@ import React from 'react';
 
 import classes from './Input.css';
 
+/**
+ * A standard LiquidLab Input object
+ * @param props
+ * @returns {*}
+ */
 const input = (props) => {
+    //All inputs receive InputElement styling
     let inputElement = null;
     const inputClasses = [classes.InputElement];
 
+    //Specialized styling
     if (props.classes) {
         inputClasses.push(props.classes);
     }
 
+    //Auto-populated styling
     if (props.autoPopulate && props.valid !== false) {
         inputClasses.push(classes.AutoPopulated);
     }
-    else if (props.valid === false) {
+    else if (props.valid === false) { //Invalid styling
         inputClasses.push(classes.Invalid);
     }
 

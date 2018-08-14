@@ -1,5 +1,12 @@
 import {compareFlavors, createNextId, round} from "./shared";
 
+/**
+ * Ensure all required Input objects are populated with valid values before attempting to calculate
+ * @param inputs    The user inputs
+ * @param flavors   The list of user-input flavors
+ * @param error The error to return
+ * @returns {boolean}   Boolean indicating the validity of all input values
+ */
 export const validateInputs = (inputs, flavors, error) => {
     if (inputs.name.value === "") {
         error("Please enter a recipe name");
@@ -30,6 +37,12 @@ export const validateInputs = (inputs, flavors, error) => {
     return true;
 };
 
+/**
+ * Determine whether any user input has occurred in the main Input objects
+ * @param inputs    The user inputs
+ * @param flavors   The user-supplied flavors
+ * @returns {boolean}   Boolean indicating formula emptiness
+ */
 export const formulaIsEmpty = (inputs, flavors) => {
     for (let prop in inputs) {
         if (inputs[prop].value !== '') {
@@ -53,6 +66,12 @@ export const formulaIsEmpty = (inputs, flavors) => {
     return true;
 };
 
+/**
+ * Map user inputs to variables
+ * @param inputs    User inputs
+ * @param weights   Ingredient weights
+ * @returns An object containing all inputs, ready for calculation
+ */
 export const mapInputs = (inputs, weights) => {
     return {
         mlToMake: parseInt(inputs.mlToMake.value, 10),
@@ -69,6 +88,13 @@ export const mapInputs = (inputs, weights) => {
     }
 };
 
+/**
+ * Calculate the recipe results for base (target) ingredients
+ * @param inputs    The user inputs for formula ingredients
+ * @param weights   The ingredient weights
+ * @param flavorMlTotal The total flavor ML expected in the recipe
+ * @returns The base ingredient results
+ */
 export const calcBaseResults = (inputs, weights, flavorMlTotal) => {
     const input = mapInputs(inputs, weights);
     const targetNic = round(input.mlToMake * input.inputNic);
@@ -91,6 +117,13 @@ export const calcBaseResults = (inputs, weights, flavorMlTotal) => {
     }
 };
 
+/**
+ * Calculate recipe results for flavor information
+ * @param inputs    The user inputs for formula flavors
+ * @param weights   The flavor weights
+ * @param flavor    The current flavor being calculated
+ * @returns     Flavor recipe results
+ */
 export const calculateFlavorResults = (inputs, weights, flavor) => {
     const input = mapInputs(inputs, weights);
     const flavorMl = flavor.percent ? round(input.mlToMake * flavor.percent.value / 100) : 0;
@@ -105,6 +138,13 @@ export const calculateFlavorResults = (inputs, weights, flavor) => {
     }
 };
 
+/**
+ * Ensure all results are valid, positive nubmers before displaying them
+ * @param baseResults   The results of the base ingredients
+ * @param update    The updateRecipe function
+ * @param error The error function
+ * @returns {boolean}   Boolean determining the validity of all results
+ */
 export const validateBaseResults = (baseResults, update, error) => {
     if (baseResults.pgPercent >= 0) {
         update('pg', {ml: baseResults.pgMl, grams: baseResults.pgGrams, percent: baseResults.pgPercent})
@@ -127,6 +167,13 @@ export const validateBaseResults = (baseResults, update, error) => {
         return true;
 };
 
+/**
+ * Verify that a recipe does not already exist in the database
+ * @param name  The recipe name
+ * @param batch The reipce batch
+ * @param recipes   The list of recipes available in Redux
+ * @returns {boolean}   Boolean determining duplication
+ */
 export const duplicateRecipe = (name, batch, recipes) => {
     for (let i in recipes) {
         if (recipes[i].name && recipes[i].name.value === name
@@ -137,6 +184,13 @@ export const duplicateRecipe = (name, batch, recipes) => {
     return false;
 };
 
+/**
+ * When saving a recipe, determine the non-inventoried flavors
+ * @param nonInventory  The list of non-inventoried flavors present in the recipe
+ * @param flavors   The total flavor list
+ * @param inventory The flavor inventory
+ * @returns {*[]}
+ */
 export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) => {
     let nonInventoriedFlavors = [...nonInventory];
     if (nonInventoriedFlavors.length === 0) {
@@ -155,6 +209,21 @@ export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) 
     return nonInventoriedFlavors;
 };
 
+/**
+ * Save or update a recipe, also verifying successful inventory update
+ * @param nonInventoriedFlavors The list of non-inventoried flavors in the recipe
+ * @param inventoryProps    The flavors included in the Redux inventory
+ * @param flavors   The flavors in the recipe
+ * @param inputs    The user inputs in the recipe
+ * @param userRecipes   All user recipes available in Redux
+ * @param recipeKey The recipe database key
+ * @param token The user database token
+ * @param dbEntryId The user database entry ID
+ * @param error The error function
+ * @param saveFlavorData    The saveFlavorData database function
+ * @param updateRecipe  The updateRecipe database function
+ * @param saveRecipe    The saveRecipe database function
+ */
 export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, flavors, inputs, userRecipes, recipeKey, token, dbEntryId,
                                    error, saveFlavorData, updateRecipe, saveRecipe) => {
     let inventory = [...inventoryProps];

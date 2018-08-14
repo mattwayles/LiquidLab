@@ -6,8 +6,7 @@ import classes from './NavigationItems.css';
 
 const navigationItems = (props) => (
     <ul className={classes.NavigationItems}>
-        <NavigationItem link="/Help">Help</NavigationItem>
-        <NavigationItem link="/about">About</NavigationItem>
+        <NavigationItem link="/support">Support</NavigationItem>
         <NavigationItem link="/weights">Weights</NavigationItem>
         {props.isAuthenticated
             ? <Auxil>

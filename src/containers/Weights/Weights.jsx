@@ -7,6 +7,9 @@ import Input from "../../components/ui/Input/Input";
 import WeightsButton from "../../components/ui/Button/WeightsButton";
 import {enforceInputConstraints} from "../../util/shared";
 
+/**
+ * Display and set the ingredient Weights
+ */
 class Weights extends React.Component {
     state = {
         pgWeight: '',
@@ -18,15 +21,26 @@ class Weights extends React.Component {
         nicWeight: ''
     };
 
+    /**
+     * Handler for user input in this page's controls
+     * @param e The user input event
+     * @param control   The control receiving the event
+     */
     handleUserInput = (e, control) => {
         e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
         this.setState({ [control]: e.target.value});
     };
 
+    /**
+     * When this page is closed, return to the main page
+     */
     handleClose = () => {
         this.props.history.push("/")
     };
 
+    /**
+     * Set the new weights to redux and database
+     */
     handleSetWeights = () => {
             let weights = null;
             for (let stateProp in this.state) {

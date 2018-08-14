@@ -1,6 +1,11 @@
 import React from 'react';
 import classes from './InputOptions.css';
 
+/**
+ * Input options drop-down when text is entered in LiquidLab flavor fields
+ * @param props
+ * @returns {*}
+ */
 const inputOptions = (props) => {
     return (
         <div className={props.class}>

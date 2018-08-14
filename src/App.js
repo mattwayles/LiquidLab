@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import * as actions from './store/actions/index';
 import Layout from './containers/Layout/Layout';
-import About from './components/About/About';
+import About from './components/Support/Support';
 import Logout from './containers/Auth/Logout';
 import LiquidLab from './containers/LiquidLab/LiquidLab';
 import './App.css';
@@ -23,6 +23,8 @@ class App extends Component {
     
     
   render() {
+
+        //Set the accessible routes based on authentication status
       let routes =
           <Switch>
               <Route path="/register" component={Register} />
@@ -36,7 +38,7 @@ class App extends Component {
       if (this.props.isAuthenticated) {
           routes =
               <Switch>
-                  <Route path="/about" component={About} />
+                  <Route path="/support" component={About} />
                   <Route path="/inventory" component={Inventory} />
                   <Route path="/shopping" component={ShoppingList} />
                   <Route path="/weights" component={Weights} />

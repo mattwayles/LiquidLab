@@ -2,6 +2,11 @@ import React from 'react';
 
 import './BatchSelect.css';
 
+/**
+ * Provide a list of batch options to select from
+ * @param props A container for the chosen value to be passed
+ * @returns {*}
+ */
 const batchSelect = (props) => (
     <select value={props.value} onChange={props.changed}>
         <option value=""> </option>

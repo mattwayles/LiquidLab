@@ -1,4 +1,4 @@
-.About {
+.Support {
     margin: 100px auto;
     width: 80%;
     box-shadow: 2px 2px 5px #ccc;
@@ -9,57 +9,57 @@
     background-color: white;
 }
 
-.About header {
+.Support header {
     font-size: 3em;
     font-family: inherit;
     font-weight: bold;
     color: var(--main-color);
 }
 
-.About h1 {
+.Support h1 {
     color: var(--accent-color);
 }
 
-.About h3 {
+.Support h3 {
     padding: 10px 50px;
 }
 
-.About p {
+.Support p {
     padding: 10px 50px;
 }
 
-.About ul{
+.Support ul{
     color: var(--main-color);
     padding: 10px 100px;
 }
 
 @media (max-width: 500px) {
-    .About {
+    .Support {
         margin: 75px auto;
         width: 90%;
     }
 
-    .About header {
+    .Support header {
         text-align: center;
         font-size: 1.5em;
     }
 
-    .About h3 {
+    .Support h3 {
         text-align: center;
         padding: 5px;
         font-size: 0.85em;
     }
-    .About h1 {
+    .Support h1 {
         text-align: center;
         font-size: 1.1em;
     }
 
-    .About p {
+    .Support p {
         padding: 5px;
         font-size: .75em;
     }
 
-    .About ul {
+    .Support ul {
         padding: 0 0 0 25px;
         font-size: .6em;
     }

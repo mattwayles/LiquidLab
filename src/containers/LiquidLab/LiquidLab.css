@@ -84,10 +84,6 @@
     animation-duration: 4s;
 }
 
-.ErrorImg {
-    width: 1.5vw;
-}
-
 @keyframes success {
     from {opacity: 1;}
     to {opacity: 0;}

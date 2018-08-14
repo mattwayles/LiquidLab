@@ -21,6 +21,9 @@ class Recipe extends Component {
         cursor: -1
     };
 
+    /**
+     * Set flavor controls on mount
+     */
     componentWillMount () {
         let col1ControlArray = [...this.state.col1Controls];
         let controlId = this.state.index;
@@ -36,7 +39,9 @@ class Recipe extends Component {
         this.setState({ col1Controls: col1ControlArray, col2Controls: col2ControlArray, index: controlId });
     }
 
-
+    /**
+     * Handler for the + button, which displays an extra flavor control
+     */
     plusClickedHandler = () => {
         let col2ControlArray = [...this.state.col2Controls];
 
@@ -51,6 +56,10 @@ class Recipe extends Component {
         }
     };
 
+    /**
+     * Handle user input of flavor data
+     * @param event The user input event
+     */
     flavorDataEnteredHandler = (event) => {
         event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
 
@@ -63,6 +72,11 @@ class Recipe extends Component {
             : this.setState({ filter: {name: event.target.value}})
     };
 
+    /**
+     * Handle user selection from an InputOptions drop-down
+     * @param e The selection event
+     * @param control   The input receivjng the event
+     */
     optionHandler = (e, control) => {
             this.setState({
                 displayOptions: {
@@ -72,7 +86,13 @@ class Recipe extends Component {
             });
     };
 
-
+    /**
+     * Handle user click on an InputOptions drop-down selection
+     * @param e The selection event
+     * @param id    The control ID (index)
+     * @param control   The control receiving the event
+     * @param selection The user InputOption selection
+     */
     optionClickedHandler = (e, id, control, selection) => {
         let flavors = [...this.props.flavors];
         for (let f in flavors) {
@@ -83,6 +103,11 @@ class Recipe extends Component {
         this.props.onDataEntered(flavors);
     };
 
+    /**
+     * Handle keyDown events in InputOption the component
+     * @param e The keyDown event
+     * @param list  The list of InputOption options
+     */
     keyDownHandler = (e, list) => {
         if (e.keyCode === 40 && this.state.cursor < list.length - 1) {
             this.setState({ cursor: this.state.cursor + 1});
@@ -110,7 +135,7 @@ class Recipe extends Component {
 
         const list = populateList(displayOptions, filter, inventory);
 
-
+        //Map column controls
         const firstRowControls = mapControls(col1Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
             this.optionClickedHandler, this.plusClickedHandler, this.flavorDataEnteredHandler, this.optionHandler,
             (e) => this.keyDownHandler(e, list), this.props.clicked);

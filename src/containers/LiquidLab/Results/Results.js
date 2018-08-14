@@ -14,6 +14,9 @@ class Results extends Component {
         confirmDialog: false,
     };
 
+    /**
+     * Register a "leave without saving" alert block on mount
+     */
     componentDidMount() {
         window.addEventListener('beforeunload',(e) => {
             if (!this.props.made) {
@@ -24,14 +27,23 @@ class Results extends Component {
         });
     }
 
+    /**
+     * Unregister the alert block on unmount
+     */
     componentWillUnmount() {
         window.removeEventListener('beforeunload', null);
     }
 
+    /**
+     * Open the 'confirm recipe made' dialog
+     */
     recipeCompletedHandler = () => {
         this.setState({ confirmDialog: !this.state.confirmDialog });
     };
 
+    /**
+     * Confirm a made recipe and subtract values from inventory
+     */
     recipeCompletedConfirm = () => {
         let inventoryFlavors = [...this.props.inventory];
         let resultFlavors = this.props.results.ingredients.flavors;
@@ -57,6 +69,7 @@ class Results extends Component {
 
         let displayedResults = [];
 
+        //Caclulate and populate Results
         Object.keys(results.ingredients).map((item, index) => {
             if (item === 'flavors') {
                 return results.ingredients.flavors.map((flavor, flavorIndex) => {

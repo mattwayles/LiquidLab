@@ -21,20 +21,32 @@ class Formula extends Component {
         nonInventory: []
     };
 
+    /**
+     * Handler for closing the Save Confirm dialog
+     */
     handleClose = () => {
         this.setState({ saveConfirm: false, nonInventory: [] });
     };
 
+    /**
+     * Handler for user click of the 'Clear' button, clearing all user input
+     */
     handleClear = () => {
         this.props.clear();
         this.props.onClearRecipe();
     };
 
+    /**
+     * Handler for user click of the 'Delete' button, to delete a recipe from redux and database
+     */
     handleDelete = () => {
         this.props.onDeleteRecipe(this.props.token, this.props.dbEntryId,
             this.props.recipeKey, this.props.inputs.name, this.props.inputs.batch, this.props.flavors, this.props.inventory);
     };
 
+    /**
+     * Handler for user click of the 'Save' button, to save a recipe to redux and database
+     */
     handleSave = () => {
         this.props.error(null);
 
@@ -49,6 +61,10 @@ class Formula extends Component {
         }
     };
 
+    /**
+     * Calculate recipe Results using input and weights
+     * @returns {boolean}
+     */
     handleCalculate = () => {
         //Clear any previous calculation errors
         this.props.error(null);

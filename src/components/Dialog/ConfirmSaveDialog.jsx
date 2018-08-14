@@ -10,7 +10,7 @@ import {
 
 
 /**
- * Produce a dialog bog allowing user input and execute an operation when a button is pressed.
+ * Produce a dialog box and execute an operation when a button is pressed.
  */
 const confirmDialog = (props) => (
         <Dialog open={props.open} onClose={props.close} aria-labelledby="form-dialog-title">

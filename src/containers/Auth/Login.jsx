@@ -8,17 +8,27 @@ import Spinner from "../../components/ui/Spinner/Spinner";
 import Auxil from "../../hoc/Auxil";
 import LoginButton from "../../components/ui/Button/LoginButton";
 
-
+/**
+ * Login Container
+ */
 class Login extends React.Component {
     state = {
         email: "",
         password: ""
     };
 
+    /**
+     * Update state when user input is entered
+     * @param e The user input event
+     * @param control   The container control receiving the input
+     */
     handleUserInput = (e, control) => {
         this.setState({ [control]: e.target.value});
     };
 
+    /**
+     * Handler for user press of the Submit button
+     */
     handleSubmit = () => {
         this.props.onAuth(this.state.email, this.state.password);
     };

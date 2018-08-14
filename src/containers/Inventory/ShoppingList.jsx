@@ -9,7 +9,7 @@ import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
-import {enforceInputConstraints, createNextId, getNextId} from "../../util/shared";
+import {enforceInputConstraints, createNextId} from "../../util/shared";
 import {populateShoppingList, sortTable, userInput} from "../../util/inventoryUtil";
 
 class ShoppingList extends React.Component {
@@ -22,16 +22,27 @@ class ShoppingList extends React.Component {
         sort: {col: "name", asc: true}
     };
 
+    /**
+     * When opening shopping list, populate with all low-inventory items
+     */
     componentWillMount() {
         let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.flavors, this.props.cutoff);
         this.setState({ cutoff: this.props.cutoff, shoppingList: shoppingList });
     }
 
+    /**
+     * When closing the shopping list, return to the main page
+     */
     handleClose = () => {
         this.props.history.push("/")
     };
 
-
+    /**
+     * Handler for when a key is pressed in an Shopping List Input object
+     * @param event The keyDown event
+     * @param row   The row of the control receiving the event
+     * @param control   The control receiving the event
+     */
     handleKeyDown = (event, row, control) => {
         if (event.keyCode === 9 && this.state.edit) {
             event.preventDefault();
@@ -55,6 +66,12 @@ class ShoppingList extends React.Component {
         }
     };
 
+    /**
+     * Handler for pasting data into an Shopping List Input object
+     * @param e The paste event
+     * @param row   The row of the control receiving the event
+     * @param control   The control receiving the event
+     */
     handlePaste = (e, row, control) => {
         let data = [...this.state.shoppingList];
         for (let flavor in data) {
@@ -66,28 +83,55 @@ class ShoppingList extends React.Component {
         this.setState({ shoppingList: data })
     };
 
+    /**
+     * Handler for when a component comes into focus
+     * @param event The focus event
+     */
     handleFocus = (event) => {
         event.target.select();
     };
 
+    /**
+     * When a shopping list component is clicked on, open an editable Input object
+     * @param e The click event
+     * @param row   The row of the component receiving the click event
+     * @param cell  The component receiving the click event
+     */
     handleEditBegin = (e, row, cell) => {
         this.setState({ edit: {row: row.id, cell: cell}})
     };
-    
+
+    /**
+     * Handler for user entry in the 'Cutoff' Input component
+     * @param e The user input event
+     */
     handleCutoffInput = (e) => {
         e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
         let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.flavors, e.target.value);
         this.setState({ cutoff: e.target.value, shoppingList: shoppingList});
     };
 
-    handleEditFinish = () => {
+    /**
+     * Set the new inventory value to state once an Input object is blurred
+     */
+    handleBlur = () => {
         this.setState({ edit: {} })
     };
 
+    /**
+     * Open the "Are you sure you want to delete" window
+     * @param e The delete event
+     * @param row   The row of the object being deleted
+     */
     handleDelete = (e, row) => {
         this.setState({ deleteDialog: !this.state.deleteDialog, deleteRow: row });
     };
 
+    /**
+     * Confirm deletion of a shopping list item
+     * @param e The delete event
+     * @param row   The row being deleted
+     */
     handleDeleteConfirm = (e, row) => {
         let data = [...this.state.shoppingList];
         for (let flavor in data) {
@@ -98,12 +142,18 @@ class ShoppingList extends React.Component {
         this.setState({ shoppingList: data, deleteDialog: false })
     };
 
+    /**
+     * Handler for adding a new Shopping List item
+     */
     handleAdd = () => {
         let data = [...this.state.shoppingList];
         data.push({id: createNextId(data), vendor: '', name:'New Flavor'});
         this.setState({shoppingList: data});
     };
 
+    /**
+     * Handler for saving the shopping list to the database
+     */
     handleSaveShoppingList = () => {
         let shoppingList = [];
         for (let i in this.state.shoppingList) {
@@ -115,6 +165,11 @@ class ShoppingList extends React.Component {
         this.props.history.push("/");
     };
 
+    /**
+     * Sort the list by column click
+     * @param e The column click event
+     * @param column    The column to be sorted
+     */
     handleTableSort = (e, column) => {
         const sortedTable = sortTable(this.state.shoppingList, column, this.state.sort);
         this.setState({ shoppingList: sortedTable.flavors, sort: sortedTable.sort });
@@ -153,12 +208,12 @@ class ShoppingList extends React.Component {
                                 return <TableRow style={{height: '10px'}} key={flav.id}>
                                         {!flav.auto && edit.row === this.state.shoppingList.indexOf(flav) && edit.cell === "vendor" ?
                                             <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
-                                                              blur={this.handleEditFinish} paste={(e) => this.handlePaste(e, flav, 'vendor')}
+                                                              blur={this.handleBlur} paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                               autoFocus={true} classes={classes.Input} focus={(e) => this.handleFocus(e)} value={flav.vendor} maxLength="4"/></TableCell>
                                             : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
                                     {!flav.auto && edit.row === this.state.shoppingList.indexOf(flav) && edit.cell === "name" ?
                                         <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'name')}
-                                                          blur={this.handleEditFinish} paste={(e) => this.handlePaste(e, flav, 'vendor')}
+                                                          blur={this.handleBlur} paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                           autoFocus={true} classes={classes.NameInput} focus={(e) => this.handleFocus(e)} value={flav.name} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
                                         {!flav.auto ?<TableCell>
@@ -173,7 +228,7 @@ class ShoppingList extends React.Component {
                 </DialogContent>
                     <div className={classes.AmtLeft}>
                         <p>Amount Left Cutoff:</p>
-                        <Input  focus={(e) => this.handleFocus(e)} blur={this.handleEditFinish} autoFocus={true} type="number" min="0" classes={classes.AmtLeftInput}
+                        <Input  focus={(e) => this.handleFocus(e)} blur={this.handleBlur} autoFocus={true} type="number" min="0" classes={classes.AmtLeftInput}
                                change={(e) => this.handleCutoffInput(e)} value={this.state.cutoff} maxLength="5"/>
                         <p>ML</p>
                     </div>

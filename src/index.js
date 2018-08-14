@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
+import firebase from 'firebase';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import authReducer from './store/reducers/auth';
 import formulaReducer from './store/reducers/formula';
@@ -15,6 +16,14 @@ import './index.css';
 
 //Only allow REDUX Devtools in the Development environment
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
+
+//TODO: REMOVE or HIDE or ENCRYPT
+const config = {
+    apiKey: "AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU",
+    authDomain: "liquidlabvape.firebaseapp.com",
+    databaseURL: "https://liquidlabvape>.firebaseio.com",
+};
+firebase.initializeApp(config);
 
 const rootReducer = combineReducers({
     auth: authReducer,

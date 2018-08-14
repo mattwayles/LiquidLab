@@ -3,6 +3,16 @@ import {compareFlavors} from "./shared";
 import RecipeControl from "../components/RecipeControl/RecipeControl";
 import React from "react";
 
+/**
+ * When user flavor input is received, update flavor data
+ * @param event The user input event
+ * @param flavors   The current list of recipe flavors
+ * @param input The user input object
+ * @param weights   The ingredient weights
+ * @param inventory The current flavor inventory
+ * @param mlToMakeVal   The MLToMake value
+ * @returns {*[]}
+ */
 export const updateFlavors = (event, flavors, input, weights, inventory, mlToMakeVal) => {
     let exists = false;
     let updatedFlavors = [...flavors];
@@ -27,6 +37,15 @@ export const updateFlavors = (event, flavors, input, weights, inventory, mlToMak
     return updatedFlavors;
 };
 
+/**
+ * Determine if a recipe cannot be made based on inventory requirements
+ * @param recipes   The list of user recipes
+ * @param inputs    The user inputs for the current recipe
+ * @param weights   The ingredient weights
+ * @param inventory The current flavor inventory
+ * @param mlToMake  The volume of liquid to be made
+ * @returns {{}}
+ */
 export const setInvalidRecipes = (recipes, inputs, weights, inventory, mlToMake) => {
     let filteredRecipes = {...recipes};
 
@@ -47,6 +66,15 @@ export const setInvalidRecipes = (recipes, inputs, weights, inventory, mlToMake)
     return filteredRecipes;
 };
 
+/**
+ * Determine if a flavor cannot be used in a recipe based on inventory requirements
+ * @param flavor   The flavor being checked for validity
+ * @param inputs    The user inputs for the current recipe
+ * @param weights   The ingredient weights
+ * @param inventory The current flavor inventory
+ * @param mlToMake  The volume of liquid to be made
+ * @returns {{}}
+ */
 export const setInvalidFlavor = (flavor, inputs, weights, inventory, mlToMake) => {
     let mlRequired = calculateFlavorResults({...inputs, mlToMake: {value: mlToMake}}, weights, flavor).ml;
     let mlInventory = 0;
@@ -64,6 +92,13 @@ export const setInvalidFlavor = (flavor, inputs, weights, inventory, mlToMake) =
     }
 };
 
+/**
+ * Provide a drop-down of input options from inventory when inputting recipe flavors
+ * @param displayOptions    The full list of input options
+ * @param filter    The curent filter string
+ * @param inventory The list of Inventory flavors
+ * @returns {Array}
+ */
 export const populateList = (displayOptions, filter, inventory) => {
     let list = [];
     for (let i in inventory) {
@@ -81,6 +116,27 @@ export const populateList = (displayOptions, filter, inventory) => {
     return list;
 };
 
+/**
+ * Map flavor controls to the LiquidLab container
+ * @param col1Controls  The column controls
+ * @param classes   The CSS classes
+ * @param recipeKey The recipe key
+ * @param recipes   The list of a ll user recipes
+ * @param flavors   The list of all flavors
+ * @param input The current user input
+ * @param weights   The ingredient weights
+ * @param inventory The current flavor inventory
+ * @param list  The InputOption list
+ * @param cursor    The cursor value
+ * @param displayOptions    The filtered display options
+ * @param optionClickedHandler  Handler for clicking an InputOption
+ * @param plusClickedHandler    Handler for clicking the column + button
+ * @param flavorDataEnteredHandler  Handler for entering flavor data
+ * @param optionHandler Handler for providing inputOptions
+ * @param keyDownHandler    Handler for pressing keys in an InputOption
+ * @param clicked   Handler for a mouse click
+ * @returns {*}
+ */
 export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
     optionClickedHandler, plusClickedHandler, flavorDataEnteredHandler, optionHandler,  keyDownHandler, clicked) => {
     return col1Controls.map(control => {

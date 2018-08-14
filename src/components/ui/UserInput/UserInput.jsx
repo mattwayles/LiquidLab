@@ -1,6 +1,11 @@
 import React from 'react';
 import classes from './UserInput.css';
 
+/**
+ * User Input object
+ * @param props
+ * @returns {*}
+ */
 const userInput = (props) => {
     const inputClasses = [classes.InputElement];
 

@@ -4,24 +4,34 @@ import Button from "../../components/ui/Button/Button";
 import { NavLink } from 'react-router-dom';
 import UserInput from "../../components/ui/UserInput/UserInput";
 import {connect} from "react-redux";
+import firebase from 'firebase';
 
-
-class Login extends React.Component {
+/**
+ * Forgot Password container
+ */
+class ForgotPassword extends React.Component {
     state = {
         email: "",
     };
 
-
+    /**
+     * Update state when user input is entered
+     * @param e The user input event
+     * @param control   The container control receiving the input
+     */
     handleUserInput = (e, control) => {
         this.setState({ [control]: e.target.value});
     };
 
+    /**
+     * Handler for user press of the Submit button
+     */
     handleSubmit = () => {
-        //TODO: Forgot Password e-mail *FIREBASE*
-        //TODO: E-mail front-end validation
-        //Developers: Use your backend server to send an e-mail
-        console.log("Developers: Use your backend server to send an e-mail");
-        window.alert("No SMTP Server Configured. Contact your System Administrator");
+        firebase.auth().sendPasswordResetEmail(this.state.email).then(() => {
+            console.log("E-mail Sent!");
+        }).catch(error => {
+            console.log(error);
+        })
     };
 
 
@@ -56,4 +66,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, null)(Login);
+export default connect(mapStateToProps, null)(ForgotPassword);
