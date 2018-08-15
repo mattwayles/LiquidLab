@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import classes from './Weights.css';
 import * as actions from "../../store/actions";
 import Input from "../../components/ui/Input/Input";
-import WeightsButton from "../../components/ui/Button/WeightsButton";
+import Button from "../../components/ui/Button/Button";
 import {enforceInputConstraints} from "../../util/shared";
 
 /**
@@ -128,12 +128,12 @@ class Weights extends React.Component {
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <WeightsButton clicked={this.handleClose} color="primary">
+                    <Button classname="Weights" clicked={this.handleClose} color="primary">
                         Close
-                    </WeightsButton>
-                    <WeightsButton clicked={this.handleSetWeights} color="primary">
+                    </Button>
+                    <Button classname="Weights" clicked={this.handleSetWeights} color="primary">
                         Set
-                    </WeightsButton>
+                    </Button>
                 </DialogActions>
             </Dialog>
         );

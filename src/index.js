@@ -22,6 +22,7 @@ const config = {
     apiKey: "AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU",
     authDomain: "liquidlabvape.firebaseapp.com",
     databaseURL: "https://liquidlabvape>.firebaseio.com",
+    storageBucket: "gs://liquidlabvape.appspot.com"
 };
 firebase.initializeApp(config);
 

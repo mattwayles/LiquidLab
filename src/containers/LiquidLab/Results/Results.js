@@ -3,15 +3,17 @@ import { connect } from 'react-redux';
 import {Table, TableHead, TableBody, TableRow, TableCell} from "@material-ui/core";
 
 import classes from './Results.css';
-import ResultsButton from "../../../components/ui/Button/ResultsButton";
 import Auxil from "../../../hoc/Auxil";
 import ConfirmDialog from "../../../components/Dialog/ConfirmDialog";
 import {compareResults} from "../../../util/shared";
 import * as actions from "../../../store/actions";
+import Button from "../../../components/ui/Button/Button";
+import firebase from 'firebase';
 
 class Results extends Component {
     state = {
         confirmDialog: false,
+        imgUrl: null
     };
 
     /**
@@ -64,7 +66,7 @@ class Results extends Component {
     };
 
     render () {
-        const { confirmDialog } = this.state;
+        const { confirmDialog, imgUrl } = this.state;
         const { results, navWarnHandler, navWarn } = this.props;
 
         let displayedResults = [];
@@ -110,15 +112,25 @@ class Results extends Component {
             : results.recipeInfo.name.value;
 
         const columns = ['', 'ML', 'Grams', '%'];
+
+        let recipeImg = firebase.storage().ref('strawberry.jpg');
+        recipeImg.getDownloadURL().then(url => {
+            this.setState({ imgUrl: url })
+        }).catch(err => { console.error(err) });
         return (
             <Auxil>
                 <div style={{overFlowY: 'auto'}}>
+                    <div className={classes.HeaderDiv}>
+                        <div className={classes.RecipeImgDiv}>
+                    {/*{imgUrl ? <img className={classes.RecipeImg} src={imgUrl} alt={results.recipeInfo.name.value} /> : null}*/}
+                        </div>
                 <p className={classes.Header}>
                     {results.recipeInfo.name.value + " "}
                     {results.recipeInfo.batch.value ?
                         <span style={{fontSize: '0.75em'}}>({results.recipeInfo.batch.value})</span>
                         : null}
                 </p>
+                    </div>
                 {results.recipeInfo.notes ?
                     <p className={classes.Notes}><em>{results.recipeInfo.notes.value}</em></p> : null}
                 <Table className={classes.Table}>
@@ -140,7 +152,7 @@ class Results extends Component {
                         })}
                         <TableRow>
                             <TableCell colSpan={4}>
-                                <ResultsButton clicked={this.recipeCompletedHandler}>I Made This</ResultsButton>
+                                <Button classname="Results" clicked={this.recipeCompletedHandler}>I Made This</Button>
                             </TableCell>
                         </TableRow>
                     </TableBody>

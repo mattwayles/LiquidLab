@@ -147,7 +147,7 @@ export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, 
                     disabled={flavors && flavors.length < 8}
                     className={flavors && flavors.length < 8 ? classes.PlusButtonDisabled : classes.PlusButton}
                     onClick={plusClickedHandler}
-                >+</button>
+                >&nbsp;+&nbsp;</button>
             )
         }
         let valid = null;

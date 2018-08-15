@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import * as actions from "../../store/actions";
 import Spinner from "../../components/ui/Spinner/Spinner";
 import Auxil from "../../hoc/Auxil";
-import LoginButton from "../../components/ui/Button/LoginButton";
+import Button from "../../components/ui/Button/Button";
 
 /**
  * Login Container
@@ -60,7 +60,7 @@ class Login extends React.Component {
                         change={(e) => this.handleUserInput(e, "password")}
                         placeholder="Password"
                     />
-                    <LoginButton clicked={this.handleSubmit}>Login</LoginButton><br />
+                    <Button classname="Login" clicked={this.handleSubmit}>Login</Button><br />
                     <NavLink to="/forgotPassword"><p style={{marginBottom: '10px'}}>Forgot Password?</p></NavLink>
                     <NavLink to="/register">Register New Account</NavLink>
                 </Auxil>}

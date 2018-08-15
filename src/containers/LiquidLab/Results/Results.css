@@ -13,12 +13,30 @@
 
 }
 
-.Header {
+.HeaderDiv {
+    border: 1px solid red;
+    margin: 0 auto;
     width: 100%;
     text-align: center;
+    display: flex;
+    flex-flow: row;
+
+}
+
+.Header {
     font-size: 1.5em;
     color: var(--accent-color);
     font-weight: bold;
+    padding-top: 10px;
+    margin-left: 3%;
+    border: 1px solid red;
+}
+
+.RecipeImgDiv {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    border: 1px solid blue;
 }
 
 .Grams {
@@ -31,7 +49,6 @@
 }
 
 .ResultsButton {
-    border: 1px solid red;
     position: absolute;
     top: 0;
     right: 0;

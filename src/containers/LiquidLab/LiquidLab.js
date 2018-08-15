@@ -33,7 +33,7 @@ class LiquidLab extends Component {
     //TODO: Error messages to Dialog windows
     //TODO: Firebase SMTP (email verification)
     //TODO: No confirmation window when exiting out w/o any changes made!
-    //TODO: Peformance testing: what happens when recipes, inventory, shoppingList get massive?
+    //TODO: Performance testing: what happens when recipes, inventory, shoppingList get massive?
     //TODO: Support page with About section, Help section, Donate/Contact, and TOC
     //TODO: Mobile Optimization
     //TODO: LiquidLab Logo

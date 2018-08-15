@@ -6,7 +6,7 @@ import {connect} from "react-redux";
 import * as actions from "../../store/actions";
 import Spinner from "../../components/ui/Spinner/Spinner";
 import Auxil from "../../hoc/Auxil";
-import LoginButton from "../../components/ui/Button/LoginButton";
+import Button from "../../components/ui/Button/Button";
 
 
 class Register extends React.Component {
@@ -54,7 +54,7 @@ class Register extends React.Component {
                             change={(e) => this.handleUserInput(e, "password")}
                             placeholder="Password"
                         />
-                        <LoginButton clicked={this.handleSubmit}>Register</LoginButton><br />
+                        <Button clicked={this.handleSubmit}>Register</Button><br />
                         <NavLink className={classes.NavLink} to="/login">Login to Existing Account</NavLink>
                     </Auxil>
                 }

@@ -57,8 +57,8 @@
     border-radius: 5px;
     background-color: var(--background-color);
     margin: 10px;
-    height: 100%;
-    max-height: 420px;
+    height: 455px;
+    max-height: 455px;
     width: 40%;
     overflow-y: auto;
 }
