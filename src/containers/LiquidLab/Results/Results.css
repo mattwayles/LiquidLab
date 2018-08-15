@@ -14,12 +14,11 @@
 }
 
 .HeaderDiv {
-    border: 1px solid red;
-    margin: 0 auto;
-    width: 100%;
-    text-align: center;
+    margin: 1vw auto 0;
+    width: 90%;
     display: flex;
     flex-flow: row;
+    justify-content: center;
 
 }
 
@@ -27,16 +26,16 @@
     font-size: 1.5em;
     color: var(--accent-color);
     font-weight: bold;
-    padding-top: 10px;
     margin-left: 3%;
-    border: 1px solid red;
+    padding-top: 5px;
 }
 
-.RecipeImgDiv {
-    height: 100px;
-    width: 100px;
+.RecipeImg {
+    min-height: 100px;
+    max-height: 100px;
+    min-width: 100px;
+    max-width: 100px;
     border-radius: 50%;
-    border: 1px solid blue;
 }
 
 .Grams {

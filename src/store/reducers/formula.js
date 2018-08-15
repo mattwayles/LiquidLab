@@ -30,7 +30,8 @@ const initialState = {
             touched: false
         },
         batch: {value: '', touched: false},
-        notes: {value: '', touched: false}
+        notes: {value: '', touched: false},
+        image: {value: '', touched: false}
     },
     weights: {
         nicStrength: 100,
@@ -99,8 +100,9 @@ const userRecipeSelected = (state, action) => {
                 valid: true,
                 touched: false
             },
-            batch: {value: action.recipe.batch ? action.recipe.batch.value : initialState.batch.value, touched: false},
-            notes: {value: action.recipe.notes ? action.recipe.notes.value : initialState.notes.value, touched: false},
+            batch: {value: action.recipe.batch ? action.recipe.batch.value : initialState.inputs.batch.value, touched: false},
+            notes: {value: action.recipe.notes ? action.recipe.notes.value : initialState.inputs.notes.value, touched: false},
+            image: {value: action.recipe.image ? action.recipe.image.value : initialState.inputs.image.value},
         },
             flavors: loadedFlavors,
             key: action.key

@@ -381,7 +381,7 @@ export const saveFlavorData = (token, dbEntryId, inventory) => {
         dispatch(saveFlavorDataStart());
         axios.put('/users/' + dbEntryId + '/inventory.json?auth=' + token, inventory)
             .then(() => {
-                const successMessage = "Successfully saved inventory to database";
+                const successMessage = "Successfully saved to database";
                 dispatch(saveFlavorDataRedux(inventory));
                 dispatch(saveFlavorDataSuccess(successMessage));
             }).catch(error => {

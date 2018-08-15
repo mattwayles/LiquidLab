@@ -20,13 +20,13 @@ class LiquidLab extends Component {
     };
 
     //BUGS:
-
+    //TODO: Add MLtoMake, select flavor, add flavor information - error
+    //TODO: State recipes aren't setting fast enough to be displayed. Need a prevProps/this.props check to see if they changed, and display
     //FEATURES:
     //TODO: Global Recipes
         //TODO: What can I make from global recipes? Filter out local flavors
         //TODO: Browse global with intense search
         //TODO: Global flavors; "Add to My List" / "Remove From My List"
-    //TODO: Associate pictures with recipes
     //TODO: Add Notes section to Inventory flavors
     //TODO: Warn when token is support to expire
     //TODO: Add PG, VG, and Nic to the inventory
@@ -52,6 +52,7 @@ class LiquidLab extends Component {
      * Redirect to root from Login or Register
      */
     componentWillUpdate() {
+        console.log("Updating");
         if (this.props.history.location.pathname === "/login" || this.props.history.location.pathname === "/register") {
             this.props.history.push("/");
         }

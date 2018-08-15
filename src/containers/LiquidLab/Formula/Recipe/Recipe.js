@@ -8,7 +8,6 @@ import classes from './Recipe.css';
 import {formulaIsEmpty} from "../../../../util/formulaUtil";
 import {mapControls, populateList, updateFlavors} from "../../../../util/recipeUtil";
 import Button from "../../../../components/ui/Button/Button";
-import firebase from 'firebase';
 
 
 class Recipe extends Component {
@@ -130,16 +129,9 @@ class Recipe extends Component {
         }
     };
 
-    uploadImg = (e) => {
-        let storageRef = firebase.storage().ref();
-        let recipeRef = storageRef.child(e.target.files[0].name);
-        recipeRef.put(e.target.files[0]).then(() => console.debug("Successfully uploaded e.target.files[0].name"));
-        this.setState({ imgFile: e.target.files[0]});
-    };
-
 
     render () {
-        const { col1Controls, col2Controls, displayOptions, filter, cursor, imgFile } = this.state;
+        const { col1Controls, col2Controls, displayOptions, filter, cursor } = this.state;
         const { input, weights, flavors, token, recipeKey, recipes, inventory } = this.props;
 
         const list = populateList(displayOptions, filter, inventory);
@@ -165,11 +157,6 @@ class Recipe extends Component {
                                 onChange={(event) => this.props.onInputDataEntered('name', event.target.value)} />
                         <BatchSelect classes={classes.Batch} value={input.batch.value}
                                      changed={(event) => this.props.onInputDataEntered('batch', event.target.value)} />
-                    </div>
-                    <div style={{display: 'flex', flexFlow: 'row', marginBottom: '2.5%', width: '65%'}}>
-                        <input placeholder="Recipe Image" value={imgFile ? imgFile.name : ''} style={{margin: '0 3% 0 0', width: '70%'}} />
-                        <input type="file" onChange={this.uploadImg} ref={(ref) => this.upload = ref} style={{display: 'none'}} />
-                        <Button classname="Round" clicked={(e) => this.upload.click(e) } >...</Button>
                     </div>
                     <div className={classes.Col1}>
                         {firstRowControls}

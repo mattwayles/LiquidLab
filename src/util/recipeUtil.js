@@ -161,6 +161,7 @@ export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, 
             }
             if (recipe) {
                 for (let i = 0; i < flavors.length; i++) {
+                    console.log(recipe.flavors);
                     if (parseInt(recipe.flavors[i].control, 10) === control.id) {
                         valid = setInvalidFlavor(flavors[i], input, weights, inventory,
                             input.mlToMake.value).valid;

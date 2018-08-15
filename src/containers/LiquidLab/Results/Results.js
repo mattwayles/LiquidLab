@@ -20,6 +20,14 @@ class Results extends Component {
      * Register a "leave without saving" alert block on mount
      */
     componentDidMount() {
+        console.log(this.props.image);
+        if (this.props.image && this.props.image.value !== '') {
+            console.log(this.props.image.value);
+            let recipeImg = firebase.storage().ref(this.props.image.value);
+            recipeImg.getDownloadURL().then(url => {
+                this.setState({ imgUrl: url })
+            }).catch(err => { console.error(err) });
+        }
         window.addEventListener('beforeunload',(e) => {
             if (!this.props.made) {
                 let message = 'Warning!\n\nNavigating away from this page will delete your text if you haven\'t already saved it.';
@@ -113,23 +121,17 @@ class Results extends Component {
 
         const columns = ['', 'ML', 'Grams', '%'];
 
-        let recipeImg = firebase.storage().ref('strawberry.jpg');
-        recipeImg.getDownloadURL().then(url => {
-            this.setState({ imgUrl: url })
-        }).catch(err => { console.error(err) });
         return (
             <Auxil>
                 <div style={{overFlowY: 'auto'}}>
                     <div className={classes.HeaderDiv}>
-                        <div className={classes.RecipeImgDiv}>
-                    {/*{imgUrl ? <img className={classes.RecipeImg} src={imgUrl} alt={results.recipeInfo.name.value} /> : null}*/}
-                        </div>
-                <p className={classes.Header}>
-                    {results.recipeInfo.name.value + " "}
-                    {results.recipeInfo.batch.value ?
-                        <span style={{fontSize: '0.75em'}}>({results.recipeInfo.batch.value})</span>
-                        : null}
-                </p>
+                        {imgUrl ? <img className={classes.RecipeImg} src={imgUrl} alt={results.recipeInfo.name.value} /> : null}
+                            <p className={classes.Header}>
+                                {results.recipeInfo.name.value + " "}
+                                {results.recipeInfo.batch.value ?
+                                    <span style={{fontSize: '0.75em'}}>({results.recipeInfo.batch.value})</span>
+                                    : null}
+                            </p>
                     </div>
                 {results.recipeInfo.notes ?
                     <p className={classes.Notes}><em>{results.recipeInfo.notes.value}</em></p> : null}
@@ -174,7 +176,8 @@ const mapStateToProps = state => {
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,
         results: state.results,
-        inventory: state.inventory.flavors
+        inventory: state.inventory.flavors,
+        image: state.formula.inputs.image
     }
 };
 

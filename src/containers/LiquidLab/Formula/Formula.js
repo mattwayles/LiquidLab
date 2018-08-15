@@ -14,18 +14,22 @@ import {
 } from "../../../util/formulaUtil";
 import Auxil from "../../../hoc/Auxil";
 import ConfirmSaveDialog from "../../../components/Dialog/ConfirmSaveDialog";
+import AddImageDialog from "../../../components/Dialog/AddImageDialog";
+import firebase from "firebase";
 
 class Formula extends Component {
     state = {
         saveConfirm: false,
-        nonInventory: []
+        nonInventory: [],
+        addImage: false,
+        imgFile: ''
     };
 
     /**
      * Handler for closing the Save Confirm dialog
      */
     handleClose = () => {
-        this.setState({ saveConfirm: false, nonInventory: [] });
+        this.setState({ addImage: false, saveConfirm: false, nonInventory: [] });
     };
 
     /**
@@ -44,12 +48,17 @@ class Formula extends Component {
             this.props.recipeKey, this.props.inputs.name, this.props.inputs.batch, this.props.flavors, this.props.inventory);
     };
 
+    handleAddImage = () => {
+        this.setState({ addImage: true });
+    };
     /**
      * Handler for user click of the 'Save' button, to save a recipe to redux and database
      */
     handleSave = () => {
-        this.props.error(null);
-
+        if (this.state.addImage) {
+            this.setState({ addImage: false, imgFile: '' });
+        }
+        
         let nonInventoriedFlavors = populateNonInventoriedFlavors(this.state.nonInventory, this.props.flavors, this.props.inventory);
         if (!this.state.saveConfirm && nonInventoriedFlavors.length > 0) {
             this.setState({ saveConfirm: true, nonInventory: nonInventoriedFlavors })
@@ -57,7 +66,8 @@ class Formula extends Component {
         else {
             saveOrUpdateRecipe(nonInventoriedFlavors, this.props.inventory, this.props.flavors, this.props.inputs, this.props.userRecipes,
                 this.props.recipeKey, this.props.token, this.props.dbEntryId, this.props.error, this.props.onSaveFlavorData, this.props.onUpdateRecipe, this.props.onSaveRecipe);
-            this.setState({ saveConfirm: false, nonInventory: [] });
+            this.props.clear();
+            this.setState({ addImage: false, saveConfirm: false, nonInventory: [] });
         }
     };
 
@@ -101,20 +111,37 @@ class Formula extends Component {
         }
     };
 
+    uploadImg = (e) => {
+        let storageRef = firebase.storage().ref();
+        console.log(storageRef);
+        let recipeRef = storageRef.child(e.target.files[0].name);
+        recipeRef.put(e.target.files[0]).then(() => console.debug("Successfully uploaded e.target.files[0].name"));
+        this.props.onInputDataEntered("image", e.target.files[0].name);
+        this.setState({ imgFile: e.target.files[0]});
+    };
+
 
     render () {
+        const { saveConfirm, nonInventory, addImage, imgFile } = this.state;
+        const { recipeKey, recipes, image} = this.props;
+
+        let addMsg = recipeKey && image !== '' ? "Update the Recipe Image? " : "Add an Image to this Recipe?";
+
+
         return (
             <Auxil>
-                <ConfirmSaveDialog open={this.state.saveConfirm} close={this.handleClose} confirm={this.handleSave}
-                                   recipeKey={this.props.recipeKey} inventoryList={this.state.nonInventory}
+                <ConfirmSaveDialog open={saveConfirm} close={this.handleClose} confirm={this.handleSave}
+                                   recipeKey={recipeKey} inventoryList={nonInventory}
                                    message={"The following flavors will be added to the Inventory:"} />
+                <AddImageDialog open={addImage} close={this.handleClose} confirm={this.handleSave}
+                                imgFile={imgFile} uploadImg={this.uploadImg} message={addMsg} />
                 <div className={classes.Formula}>
                     <Target  />
                     <Recipe
-                        recipes={this.props.recipes}
+                        recipes={recipes}
                         delete={this.handleDelete}
                         clear={this.handleClear}
-                        save={this.handleSave}
+                        save={this.handleAddImage}
                         calculate={() => this.handleCalculate() ? this.props.displayResults() : null} />
                 </div>
             </Auxil>
@@ -132,7 +159,8 @@ const mapStateToProps = state => {
         dbEntryId: state.database.dbEntryId,
         userRecipes: state.database.userRecipes,
         inventory: state.inventory.flavors,
-        results: state.results
+        results: state.results,
+        image: state.formula.inputs.image.value
     }
 };
 
@@ -144,7 +172,8 @@ const mapDispatchToProps = dispatch => {
         onUpdateRecipe: (token, db, key, recipeData, inventory, original) => dispatch(actions.updateRecipe(token, db, key, recipeData, inventory, original)),
         onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
         onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value)),
-        onSaveFlavorData: (token, dbEntryId, flavors) => dispatch(actions.saveFlavorData(token, dbEntryId, flavors))
+        onSaveFlavorData: (token, dbEntryId, flavors) => dispatch(actions.saveFlavorData(token, dbEntryId, flavors)),
+        onInputDataEntered: (control, value) => dispatch(actions.inputDataEntered(control, value))
     }
 };
 
