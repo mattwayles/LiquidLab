@@ -98,7 +98,7 @@
     }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1280px) {
     .Views {
         flex-flow: column;
     }

@@ -589,3 +589,11 @@ export const modifyFlavorRecipeCountFailed = (error) => {
         error: error
     };
 };
+
+
+export const recipeValidation = (recipes) => {
+    return {
+        type: actionTypes.VALIDATE_RECIPES,
+        recipes
+    }
+};

@@ -113,7 +113,6 @@ class Formula extends Component {
 
     uploadImg = (e) => {
         let storageRef = firebase.storage().ref();
-        console.log(storageRef);
         let recipeRef = storageRef.child(e.target.files[0].name);
         recipeRef.put(e.target.files[0]).then(() => console.debug("Successfully uploaded e.target.files[0].name"));
         this.props.onInputDataEntered("image", e.target.files[0].name);

@@ -47,20 +47,18 @@ export const updateFlavors = (event, flavors, input, weights, inventory, mlToMak
  * @returns {{}}
  */
 export const setInvalidRecipes = (recipes, inputs, weights, inventory, mlToMake) => {
-    let filteredRecipes = {...recipes};
+    let filteredRecipes = [...recipes];
 
     for (let r in recipes) {
-        let recipe = recipes[r];
+        let recipe = {...recipes[r], invalid: false};
         //For each flavor in recipe
         for (let f in recipe.flavors) {
             const flavor = setInvalidFlavor(recipe.flavors[f], inputs, weights, inventory, mlToMake);
             if (!flavor.valid) {
-                recipe = {...recipe, invalid: true, flavors: [...recipe.flavors, flavor]};
+                recipe = {...recipe, invalid: true};
+
             }
-            else {
-                recipe = {...recipe, flavors: [...recipe.flavors, flavor]}
-            }
-            filteredRecipes = {...filteredRecipes, [r]: recipe};
+            filteredRecipes[r] = recipe;
         }
     }
     return filteredRecipes;
@@ -103,17 +101,18 @@ export const populateList = (displayOptions, filter, inventory) => {
     let list = [];
     for (let i in inventory) {
         if (displayOptions.ven.display) {
-            if (inventory[i].vendor && filter.ven && inventory[i].vendor.toLowerCase().includes(filter.ven.toLowerCase())) {
+            if (inventory[i].vendor && filter.ven && inventory[i].vendor.toLowerCase().startsWith(filter.ven.toLowerCase())) {
                 list.push(inventory[i].vendor)
             }
         }
         else if (displayOptions.name.display) {
-            if (inventory[i].name && filter.name && inventory[i].name.toLowerCase().includes(filter.name.toLowerCase())) {
+            if (inventory[i].name && filter.name && inventory[i].name.toLowerCase().startsWith(filter.name.toLowerCase())) {
                 list.push(inventory[i].name);
             }
         }
     }
-    return list;
+
+    return Array.from(new Set(list)).sort();
 };
 
 /**
@@ -161,16 +160,16 @@ export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, 
             }
             if (recipe) {
                 for (let i = 0; i < flavors.length; i++) {
-                    console.log(recipe.flavors);
-                    if (parseInt(recipe.flavors[i].control, 10) === control.id) {
-                        valid = setInvalidFlavor(flavors[i], input, weights, inventory,
-                            input.mlToMake.value).valid;
+                    if (recipe.flavors[i]) {
+                        if (parseInt(recipe.flavors[i].control, 10) === control.id) {
+                            valid = setInvalidFlavor(flavors[i], input, weights, inventory,
+                                input.mlToMake.value).valid;
+                        }
                     }
                 }
             }
         }
         else if (flavors) {
-
             for (let i = 0; i < flavors.length; i++) {
                 if (+flavors[i].control === control.id) {
                     valid = flavors[i].valid !== false;

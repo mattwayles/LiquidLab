@@ -13,7 +13,6 @@
 
 .InputOptionVen, .InputOptionFlavor {
     box-shadow: 4px 4px 5px grey;
-    border: 1px solid black;
     border-radius: 5px;
     background-color: #fff;
     width: 150px;
@@ -21,6 +20,10 @@
     text-overflow: ellipsis;
     position: absolute;
     margin-top: 25px;
+}
+
+.InputOptionVen option, .InputOptionFlavor option {
+    border-bottom: 1px solid var(--main-color);
 }
 
 .InputOptionFlavor {

@@ -20,9 +20,7 @@ class Results extends Component {
      * Register a "leave without saving" alert block on mount
      */
     componentDidMount() {
-        console.log(this.props.image);
         if (this.props.image && this.props.image.value !== '') {
-            console.log(this.props.image.value);
             let recipeImg = firebase.storage().ref(this.props.image.value);
             recipeImg.getDownloadURL().then(url => {
                 this.setState({ imgUrl: url })

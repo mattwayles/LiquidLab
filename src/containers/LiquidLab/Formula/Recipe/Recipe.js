@@ -16,7 +16,7 @@ class Recipe extends Component {
         col2Controls: [],
         index: 0,
         selectedOption: null,
-        displayOptions: {ven: {row: -1, display: false}, name: { roe: -1, display: false}},
+        displayOptions: {ven: {row: -1, display: false}, name: { row: -1, display: false}},
         filter: {ven: null, name: null},
         cursor: -1,
         imgFile: null
@@ -98,10 +98,12 @@ class Recipe extends Component {
         let flavors = [...this.props.flavors];
         for (let f in flavors) {
             if (parseInt(flavors[f].control,10) === id) {
-                flavors[f][control] = {value: selection, touched: false};
+                flavors[f][control] = {value: selection, touched: true};
             }
         }
         this.props.onDataEntered(flavors);
+        control = control === 'flavor' ? 'name' : control;
+        this.setState({ filter: {...this.state.filter, [control]: selection}})
     };
 
     /**
@@ -110,6 +112,7 @@ class Recipe extends Component {
      * @param list  The list of InputOption options
      */
     keyDownHandler = (e, list) => {
+
         if (e.keyCode === 40 && this.state.cursor < list.length - 1) {
             this.setState({ cursor: this.state.cursor + 1});
         }
@@ -121,7 +124,9 @@ class Recipe extends Component {
                 let flavors = [...this.props.flavors];
                 for (let f in flavors) {
                     if (parseInt(flavors[f].control, 10) === parseInt(e.target.id, 10)) {
-                        flavors[f][e.target.name] = {value: list[this.state.cursor], touched: false};
+                        flavors[f][e.target.name] = {value: list[this.state.cursor], touched: true};
+                        let control = e.target.name === 'flavor' ? 'name' : e.target.name;
+                        this.setState({ filter: {...this.state.filter, [control]:  list[this.state.cursor]}})
                     }
                 }
                 this.props.onDataEntered(flavors);
@@ -133,7 +138,6 @@ class Recipe extends Component {
     render () {
         const { col1Controls, col2Controls, displayOptions, filter, cursor } = this.state;
         const { input, weights, flavors, token, recipeKey, recipes, inventory } = this.props;
-
         const list = populateList(displayOptions, filter, inventory);
 
         //Map column controls
@@ -141,7 +145,8 @@ class Recipe extends Component {
             this.optionClickedHandler, this.plusClickedHandler, this.flavorDataEnteredHandler, this.optionHandler,
             (e) => this.keyDownHandler(e, list), this.props.clicked);
         const secondRowControls = mapControls(col2Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
-            this.keyDownHandler, this.optionClickedHandler, this.plusClickedHandler, this.flavorDataEnteredHandler, this.optionHandler, this.props.clicked);
+            this.optionClickedHandler, this.plusClickedHandler, this.flavorDataEnteredHandler, this.optionHandler,
+            (e) => this.keyDownHandler(e, list), this.props.clicked);
 
 
         return(

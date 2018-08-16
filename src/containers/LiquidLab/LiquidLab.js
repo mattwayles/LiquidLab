@@ -14,20 +14,19 @@ class LiquidLab extends Component {
     state = {
         results: false,
         error: null,
-        recipes: null,
         made: false,
         navWarn: false
     };
 
     //BUGS:
-    //TODO: Add MLtoMake, select flavor, add flavor information - error
-    //TODO: State recipes aren't setting fast enough to be displayed. Need a prevProps/this.props check to see if they changed, and display
+
     //FEATURES:
     //TODO: Global Recipes
         //TODO: What can I make from global recipes? Filter out local flavors
         //TODO: Browse global with intense search
         //TODO: Global flavors; "Add to My List" / "Remove From My List"
     //TODO: Add Notes section to Inventory flavors
+    //TODO: Autocomplete flavor values from InputOption top result
     //TODO: Warn when token is support to expire
     //TODO: Add PG, VG, and Nic to the inventory
     //TODO: Error messages to Dialog windows
@@ -52,7 +51,6 @@ class LiquidLab extends Component {
      * Redirect to root from Login or Register
      */
     componentWillUpdate() {
-        console.log("Updating");
         if (this.props.history.location.pathname === "/login" || this.props.history.location.pathname === "/register") {
             this.props.history.push("/");
         }
@@ -106,12 +104,8 @@ class LiquidLab extends Component {
         event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
         let valid = event.target.value >= 1;
         this.props.onDataEntered('mlToMake', event.target.value, valid);
-        //For each recipe
-        let recipes = {...this.state.recipes};
-        if (!recipes.length > 0) {
-            recipes = {...this.props.userRecipes}
-        }
 
+        let recipes = [...this.props.userRecipes];
         let flavors = [...this.props.flavors];
 
         for(let f in flavors) {
@@ -119,10 +113,8 @@ class LiquidLab extends Component {
         }
         this.props.onRecipeDataEntered(flavors);
 
-
-
         let filteredRecipes = setInvalidRecipes(recipes, this.props.inputs, this.props.weights, this.props.inventory, event.target.value);
-        this.setState({ recipes: filteredRecipes});
+        this.props.onRecipeValidation(filteredRecipes);
     };
 
     /**
@@ -155,14 +147,10 @@ class LiquidLab extends Component {
     };
 
     render() {
-        const { results, error, recipes, made, navWarn } = this.state;
+        const { results, error, made, navWarn } = this.state;
         const { isAuthenticated, inputs, userRecipes, recipeKey, successMsg, loading } = this.props;
 
-
-        let displayedRecipes = recipes;
-        if (!recipes) {
-            displayedRecipes = userRecipes;
-        }
+        let displayedRecipes = userRecipes;
 
         return (
             <div className={classes.LiquidLab}>
@@ -181,7 +169,7 @@ class LiquidLab extends Component {
                     <select className={classes.Select} value={recipeKey} onChange={(event) => this.recipeSelectHandler(event)}>
                         {isAuthenticated ? <option value="" disabled>Select a Recipe...</option>
                             : <option value="" disabled>Register or Login to Save and Retrieve your Recipes!</option>}
-                        {displayedRecipes ? Object.keys(displayedRecipes).sort().map(index => {
+                        {displayedRecipes ? Object.keys(displayedRecipes).map(index => {
                             const recipe = displayedRecipes[index];
                             let recName = recipe.name.value;
                             recName = recipe.batch.value ? recName + " [" + recipe.batch.value + "]" : recName;
@@ -192,7 +180,7 @@ class LiquidLab extends Component {
                 </header>
                 {successMsg ? <p className={classes.Success}>{successMsg}</p> : null}
                 <div className={classes.Views}>
-                    <Formula clear={this.handleClearResults} recipes={recipes} displayResults={this.displayResultsHandler} error={this.errorHandler}/>
+                    <Formula clear={this.handleClearResults} recipes={userRecipes} displayResults={this.displayResultsHandler} error={this.errorHandler}/>
                     <div className={classes.Results}>
                         {results ? <Results navWarn={navWarn} made={made} navWarnHandler={this.handleNavWarn} madeHandler={this.handleRecipeMade}/> : <p className={classes.Placeholder}>Results</p>}
                     </div>
@@ -225,6 +213,7 @@ const mapDispatchToProps = dispatch => {
         onDataEntered: (control, value, valid) => dispatch(actions.inputDataEntered(control, value, valid)),
         onClearSuccessMessage: () => dispatch(actions.clearSuccessMessage()),
         onRecipeDataEntered: (arr) => dispatch(actions.recipeDataEntered(arr)),
+        onRecipeValidation: (recipes) => dispatch(actions.recipeValidation(recipes)),
     }
 };
 

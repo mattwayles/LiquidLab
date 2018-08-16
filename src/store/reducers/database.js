@@ -3,7 +3,7 @@ import { updateObject } from '../../util/shared.js';
 
 const initialState = {
     dbEntryId: null,
-    userRecipes: {},
+    userRecipes: [],
     success: null
 };
 
@@ -42,6 +42,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.SAVE_SHOPPING_LIST_DATABASE_START:return saveShoppingListStart(state, action);
         case actionTypes.SAVE_SHOPPING_LIST_DATABASE_SUCCESS:return saveShoppingListSuccess(state, action);
         case actionTypes.SAVE_SHOPPING_LIST_DATABASE_FAILED:return saveShoppingListFailed(state, action);
+        case actionTypes.VALIDATE_RECIPES: return validateRecipes(state, action);
         case actionTypes.CLEAR_DB_REDUX: return clearDatabaseRedux(state);
         case actionTypes.CLEAR_DATABASE_ERROR: return clearError(state, action);
         case actionTypes.CLEAR_SUCCESS: return clearSuccess(state, action);
@@ -192,7 +193,7 @@ const getUserRecipesStart = (state) => {
 };
 
 const getUserRecipesSuccess = (state, action) => {
-    let recipes = {...action.recipes}
+    let recipes = {...action.recipes};
     for (let r in recipes) {
         recipes[r] = {...recipes[r], dbKey: r}
     }
@@ -269,6 +270,10 @@ const saveShoppingListFailed = (state, action) => {
     return updateObject(state, {
         error: action.error,
         loading: false });
+};
+
+const validateRecipes = (state, action) => {
+    return updateObject(state, {userRecipes:action.recipes})
 };
 
 
