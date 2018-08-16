@@ -5,7 +5,7 @@ import React from 'react';
 import {
     Button,
     Dialog, DialogActions,
-    DialogTitle,
+    DialogTitle, DialogContent, DialogContentText
 } from "@material-ui/core";
 
 
@@ -15,6 +15,11 @@ import {
 const confirmDialog = (props) => (
         <Dialog open={props.open} onClose={props.close} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">{props.message}</DialogTitle>
+            {props.subtitle ? <DialogContent>
+                <DialogContentText>
+                {props.subtitle}
+            </DialogContentText>
+            </DialogContent>: null }
             <DialogActions>
                 <Button onClick={props.close} color="primary">
                     No

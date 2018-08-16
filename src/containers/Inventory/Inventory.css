@@ -33,7 +33,7 @@
     font-size: .5vw !important;
 }
 
-.Input, .NameInput {
+.Input, .NameInput, .NotesInput {
     width: 3vw;
     text-align: left;
     font-size: inherit;
@@ -41,6 +41,10 @@
 
 .NameInput {
     width: 8.5vw;
+}
+
+.NotesInput {
+    width: 35vw;
 }
 
 .AmtLeftInput {

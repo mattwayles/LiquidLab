@@ -229,7 +229,7 @@ export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, flavor
     let inventory = [...inventoryProps];
     for (let f in nonInventoriedFlavors) {
         inventory.push({amount: 0, id: createNextId([...inventory]), name: nonInventoriedFlavors[f].flavor.value,
-            vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0})
+            vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0, notes: ''})
     }
     if (recipeKey) {
         let original = {};

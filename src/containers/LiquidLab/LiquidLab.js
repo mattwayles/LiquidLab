@@ -19,17 +19,15 @@ class LiquidLab extends Component {
     };
 
     //BUGS:
-
+    //TODO: Material-UI buttons on ConfirmDialog, SaveConfirm dialog, etc. don't conform
     //FEATURES:
     //TODO: Global Recipes
         //TODO: What can I make from global recipes? Filter out local flavors
         //TODO: Browse global with intense search
         //TODO: Global flavors; "Add to My List" / "Remove From My List"
-    //TODO: Add Notes section to Inventory flavors
     //TODO: Autocomplete flavor values from InputOption top result
     //TODO: Warn when token is support to expire
     //TODO: Add PG, VG, and Nic to the inventory
-    //TODO: Error messages to Dialog windows
     //TODO: Firebase SMTP (email verification)
     //TODO: No confirmation window when exiting out w/o any changes made!
     //TODO: Performance testing: what happens when recipes, inventory, shoppingList get massive?

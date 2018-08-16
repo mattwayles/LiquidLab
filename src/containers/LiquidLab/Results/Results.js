@@ -162,6 +162,7 @@ class Results extends Component {
                                message={"Subtract ingredient usage for " + results.recipeInfo.mlToMake.value + " ml of "
                                + recipeName + " from inventory?"}  />
                 <ConfirmDialog open={navWarn} close={ navWarnHandler } confirm={(e) => this.recipeCompletedConfirm(e, displayedResults)}
+                               subtitle="Click YES to subtract flavor usage from inventory"
                                message={"You calculated results for " + results.recipeInfo.mlToMake.value + " ml of "
                                + recipeName + ". Did you make it?"}  />
             </Auxil>

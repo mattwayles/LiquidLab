@@ -109,19 +109,38 @@ export const userInput = (e, row, control, list) => {
     let data = [...list];
     for (let flavor in data) {
         if (data[flavor].id === row.id) {
-            if ((e.keyCode > 47 && e.keyCode < 91 && !e.ctrlKey) || (e.keyCode > 95 && e.keyCode < 106) ||
-                e.keyCode === 8 || e.keyCode === 32) {
-                if (window.getSelection().toString().length) {
-                    const newStr = e.target.value.slice(0, e.target.value.length - window.getSelection().toString().length);
-                    data[flavor] = {...data[flavor], [control]: newStr};
-                }
-                else if (e.keyCode === 8) {
-                    data[flavor] = {...data[flavor], [control]: e.target.value.slice(0, -1)};
-                }
+            if (control === 'amount') {
+                if (e.keyCode === 8 || e.keyCode === 190 || (e.keyCode > 47 && e.keyCode < 58) || (e.keyCode > 95 && e.keyCode < 106)) {
+                    if (window.getSelection().toString().length) {
+                        const newStr = e.target.value.slice(0, e.target.value.length - window.getSelection().toString().length);
+                        data[flavor] = {...data[flavor], [control]: newStr};
+                    }
+                    else if (e.keyCode === 8) {
+                        data[flavor] = {...data[flavor], [control]: e.target.value.slice(0, -1)};
+                    }
 
-                let newVal = (e.keyCode === 8) ? data[flavor][control] : data[flavor][control] + e.key;
+                    let newVal = (e.keyCode === 8) ? data[flavor][control] : data[flavor][control] + e.key;
 
-                data[flavor] = {...data[flavor], [control]: newVal};
+                    data[flavor] = {...data[flavor], [control]: newVal};
+                }
+            }
+            else {
+                if ((e.keyCode > 47 && e.keyCode < 91 && !e.ctrlKey) || (e.keyCode > 95 && e.keyCode < 106) ||
+                    e.keyCode === 8 || e.keyCode === 32 || e.keyCode > 145) {
+                    console.log(window.getSelection().toString().length);
+                    if (window.getSelection().toString().length) {
+                        const newStr = e.target.value.slice(0, e.target.value.length - window.getSelection().toString().length);
+                        data[flavor] = {...data[flavor], [control]: newStr};
+                    }
+                    else if (e.keyCode === 8) {
+                        console.log(e.target.value);
+                        data[flavor] = {...data[flavor], [control]:  e.target.value.slice(0, -1)};
+                    }
+
+                    let newVal = (e.keyCode === 8) ? data[flavor][control] : data[flavor][control] + e.key;
+
+                    data[flavor] = {...data[flavor], [control]: newVal};
+                }
             }
         }
     }
