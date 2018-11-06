@@ -33,7 +33,7 @@ class Register extends React.Component {
 
         return (
             <div className={classes.Auth}>
-                <p className={classes.Label}>Register a new ReactApp Account</p>
+                <p className={classes.Label}>Register a new LiquidLab Account</p>
                 { error ? <p className={classes.Error}>&#9888;&emsp;{error}</p> : null}
                 {loading ? <Spinner/> :
                     <Auxil>

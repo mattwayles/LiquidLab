@@ -18,22 +18,23 @@ class LiquidLab extends Component {
         navWarn: false
     };
 
-    //BUGS:
-    //TODO: Material-UI buttons on ConfirmDialog, SaveConfirm dialog, etc. don't conform
-    //FEATURES:
-    //TODO: Global Recipes
-        //TODO: What can I make from global recipes? Filter out local flavors
-        //TODO: Browse global with intense search
-        //TODO: Global flavors; "Add to My List" / "Remove From My List"
-    //TODO: Autocomplete flavor values from InputOption top result
-    //TODO: Warn when token is support to expire
-    //TODO: Add PG, VG, and Nic to the inventory
-    //TODO: Firebase SMTP (email verification)
-    //TODO: No confirmation window when exiting out w/o any changes made!
-    //TODO: Performance testing: what happens when recipes, inventory, shoppingList get massive?
-    //TODO: Support page with About section, Help section, Donate/Contact, and TOC
-    //TODO: Mobile Optimization
-    //TODO: LiquidLab Logo
+    //TODO:
+    //BUG: Text input in inventory is wonky. Cannot delete appropriately, cannot add appropriately, etc.
+    //BUG: Warn when token is support to expire
+    //BUG: (I want) No confirmation window when exiting out w/o any changes made!
+    //CLEANUP: Add PG, VG, and Nic to the inventory
+    //CLEANUP: Material-UI buttons on ConfirmDialog, SaveConfirm dialog, etc. don't conform
+    //CLEANUP: Logo!
+    //CLEANUP: Fonts
+    //CLEANUP: Mobile Optimization
+    //FEATURE: Global Recipes
+        //What can I make from global recipes? Filter out local flavors
+        //Browse global with intense search
+        //Global flavors; "Add to My List" / "Remove From My List"
+    //FEATURE: Autocomplete flavor values from InputOption top result
+    //FEATURE: Firebase SMTP (email verification)
+    //FEATURE: Performance testing: what happens when recipes, inventory, shoppingList get massive?
+    //FEATURE: Support page with About section, Help section, Donate/Contact, and TOC
 
 
     /**
@@ -153,7 +154,7 @@ class LiquidLab extends Component {
         return (
             <div className={classes.LiquidLab}>
                 <header className={classes.HeaderDiv}>
-                    <p className={classes.Header}>ReactApp</p>
+                    <p className={classes.Header}>LiquidLab</p>
                     <div>
                         {loading ? <CircularProgress size={60} /> : null}
                     </div>
