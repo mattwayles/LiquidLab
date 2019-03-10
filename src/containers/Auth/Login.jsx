@@ -1,9 +1,9 @@
 import React from 'react'
+import firebase from 'firebase';
 import classes from './Auth.css';
 import { NavLink } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import UserInput from "../../components/ui/UserInput/UserInput";
-import {connect} from "react-redux";
-import * as actions from "../../store/actions";
 import Spinner from "../../components/ui/Spinner/Spinner";
 import Auxil from "../../hoc/Auxil";
 import Button from "../../components/ui/Button/Button";
@@ -14,7 +14,10 @@ import Button from "../../components/ui/Button/Button";
 class Login extends React.Component {
     state = {
         email: "",
-        password: ""
+        password: "",
+        error: null,
+        loading: false,
+        redirect: false
     };
 
     /**
@@ -30,16 +33,22 @@ class Login extends React.Component {
      * Handler for user press of the Submit button
      */
     handleSubmit = () => {
-        this.props.onAuth(this.state.email, this.state.password);
+        firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+            .then(() => {
+                this.setState({ redirect: true, loading: false });
+            })
+            .catch(error => {
+                this.setState({ error: error.message, loading: false });
+            });
     };
 
 
     render() {
-        const { email, password } = this.state;
-        const { error, loading } = this.props;
+        const { email, password, error, loading, redirect } = this.state;
 
         return (
             <div className={classes.Auth}>
+                {redirect ? <Redirect to="'/'" /> : null}
                 <p className={classes.Label}>Welcome Back! Login to your account:</p>
                 { error ? <p className={classes.Error}>&#9888;&emsp;{error}</p> : null}
                 {loading ? <Spinner /> : <Auxil>
@@ -69,17 +78,4 @@ class Login extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        error: state.auth.error,
-        loading: state.auth.loading
-    }
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onAuth: (email, password, register) => dispatch(actions.auth(email, password, register)),
-    }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default (Login);

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import * as actions from './store/actions/index';
 import Layout from './containers/Layout/Layout';
 import About from './components/Support/Support';
 import Logout from './containers/Auth/Logout';
@@ -16,15 +14,8 @@ import ShoppingList from "./containers/Inventory/ShoppingList";
 
 class App extends Component {
     
-    //Auto-Sign In if token is still active
-    componentDidMount () {
-        this.props.onTryAutoSignup();
-    }
-    
-    
   render() {
-
-        //Set the accessible routes based on authentication status
+      //Set the accessible routes based on authentication status
       let routes =
           <Switch>
               <Route path="/register" component={Register} />
@@ -60,16 +51,4 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => {
-    return {
-        isAuthenticated: state.auth.token !== null
-    }
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onTryAutoSignup: () => dispatch(actions.authCheckState())
-    }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default (App);

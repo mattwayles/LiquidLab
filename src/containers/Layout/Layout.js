@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import firebase from 'firebase';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
@@ -13,6 +14,27 @@ class Layout extends Component {
     state = {
         sideDrawerOpen: false
     };
+
+    // componentDidUpdate () {
+    //     console.log("UPDATING");
+    //     firebase.auth().onAuthStateChanged(user => {
+    //         if (user) {
+    //             this.setState({ loggedInUser: user.email });
+    //             // User is signed in.
+    //             // var displayName = user.displayName;
+    //             // var email = user.email;
+    //             // var emailVerified = user.emailVerified;
+    //             // var photoURL = user.photoURL;
+    //             // var isAnonymous = user.isAnonymous;
+    //             // var uid = user.uid;
+    //             // var providerData = user.providerData;
+    //             // // ...
+    //         } else {
+    //             // User is signed out.
+    //             // ...
+    //         }
+    //     });
+    // }
     
     toggleSideDrawerHandler = () => {
         this.setState( { sideDrawerOpen: !this.state.sideDrawerOpen });

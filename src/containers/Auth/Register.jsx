@@ -1,9 +1,9 @@
 import React from 'react'
+import firebase from 'firebase';
 import classes from './Auth.css';
 import { NavLink } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import UserInput from "../../components/ui/UserInput/UserInput";
-import {connect} from "react-redux";
-import * as actions from "../../store/actions";
 import Spinner from "../../components/ui/Spinner/Spinner";
 import Auxil from "../../hoc/Auxil";
 import Button from "../../components/ui/Button/Button";
@@ -12,7 +12,10 @@ import Button from "../../components/ui/Button/Button";
 class Register extends React.Component {
     state = {
         email: "",
-        password: ""
+        password: "",
+        error: null,
+        loading: false,
+        redirect: false
     };
 
 
@@ -21,18 +24,29 @@ class Register extends React.Component {
     };
 
     handleSubmit = () => {
-        this.props.onAuth(this.state.email, this.state.password, true, this.props.weights);
+        this.setState({ error: null, loading: true });
+        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+            .then(() => {
+                firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+                    .then(() => {
+                        this.setState({ redirect: true, loading: false });
+                    })
+                    .catch(error => {
+                    this.setState({ error: error.message, loading: false });
+                });
+        })
+            .catch(error => {
+            this.setState({ error: error.message, loading: false });
+        });
     };
 
 
     render() {
-        const { email, password } = this.state;
-        const { error, loading } = this.props;
-
-
+        const { email, password, error, loading, redirect } = this.state;
 
         return (
             <div className={classes.Auth}>
+                {redirect ? <Redirect to="'/'" /> : null}
                 <p className={classes.Label}>Register a new LiquidLab Account</p>
                 { error ? <p className={classes.Error}>&#9888;&emsp;{error}</p> : null}
                 {loading ? <Spinner/> :
@@ -46,7 +60,7 @@ class Register extends React.Component {
                             change={(e) => this.handleUserInput(e, "email")}
                             placeholder="E-Mail Address"
                         />
-                        < UserInput
+                        <UserInput
                             type="password"
                             id="password"
                             value={password}
@@ -63,18 +77,4 @@ class Register extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        weights: state.formula.weights,
-        error: state.auth.error,
-        loading: state.auth.loading
-    }
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        onAuth: (email, password, register, weights) => dispatch(actions.auth(email, password, register, weights)),
-    }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default (Register);

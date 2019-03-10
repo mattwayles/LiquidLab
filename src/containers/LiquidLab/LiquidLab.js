@@ -47,15 +47,6 @@ class LiquidLab extends Component {
     }
 
     /**
-     * Redirect to root from Login or Register
-     */
-    componentWillUpdate() {
-        if (this.props.history.location.pathname === "/login" || this.props.history.location.pathname === "/register") {
-            this.props.history.push("/");
-        }
-    }
-
-    /**
      * Retain a success message on fade for 4 seconds
      */
     componentDidUpdate() {
@@ -212,7 +203,7 @@ const mapDispatchToProps = dispatch => {
         onDataEntered: (control, value, valid) => dispatch(actions.inputDataEntered(control, value, valid)),
         onClearSuccessMessage: () => dispatch(actions.clearSuccessMessage()),
         onRecipeDataEntered: (arr) => dispatch(actions.recipeDataEntered(arr)),
-        onRecipeValidation: (recipes) => dispatch(actions.recipeValidation(recipes)),
+        onRecipeValidation: (recipes) => dispatch(actions.recipeValidation(recipes))
     }
 };
 
