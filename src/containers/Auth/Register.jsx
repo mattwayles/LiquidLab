@@ -9,7 +9,9 @@ import Auxil from "../../hoc/Auxil";
 import Button from "../../components/ui/Button/Button";
 import {validateNewUserInput} from "../../util/userInputUtil";
 
-
+/**
+ * User Registration Container
+ */
 class Register extends React.Component {
     state = {
         username: "",
@@ -20,14 +22,25 @@ class Register extends React.Component {
         clientError: ""
     };
 
+    /**
+     * Clear any errors that may be lingering from previous login attempts or user registrations.
+     */
     componentWillMount() {
         this.props.clearAuthError();
     }
 
+    /**
+     * Update state when user input is entered
+     * @param e The user input event
+     * @param control   The container control receiving the input
+     */
     handleUserInput = (e, control) => {
         this.setState({ [control]: e.target.value});
     };
 
+    /**
+     * Validate user data and attempt registration when the Register button is pressed
+     */
     handleSubmit = () => {
         let invalid = validateNewUserInput(
             this.state.username,
@@ -50,6 +63,7 @@ class Register extends React.Component {
         const { username, email, verifyEmail, password, confirmPw, clientError } = this.state;
         const { error, loading } = this.props;
 
+        //Display any client - or - server side errors, with priority given to server
         let inputError = error || clientError;
 
         return (

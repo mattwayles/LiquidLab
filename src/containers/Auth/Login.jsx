@@ -19,8 +19,10 @@ class Login extends React.Component {
         clientError: ""
     };
 
+    /**
+     * Clear any errors that may be lingering from previous login attempts or user registrations.
+     */
     componentWillMount() {
-        console.log("MOUNTING");
         this.props.clearAuthError();
     }
 
@@ -34,7 +36,7 @@ class Login extends React.Component {
     };
 
     /**
-     * Handler for user press of the Submit button
+     * Validate user data and attempt login when the Login button is pressed
      */
     handleSubmit = () => {
         let invalid = validateLoginInput(this.state.email, this.state.password);
@@ -51,6 +53,7 @@ class Login extends React.Component {
         const { email, password, clientError } = this.state;
         const { error, loading } = this.props;
 
+        //Display any client - or - server side errors, with priority given to server
         let inputError = error || clientError;
 
         return (
