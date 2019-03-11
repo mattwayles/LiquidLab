@@ -1,6 +1,6 @@
 import * as errorType from "./errorTypes";
 
-export const errorMessage = (errorMessage) => {
+export const errorMessage = (errorMessage, extra) => {
     switch (errorMessage) {
         case errorType.INVALID_EMAIL:
             return "Invalid E-Mail address entered. The e-mail address must be in the format xxxx@yyy.zzz";
@@ -16,6 +16,8 @@ export const errorMessage = (errorMessage) => {
             return "A user record already exists for the provided e-mail address.";
         case errorType.BAD_REQUEST:
             return "The server received a bad request. Please contact your system administrator.";
+        case errorType.USERNAME_TAKEN:
+            return "The selected username " + extra + " is not available";
         default:
             return errorMessage;
     }

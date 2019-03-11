@@ -17,12 +17,11 @@ import './index.css';
 //Only allow REDUX Devtools in the Development environment
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
-//TODO: REMOVE or HIDE or ENCRYPT
 const config = {
-    apiKey: "AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU",
-    authDomain: "liquidlabvape.firebaseapp.com",
-    databaseURL: "https://liquidlabvape>.firebaseio.com",
-    storageBucket: "gs://liquidlabvape.appspot.com"
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_DATABASE_URL,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET
 };
 firebase.initializeApp(config);
 

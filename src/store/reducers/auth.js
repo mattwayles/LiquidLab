@@ -12,9 +12,12 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.AUTH_START:return authStart(state, action);
-        case actionTypes.AUTH_SUCCESS:return authSuccess(state, action);
-        case actionTypes.AUTH_FAILED:return authFailed(state, action);
+        case actionTypes.LOGIN_START:return loginStart(state, action);
+        case actionTypes.LOGIN_SUCCESS:return loginSuccess(state, action);
+        case actionTypes.LOGIN_FAILED:return loginFailed(state, action);
+        case actionTypes.REGISTER_START:return registerStart(state, action);
+        case actionTypes.REGISTER_SUCCESS:return registerSuccess(state, action);
+        case actionTypes.REGISTER_FAILED:return registerFailed(state, action);
         case actionTypes.SET_AUTH_REDIRECT: return setAuthRedirectPath(state, action);
         case actionTypes.AUTH_LOGOUT: return authLogout(state, action);
         case actionTypes.CLEAR_AUTH_ERROR: return clearError(state, action);
@@ -23,13 +26,13 @@ const reducer = (state = initialState, action) => {
 };
 
 
-const authStart = (state) => {
+const loginStart = (state) => {
     return updateObject(state, {
         error: null,
         loading: true });
 };
 
-const authSuccess = (state, action) => {
+const loginSuccess = (state, action) => {
     return updateObject(state, {
         token: action.idToken,
         userId: action.userId,
@@ -37,7 +40,27 @@ const authSuccess = (state, action) => {
         loading: false });
 };
 
-const authFailed = (state, action) => {
+const loginFailed = (state, action) => {
+    return updateObject(state, {
+        error: action.error,
+        loading: false });
+};
+
+const registerStart = (state) => {
+    return updateObject(state, {
+        error: null,
+        loading: true });
+};
+
+const registerSuccess = (state, action) => {
+    return updateObject(state, {
+        token: action.idToken,
+        userId: action.userId,
+        error: null,
+        loading: false });
+};
+
+const registerFailed = (state, action) => {
     return updateObject(state, {
         error: action.error,
         loading: false });

@@ -4,67 +4,114 @@ import * as actionTypes from './actionTypes';
 import {clearDbRedux, createDatabaseUser, getDatabaseUser} from "./database";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////// AUTHENTICATE A USER /////////////////////////////////////////////////////
+////////////////////////////////////////////// REGISTER A USER /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const auth = (email, password, register, weights) => {
+export const register = (username, email, password) => {
     return dispatch => {
-        dispatch(authStart());
+        dispatch(registerStart());
+        const authData = {
+            displayName: username,
+            email: email,
+            password: password,
+            returnSecureToken: true
+        };
+
+        let registeredDisplayNames = [];
+        axios.get('/users.json?auth=' + process.env.REACT_APP_ADMIN_TOKEN)
+            .then(response => {
+                for (let i in response.data) {
+                    registeredDisplayNames.push(response.data[i].displayName.toLowerCase());
+                }
+                if (registeredDisplayNames.indexOf(username.toLowerCase()) >= 0) {
+                    dispatch(registerFailed(ErrorMessage("USERNAME_TAKEN", username)));
+                } else {
+                    let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + process.env.REACT_APP_API_KEY;
+
+                    axios.post(url, authData)
+                        .then(response => {
+                            dispatch(createDatabaseUser(username, email, response.data.localId, response.data.idToken));
+                            dispatch(login(email, password));
+                        }).catch(error => {
+                            dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+                    });
+                }
+            })
+            .catch(error => {
+                dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+            });
+    }
+};
+
+//Synchronous actions
+export const registerStart = () => {
+    return {
+        type: actionTypes.REGISTER_START
+    }
+};
+
+export const registerSuccess = (idToken, userId) => {
+    return {
+        type: actionTypes.REGISTER_SUCCESS,
+        idToken,
+        userId
+    }
+};
+
+export const registerFailed = (error) => {
+    return {
+        type: actionTypes.REGISTER_FAILED,
+        error: error
+    };
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////// LOGIN A USER ////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export const login = (email, password) => {
+    return dispatch => {
+        dispatch(loginStart());
         const authData = {
             email: email,
             password: password,
             returnSecureToken: true
         };
 
-        //TODO: Remove key if submitting to public version control
-        let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU";
-        if (!register) {
-            url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyAMrC9UObNobVpzQmJ-xDnMBLfeorOpwBU";
-        }
+        let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" + process.env.REACT_APP_API_KEY;
+
         axios.post(url, authData)
             .then(response => {
                 const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000);
                 localStorage.setItem('token', response.data.idToken);
                 localStorage.setItem('expirationDate', expirationDate);
                 localStorage.setItem('userId', response.data.localId);
-                if (!register) {
-                    dispatch(getDatabaseUser(response.data.localId, response.data.idToken));
-                }
-                else {
-                    dispatch(createDatabaseUser(email, response.data.localId, response.data.idToken, weights));
-                }
-                dispatch(authSuccess(response.data.idToken, response.data.localId));
-                dispatch(checkAuthTimeout(response.data.expiresIn));
+                dispatch(getDatabaseUser(response.data.localId, response.data.idToken));
             }).catch(error => {
-                dispatch(authFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
-
+            dispatch(loginFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
-
-
     }
 };
 
 //Synchronous actions
-export const authStart = () => {
+export const loginStart = () => {
     return {
-        type: actionTypes.AUTH_START
+        type: actionTypes.LOGIN_START
     }
 };
 
-export const authSuccess = (idToken, userId) => {
+export const loginSuccess = (idToken, userId) => {
     return {
-        type: actionTypes.AUTH_SUCCESS,
+        type: actionTypes.LOGIN_SUCCESS,
         idToken,
         userId
     }
 };
 
-export const authFailed = (error) => {
+export const loginFailed = (error) => {
     return {
-        type: actionTypes.AUTH_FAILED,
+        type: actionTypes.LOGIN_FAILED,
         error: error
     };
 };
-
 
 
 export const checkAuthTimeout = (expirationTime) => {
@@ -92,7 +139,7 @@ export const authCheckState = () => {
             }
             else {
                 const userId = localStorage.getItem('userId');
-                dispatch(authSuccess(token, userId));
+                dispatch(loginSuccess(token, userId));
                 dispatch(getDatabaseUser(userId, token));
                 dispatch(checkAuthTimeout((expirationDate.getTime() - new Date().getTime()) / 1000));
             }
@@ -109,4 +156,11 @@ export const logout = () => {
     return {
         type: actionTypes.AUTH_LOGOUT
     }
+};
+
+export const clearAuthError = () => {
+    return {
+        type: actionTypes.CLEAR_AUTH_ERROR,
+        error: null
+    };
 };

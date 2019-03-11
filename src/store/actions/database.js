@@ -4,24 +4,28 @@ import * as actionTypes from './actionTypes';
 import {clearRecipe, selectUserRecipe, setWeightsRedux} from "./formula";
 import {modifyFlavorRecipeCountRedux, saveFlavorDataRedux, saveShoppingListRedux} from "./inventory";
 import {compareFlavors} from "../../util/shared";
+import {loginSuccess, registerFailed, registerSuccess} from "./auth";
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// CREATE USER DATABASE ENTRY ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const createDatabaseUser = (email, userId, token, weights) => {
+export const createDatabaseUser = (username, email, userId, token) => {
     return dispatch => {
         dispatch(createDbUserStart());
-        const payload = {email: email, id: userId};
+        const payload = {displayName: username, email: email, id: userId};
+
         axios.post('/users.json?auth=' + token, payload)
             .then(response => {
-                dispatch(setDbWeights(token, response.data.name, weights));
                 dispatch(createDbUserSuccess(response.data.name));
+                dispatch(registerSuccess(userId, token));
             }).catch(error => {
                 dispatch(createDbUserFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+                dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
     };
 };
+
 
 
 //Synchronous actions
@@ -60,6 +64,7 @@ export const getDatabaseUser = (userId, token) => {
                 dispatch(getDatabaseWeights(token, dbEntryId));
                 dispatch(getUserInventory(token, dbEntryId));
                 dispatch(getUserShoppingList(token, dbEntryId));
+                dispatch(loginSuccess(userId, token));
             }).catch(error => {
             dispatch(getDbUserFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });

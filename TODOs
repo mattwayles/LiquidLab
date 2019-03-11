@@ -1,0 +1,45 @@
+============================================================================
+====================== BUGS / CLEANUP ======================================
+============================================================================
+
+===== APP =====
+-Warn when token is about to expire
+-Mobile Optimization
+
+===== LIQUIDLAB =====
+-The flavor percentage box goes red every time something is entered.
+-"I Made This" should only present to authenticated users
+-Should un-authenticated users really have to enter a recipe name?
+-Note textbox font should match the rest of the app
+-LiquidLab text formatting and logo
+-No confirmation window when exiting out w/o any changes made. If there are changes, alert me. If not, don't alert me.
+
+===== INVENTORY =====
+- Text input is wonky. Cannot delete appropriately, cannot add appropriately, etc.
+- Add PG, VG, NIC inventory
+
+===== TOOLBAR =====
+- Include LL logo, not the React logo
+- FavIcon change to liquidlab logo
+
+===== WEIGHTS =====
+- Ensure database commit works correctly, big changes were made without being tested.
+
+===== DIALOGS =====
+- Material-UI dialog buttons don't conform to the rest of app. Pick one and stick with it.
+
+
+======================================================================
+====================== FEATURES ======================================
+======================================================================
+
+- Global Recipes
+    - What can I make from global recipes? (Filter out local flavors)
+    - Browse global with intense search
+    - Global flavors "Add to Make List / Remove from Make List"
+
+-Expand AutoComplete capabilities in InputOption to actually populate the textbox with the top result.
+- Firebase SMTP (email verification, forgot password e-mail, password reset, tier 0 until verified otherwise)
+- Paid Tiers with credit card app embedded
+- Performance testing: what happens when recipes, inventory, shoppingList get massive?
+- Support page with About section, Help section, Walkthrough, Donate/Contact, and TOC

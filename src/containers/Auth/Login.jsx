@@ -7,6 +7,7 @@ import * as actions from "../../store/actions";
 import Spinner from "../../components/ui/Spinner/Spinner";
 import Auxil from "../../hoc/Auxil";
 import Button from "../../components/ui/Button/Button";
+import {validateLoginInput} from "../../util/userInputUtil";
 
 /**
  * Login Container
@@ -14,8 +15,14 @@ import Button from "../../components/ui/Button/Button";
 class Login extends React.Component {
     state = {
         email: "",
-        password: ""
+        password: "",
+        clientError: ""
     };
+
+    componentWillMount() {
+        console.log("MOUNTING");
+        this.props.clearAuthError();
+    }
 
     /**
      * Update state when user input is entered
@@ -30,25 +37,33 @@ class Login extends React.Component {
      * Handler for user press of the Submit button
      */
     handleSubmit = () => {
-        this.props.onAuth(this.state.email, this.state.password);
+        let invalid = validateLoginInput(this.state.email, this.state.password);
+        
+        if (invalid) {
+            this.setState({ clientError: invalid });
+        } else {
+            this.props.onLogin(this.state.email, this.state.password);
+        }
     };
 
 
     render() {
-        const { email, password } = this.state;
+        const { email, password, clientError } = this.state;
         const { error, loading } = this.props;
+
+        let inputError = error || clientError;
 
         return (
             <div className={classes.Auth}>
                 <p className={classes.Label}>Welcome Back! Login to your account:</p>
-                { error ? <p className={classes.Error}>&#9888;&emsp;{error}</p> : null}
+                { inputError ? <p className={classes.Error}>&#9888;&emsp;{inputError}</p> : null}
                 {loading ? <Spinner /> : <Auxil>
                     <UserInput
                         autofocus={true}
                         type="string"
                         id="email"
                         value={email}
-                        invalid={error && error.includes("E-Mail")}
+                        invalid={inputError && inputError.includes("E-Mail")}
                         change={(e) => this.handleUserInput(e, "email")}
                         placeholder="E-Mail Address"
                     />
@@ -56,7 +71,7 @@ class Login extends React.Component {
                         type="password"
                         id="password"
                         value={password}
-                        invalid={error && error.includes("password")}
+                        invalid={inputError && inputError.includes("password")}
                         change={(e) => this.handleUserInput(e, "password")}
                         placeholder="Password"
                     />
@@ -78,7 +93,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onAuth: (email, password, register) => dispatch(actions.auth(email, password, register)),
+        onLogin: (email, password) => dispatch(actions.login(email, password)),
+        clearAuthError: () => dispatch(actions.clearAuthError())
     }
 };
 

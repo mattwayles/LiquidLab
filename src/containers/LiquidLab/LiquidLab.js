@@ -18,25 +18,6 @@ class LiquidLab extends Component {
         navWarn: false
     };
 
-    //TODO:
-    //BUG: Text input in inventory is wonky. Cannot delete appropriately, cannot add appropriately, etc.
-    //BUG: Warn when token is support to expire
-    //BUG: (I want) No confirmation window when exiting out w/o any changes made!
-    //CLEANUP: Add PG, VG, and Nic to the inventory
-    //CLEANUP: Material-UI buttons on ConfirmDialog, SaveConfirm dialog, etc. don't conform
-    //CLEANUP: Logo!
-    //CLEANUP: Fonts
-    //CLEANUP: Mobile Optimization
-    //FEATURE: Global Recipes
-        //What can I make from global recipes? Filter out local flavors
-        //Browse global with intense search
-        //Global flavors; "Add to My List" / "Remove From My List"
-    //FEATURE: Autocomplete flavor values from InputOption top result
-    //FEATURE: Firebase SMTP (email verification)
-    //FEATURE: Performance testing: what happens when recipes, inventory, shoppingList get massive?
-    //FEATURE: Support page with About section, Help section, Donate/Contact, and TOC
-
-
     /**
      * Retain the MLToMake value across page visits
      */
