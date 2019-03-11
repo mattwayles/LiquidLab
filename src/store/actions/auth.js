@@ -16,29 +16,43 @@ export const register = (username, email, password) => {
             returnSecureToken: true
         };
 
-        let registeredDisplayNames = [];
-        axios.get('/users.json?auth=' + process.env.REACT_APP_ADMIN_TOKEN)
-            .then(response => {
-                for (let i in response.data) {
-                    registeredDisplayNames.push(response.data[i].displayName.toLowerCase());
-                }
-                if (registeredDisplayNames.indexOf(username.toLowerCase()) >= 0) {
-                    dispatch(registerFailed(ErrorMessage("USERNAME_TAKEN", username)));
-                } else {
-                    let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + process.env.REACT_APP_API_KEY;
+        let url = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + process.env.REACT_APP_API_KEY;
 
-                    axios.post(url, authData)
-                        .then(response => {
+        //Create the user to retrieve a session token used for querying the database
+        axios.post(url, authData)
+            .then(response => {
+
+                //Use the token to query the list of registered display names and ensure no duplicates
+                let registeredDisplayNames = [];
+                axios.get('users.json?auth=' + response.data.idToken)
+                    .then(displayNames => {
+
+                        //Parse response for display names
+                        for (let i in displayNames.data) {
+                            registeredDisplayNames.push(displayNames.data[i].displayName.toLowerCase());
+                        }
+
+                        //If a duplicate display name is found, remove the user and send an error message
+                        if (registeredDisplayNames.indexOf(username.toLowerCase()) >= 0) {
+                            axios.post("https://www.googleapis.com/identitytoolkit/v3/relyingparty/deleteAccount?key=" + process.env.REACT_APP_API_KEY,
+                                {idToken: response.data.idToken, localId: response.data.localId});
+                            dispatch(registerFailed(ErrorMessage("USERNAME_TAKEN", username)));
+                        }
+
+                        //If no duplicate display name is found, create DB user and login
+                        else {
                             dispatch(createDatabaseUser(username, email, response.data.localId, response.data.idToken));
                             dispatch(login(email, password));
-                        }).catch(error => {
-                            dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+                        }
+                    })
+                    .catch(error => {
+                        //Error retrieving display names from database
+                        dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
                     });
-                }
-            })
-            .catch(error => {
-                dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
-            });
+            }).catch(error => {
+                //Error creating user
+            dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+        });
     }
 };
 

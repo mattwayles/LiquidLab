@@ -28,6 +28,9 @@
 ===== DIALOGS =====
 - Material-UI dialog buttons don't conform to the rest of app. Pick one and stick with it.
 
+===== REGISTER / LOGIN =====
+- Enter key should submit
+
 
 ======================================================================
 ====================== FEATURES ======================================

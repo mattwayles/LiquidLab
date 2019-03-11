@@ -58,6 +58,16 @@ class Register extends React.Component {
         }
     };
 
+    /**
+     * Handler for pressing the 'Enter' key inside any input box
+     * @param event The key press event
+     */
+    enterKeyPressed = (event) => {
+        if (event.key === 'Enter') {
+            this.handleSubmit();
+        }
+    };
+
 
     render() {
         const { username, email, verifyEmail, password, confirmPw, clientError } = this.state;
@@ -77,6 +87,7 @@ class Register extends React.Component {
                             type="string"
                             id="username"
                             value={username}
+                            enter={this.enterKeyPressed}
                             invalid={inputError && inputError.includes("username")}
                             change={(e) => this.handleUserInput(e, "username")}
                             placeholder="Username *"
@@ -86,6 +97,7 @@ class Register extends React.Component {
                             type="string"
                             id="email"
                             value={email}
+                            enter={this.enterKeyPressed}
                             invalid={inputError && inputError.includes("e-mail")}
                             change={(e) => this.handleUserInput(e, "email")}
                             placeholder="E-Mail Address *"
@@ -95,6 +107,7 @@ class Register extends React.Component {
                             type="string"
                             id="verifyEmail"
                             value={verifyEmail}
+                            enter={this.enterKeyPressed}
                             invalid={inputError && inputError.includes("verify e-mail")}
                             change={(e) => this.handleUserInput(e, "verifyEmail")}
                             placeholder="Verify E-Mail Address *"
@@ -103,6 +116,7 @@ class Register extends React.Component {
                             type="password"
                             id="password"
                             value={password}
+                            enter={this.enterKeyPressed}
                             invalid={inputError && (inputError.includes("provided password") || inputError.includes("The password"))}
                             change={(e) => this.handleUserInput(e, "password")}
                             placeholder="Password *"
@@ -111,6 +125,7 @@ class Register extends React.Component {
                             type="password"
                             id="confirm"
                             value={confirmPw}
+                            enter={this.enterKeyPressed}
                             invalid={inputError && (inputError.includes("provided password") || inputError.includes("confirm"))}
                             change={(e) => this.handleUserInput(e, "confirmPw")}
                             placeholder="Confirm Password *"

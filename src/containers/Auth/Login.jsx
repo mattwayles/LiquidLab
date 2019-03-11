@@ -44,8 +44,19 @@ class Login extends React.Component {
         if (invalid) {
             this.setState({ clientError: invalid });
         } else {
+            this.setState({ clientError: null });
             this.props.onLogin(this.state.email, this.state.password);
         }
+    };
+
+    /**
+     * Handler for pressing the 'Enter' key inside any input box
+     * @param event The key press event
+     */
+    enterKeyPressed = (event) => {
+      if (event.key === 'Enter') {
+          this.handleSubmit();
+      }
     };
 
 
@@ -66,6 +77,7 @@ class Login extends React.Component {
                         type="string"
                         id="email"
                         value={email}
+                        enter={this.enterKeyPressed}
                         invalid={inputError && inputError.includes("E-Mail")}
                         change={(e) => this.handleUserInput(e, "email")}
                         placeholder="E-Mail Address"
@@ -74,6 +86,7 @@ class Login extends React.Component {
                         type="password"
                         id="password"
                         value={password}
+                        enter={this.enterKeyPressed}
                         invalid={inputError && inputError.includes("password")}
                         change={(e) => this.handleUserInput(e, "password")}
                         placeholder="Password"
