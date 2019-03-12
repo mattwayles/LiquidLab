@@ -2,6 +2,8 @@ import {calculateFlavorResults} from "./formulaUtil";
 import {compareFlavors} from "./shared";
 import RecipeControl from "../components/RecipeControl/RecipeControl";
 import React from "react";
+import ReactTooltip from 'react-tooltip';
+import * as ToolTip from '../constants/Tooltip';
 
 /**
  * When user flavor input is received, update flavor data
@@ -134,19 +136,25 @@ export const populateList = (displayOptions, filter, inventory) => {
  * @param optionHandler Handler for providing inputOptions
  * @param keyDownHandler    Handler for pressing keys in an InputOption
  * @param clicked   Handler for a mouse click
+ * @param auth The user's authentication status
  * @returns {*}
  */
 export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
-    optionClickedHandler, plusClickedHandler, flavorDataEnteredHandler, optionHandler,  keyDownHandler, clicked) => {
+    optionClickedHandler, plusClickedHandler, flavorDataEnteredHandler, optionHandler,  keyDownHandler, clicked, auth) => {
+
+    let disabled = flavors && flavors.length < 8;
     return col1Controls.map(control => {
         if (control.type === 'button') {
             return (
-                <button
-                    key="plusBtn"
-                    disabled={flavors && flavors.length < 8}
-                    className={flavors && flavors.length < 8 ? classes.PlusButtonDisabled : classes.PlusButton}
-                    onClick={plusClickedHandler}
-                >&nbsp;+&nbsp;</button>
+                <span data-tip={disabled ? ToolTip.PLUS_BUTTON_DISABLED : ToolTip.PLUS_BUTTON}>
+                    <button
+                            key="plusBtn"
+                            disabled={disabled}
+                            className={disabled ? classes.PlusButtonDisabled : classes.PlusButton}
+                            onClick={plusClickedHandler}
+                    >+</button>
+                    <ReactTooltip delayShow={500}/>
+                </span>
             )
         }
         let valid = null;
@@ -187,7 +195,7 @@ export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, 
             values={flavors ? flavors[control.id] : null}
             key={control.id}
             id={control.id}
-            valid={valid}
+            valid={auth ? valid : true}
             optionClick={optionClickedHandler}
             plusClicked={plusClickedHandler}
             change={flavorDataEnteredHandler}

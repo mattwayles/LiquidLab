@@ -3,14 +3,15 @@ import {Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions,
     Table, TableHead, TableBody, TableRow, TableCell} from "@material-ui/core";
 import {connect} from "react-redux";
 import classes from './Inventory.css';
-import { Add, Delete, ArrowDropUp, ArrowDropDown } from "@material-ui/icons";
-import Button from "../../components/ui/Button/Button";
+import { Delete, ArrowDropUp, ArrowDropDown } from "@material-ui/icons";
 import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
+import * as ToolTip from '../../constants/Tooltip';
 import * as actions from "../../store/actions";
 import {createNextId, round} from "../../util/shared";
 import {detectRecipeInclusion, sortTable, userInput} from "../../util/inventoryUtil";
+import Button from "../../components/ui/Button/Button";
 
 /**
  * Manage a user's inventory list
@@ -180,12 +181,12 @@ class Inventory extends React.Component {
         const { edit, flavors, deleteDialog, deleteRow, sort } = this.state;
 
         const columns = [
-            { name: "vendor", label: "Vendor" },
-            { name: "name", label: "Flavor Name" },
-            { name: "amount", label: "Amount Left (ml)" },
-            { name: "recipes", label: "# of Recipes" },
-            { name: "notes", label: "Notes" },
-            { name: "remove", label: "Remove" }
+            { name: "vendor", label: "Vendor", tooltip: ToolTip.VENDOR },
+            { name: "name", label: "Flavor Name", tooltip: ToolTip.FLAVOR },
+            { name: "amount", label: "Amount Left (ml)", tooltip: ToolTip.INVENTORY_AMOUNT_LEFT },
+            { name: "recipes", label: "# of Recipes", tooltip: ToolTip.INVENTORY_RECIPE_COUNT },
+            { name: "notes", label: "Notes", tooltip: ToolTip.INVENTORY_NOTES },
+            { name: "remove", label: "Remove", tooltip: ToolTip.INVENTORY_DELETE }
         ];
 
         return(
@@ -201,8 +202,8 @@ class Inventory extends React.Component {
                             <TableRow style={{height: '10px'}}>
                                 {columns.map(column => (
                                     <TableCell onClick={column.name !== 'remove' ? (e) => this.handleTableSort(e, column.name, sort) : null}
-                                               key={column.name}>{sort.col === column.name ? sort.asc ?
-                                                    <ArrowDropUp fontSize='inherit' /> : <ArrowDropDown fontSize='inherit' /> : null} {column.label}</TableCell>
+                                               key={column.name}><div data-tip={column.tooltip}>{sort.col === column.name ? sort.asc ?
+                                        <ArrowDropUp fontSize='inherit' /> : <ArrowDropDown fontSize='inherit' /> : null} {column.label}</div></TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
@@ -210,45 +211,60 @@ class Inventory extends React.Component {
                             {flavors.map(flav => {
                                 return <TableRow style={{height: '10px'}} key={flav.id}>
                                         {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "vendor" ?
-                                            <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
+                                            <TableCell><Input
+                                                              keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                               paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                               blur={this.handleBlur} autoFocus={true} classes={classes.Input}
                                                               value={flav.vendor} focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
                                             : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
                                     {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "name" ?
-                                        <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
+                                        <TableCell><Input
+                                                          keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                           paste={(e) => this.handlePaste(e, flav, 'name')}
                                                           blur={this.handleBlur} autoFocus={true} classes={classes.NameInput}
                                                           value={flav.name} focus={(e) => this.handleFocus(e)} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
                                     {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "amount" ?
-                                        <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'amount')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
+                                        <TableCell><Input
+                                                            keyDown={(e) => this.handleKeyDown(e, flav, 'amount')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                           paste={(e) => this.handlePaste(e, flav, 'amount')}
                                                           blur={this.handleBlur} autoFocus={true} classes={classes.Input}
                                                           value={flav.amount} type="text" min="0" focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
                                         : <TableCell  onClick={(e) => this.handleEditBegin(e, flav, "amount")} >{round(flav.amount)}</TableCell>}
-                                        <TableCell >{flav.recipes}</TableCell>
+                                    <TableCell ><Auxil><span data-tip={ToolTip.INVENTORY_RECIPE_COUNT}>{flav.recipes}</span></Auxil></TableCell>
                                     {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "notes" ?
-                                        <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'notes')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
+                                        <TableCell><Input
+                                                        keyDown={(e) => this.handleKeyDown(e, flav, 'notes')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                           paste={(e) => this.handlePaste(e, flav, 'notes')}
                                                           blur={this.handleBlur} autoFocus={true} classes={classes.NotesInput}
                                                           value={flav.notes} type="text" min="0" focus={(e) => this.handleFocus(e)} /></TableCell>
                                         : <TableCell  onClick={(e) => this.handleEditBegin(e, flav, "notes")} >{flav.notes}</TableCell>}
                                     <TableCell>
-                                        <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
+                                        <div data-tip={ToolTip.INVENTORY_DELETE}>
+                                            <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             })}
-                            <TableRow><TableCell span={4}><Add className={classes.IconBtn}
-                                                               onClick={this.handleAdd} color={"primary"}/></TableCell></TableRow>
+                            <TableRow>
+                                <TableCell span={4}>
+                                <span data-tip={ToolTip.INVENTORY_PLUS_BUTTON}>
+                                    <button
+                                        key="plusBtn"
+                                        className={classes.PlusButton}
+                                        onClick={this.handleAdd}
+                                    >+</button>
+                                </span>
+                                </TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </DialogContent>
                 <DialogActions>
-                    <Button clicked={this.handleClose} color="primary">
+                    <Button clicked={this.handleClose}>
                         Close
                     </Button>
-                    <Button clicked={this.handleSaveInventory} color="primary">
+                    <Button clicked={this.handleSaveInventory}>
                         Save
                     </Button>
                 </DialogActions>

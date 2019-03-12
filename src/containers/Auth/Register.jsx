@@ -3,6 +3,7 @@ import classes from './Auth.css';
 import { NavLink } from 'react-router-dom';
 import UserInput from "../../components/ui/UserInput/UserInput";
 import {connect} from "react-redux";
+import * as ToolTip from '../../constants/Tooltip';
 import * as actions from "../../store/actions";
 import Spinner from "../../components/ui/Spinner/Spinner";
 import Auxil from "../../hoc/Auxil";
@@ -83,6 +84,7 @@ class Register extends React.Component {
                 {loading ? <Spinner/> :
                     <Auxil>
                         <UserInput
+                            tooltip={ToolTip.REGISTER_USERNAME}
                             autofocus={true}
                             type="string"
                             id="username"
@@ -93,6 +95,7 @@ class Register extends React.Component {
                             placeholder="Username *"
                         />
                         <UserInput
+                            tooltip={ToolTip.REGISTER_EMAIL}
                             autofocus={false}
                             type="string"
                             id="email"
@@ -103,6 +106,7 @@ class Register extends React.Component {
                             placeholder="E-Mail Address *"
                         />
                         <UserInput
+                            tooltip={ToolTip.REGISTER_CONFIRM_EMAIL}
                             autofocus={false}
                             type="string"
                             id="verifyEmail"
@@ -113,6 +117,7 @@ class Register extends React.Component {
                             placeholder="Verify E-Mail Address *"
                         />
                         <UserInput
+                            tooltip={ToolTip.REGISTER_PASSWORD}
                             type="password"
                             id="password"
                             value={password}
@@ -122,6 +127,7 @@ class Register extends React.Component {
                             placeholder="Password *"
                         />
                         <UserInput
+                            tooltip={ToolTip.REGISTER_CONFIRM_PASSWORD}
                             type="password"
                             id="confirm"
                             value={confirmPw}

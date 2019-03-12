@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-
 import { connect } from 'react-redux';
 import { enforceInputConstraints } from '../../../../util/shared';
 import * as actions from '../../../../store/actions/index';
+import ReactTooltip from 'react-tooltip';
+import * as ToolTip from '../../../../constants/Tooltip';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
 import classes from './Recipe.css';
 import {formulaIsEmpty} from "../../../../util/formulaUtil";
@@ -137,16 +138,16 @@ class Recipe extends Component {
 
     render () {
         const { col1Controls, col2Controls, displayOptions, filter, cursor } = this.state;
-        const { input, weights, flavors, token, recipeKey, recipes, inventory } = this.props;
+        const { isAuthenticated, input, weights, flavors, token, recipeKey, recipes, inventory } = this.props;
         const list = populateList(displayOptions, filter, inventory);
 
         //Map column controls
         const firstRowControls = mapControls(col1Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
             this.optionClickedHandler, this.plusClickedHandler, this.flavorDataEnteredHandler, this.optionHandler,
-            (e) => this.keyDownHandler(e, list), this.props.clicked);
+            (e) => this.keyDownHandler(e, list), this.props.clicked, isAuthenticated);
         const secondRowControls = mapControls(col2Controls, classes, recipeKey, recipes, flavors, input, weights, inventory, list, cursor, displayOptions,
             this.optionClickedHandler, this.plusClickedHandler, this.flavorDataEnteredHandler, this.optionHandler,
-            (e) => this.keyDownHandler(e, list), this.props.clicked);
+            (e) => this.keyDownHandler(e, list), this.props.clicked, isAuthenticated);
 
 
         return(
@@ -154,13 +155,15 @@ class Recipe extends Component {
                 <div className={classes.RecipeInner}> 
                     <p className={classes.Header}>Recipe</p>
                     <div className={classes.RecipeName} >
-                        <input className={!input.name.touched && input.name.value !== '' ?
+                        <input data-tip={ToolTip.RECIPE_NAME}
+                            className={!input.name.touched && input.name.value !== '' ?
                             classes.RecipeNameInputAuto : classes.RecipeNameInput}
                                value={input.name.value}
                                type="text"
                                placeholder="Recipe Name"
                                 onChange={(event) => this.props.onInputDataEntered('name', event.target.value)} />
-                        <BatchSelect classes={classes.Batch} value={input.batch.value}
+                        <ReactTooltip delayShow={500}/>
+                        <BatchSelect value={input.batch.value}
                                      changed={(event) => this.props.onInputDataEntered('batch', event.target.value)} />
                     </div>
                     <div className={classes.Col1}>
@@ -170,11 +173,18 @@ class Recipe extends Component {
                         {secondRowControls}
                     </div>
                     <div className={classes.RecipeButtons}>
-                        <Button classname="Main" disabled={recipeKey === ''} clicked={this.props.delete} >Delete</Button>
+                        <Button classname="Main" disabled={recipeKey === ''}
+                                tooltip={isAuthenticated ? recipeKey === '' ? ToolTip.DELETE_RECIPE_BUTTON_DISABLED : ToolTip.DELETE_RECIPE_BUTTON : ToolTip.DELETE_RECIPE_BUTTON_GUEST}
+                                clicked={this.props.delete} >Delete</Button>
                         <Button classname="Main" disabled={!token || input.name.value === ""}
+                                tooltip={isAuthenticated ? !token || input.name.value === "" === '' ? ToolTip.SAVE_RECIPE_BUTTON : ToolTip.SAVE_RECIPE_BUTTON_DISABLED : ToolTip.SAVE_RECIPE_BUTTON_GUEST}
                                 clicked={this.props.save} >{recipeKey ? "Update" : "Save"}</Button>
-                        <Button classname="Main" disabled={formulaIsEmpty(this.props.input, this.props.flavors)} clicked={this.props.clear} >Clear</Button>
-                        <Button classname="Main" clicked={this.props.calculate} >Calculate</Button>
+                        <Button classname="Main" disabled={formulaIsEmpty(this.props.input, this.props.flavors)}
+                                tooltip={formulaIsEmpty(this.props.input, this.props.flavors) ? ToolTip.CLEAR_BUTTON_DISABLED : ToolTip.CLEAR_BUTTON}
+                                clicked={this.props.clear} >Clear</Button>
+                        <Button classname="Main"
+                                tooltip={ToolTip.CALCULATE_BUTTON}
+                                clicked={this.props.calculate}>Calculate</Button>
                     </div>
                 </div>
             </div>
@@ -183,6 +193,7 @@ class Recipe extends Component {
 
 const mapStateToProps = state => {
     return {
+        isAuthenticated: state.auth.token !== null,
         recipeKey: state.formula.key,
         input: state.formula.inputs,
         flavors: state.formula.flavors,

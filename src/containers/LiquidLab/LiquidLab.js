@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import Formula from './Formula/Formula';
 import Results from './Results/Results';
 import classes from './LiquidLab.css';
+import logo from '../../assets/logo.png';
+import * as ToolTip from "../../constants/Tooltip";
+import ReactTooltip from 'react-tooltip';
 import * as actions from "../../store/actions";
 import Input from "../../components/ui/Input/Input";
 import {enforceInputConstraints} from "../../util/shared";
@@ -142,11 +145,13 @@ class LiquidLab extends Component {
                     <div className={classes.MlToMake}>
                         <p>ML To Make:</p>
                         <Input value={inputs.mlToMake.value} classes={classes.Input} valid={error ? !error.includes("ML") : true}
+                               tooltip={error && error.includes("ML") ? ToolTip.ML_TO_MAKE_ERROR : ToolTip.ML_TO_MAKE}
                                change={(e) => this.dataEnteredHandler(e)} type='number'
                                maxLength={5} placeholder="0" autoFocus/>
                         <p>ml</p>
                     </div>
-                    <select className={classes.Select} value={recipeKey} onChange={(event) => this.recipeSelectHandler(event)}>
+                    <select data-tip={isAuthenticated ? ToolTip.RECIPE_DROPDOWN : ToolTip.RECIPE_DROPDOWN_DISABLED}
+                        className={classes.Select} value={recipeKey} onChange={(event) => this.recipeSelectHandler(event)}>
                         {isAuthenticated ? <option value="" disabled>Select a Recipe...</option>
                             : <option value="" disabled>Register or Login to Save and Retrieve your Recipes!</option>}
                         {displayedRecipes ? Object.keys(displayedRecipes).map(index => {
@@ -157,12 +162,14 @@ class LiquidLab extends Component {
                                 : <option key={recipe.dbKey} value={recipe.dbKey}>{recName}</option>
                         }) : null}
                     </select>
+                    <ReactTooltip delayShow={500}/>
                 </header>
                 {successMsg ? <p className={classes.Success}>{successMsg}</p> : null}
                 <div className={classes.Views}>
                     <Formula clear={this.handleClearResults} recipes={userRecipes} displayResults={this.displayResultsHandler} error={this.errorHandler}/>
                     <div className={classes.Results}>
-                        {results ? <Results navWarn={navWarn} made={made} navWarnHandler={this.handleNavWarn} madeHandler={this.handleRecipeMade}/> : <p className={classes.Placeholder}>Results</p>}
+                        {results ? <Results navWarn={navWarn} made={made} navWarnHandler={this.handleNavWarn} madeHandler={this.handleRecipeMade}/>
+                            : <div className={classes.ResultPlaceholder}><img className={classes.Logo} src={logo} alt="" /><span className={classes.Placeholder}>Results</span></div>}
                     </div>
                 </div>
                 {error ? <ErrorDialog open={!!error} close={() => this.errorHandler(null)} message={error} /> : null}

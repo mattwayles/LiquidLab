@@ -3,10 +3,11 @@ import {Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions,
     Table, TableHead, TableBody, TableRow, TableCell} from "@material-ui/core";
 import {connect} from "react-redux";
 import classes from './Inventory.css';
-import { Add, Delete, ArrowDropUp, ArrowDropDown } from "@material-ui/icons";
+import { Delete, ArrowDropUp, ArrowDropDown } from "@material-ui/icons";
 import Button from "../../components/ui/Button/Button";
 import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
+import * as ToolTip from '../../constants/Tooltip';
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
 import {enforceInputConstraints, createNextId} from "../../util/shared";
@@ -180,9 +181,9 @@ class ShoppingList extends React.Component {
         const { edit, shoppingList, deleteDialog, deleteRow, sort } = this.state;
 
         const columns = [
-            { name: "vendor", label: "Vendor" },
-            { name: "name", label: "Flavor Name" },
-            { name: 'remove', label: "Remove" }
+            { name: "vendor", label: "Vendor", tooltip: ToolTip.VENDOR},
+            { name: "name", label: "Flavor Name", tooltip:  ToolTip.FLAVOR},
+            { name: 'remove', label: "Remove", tooltip:  ToolTip.INVENTORY_DELETE}
         ];
 
         return(
@@ -198,8 +199,9 @@ class ShoppingList extends React.Component {
                             <TableRow style={{height: '10px'}}>
                                 {columns.map(column => (
                                     <TableCell onClick={column.name !== 'remove' ? (e) => this.handleTableSort(e, column.name, sort) : null}
-                                               key={column.name}>{sort.col === column.name ? sort.asc ?
-                                                    <ArrowDropUp fontSize='inherit' /> : <ArrowDropDown fontSize='inherit' /> : null} {column.label}</TableCell>
+                                               key={column.name}><div data-tip={column.tooltip}>{sort.col === column.name ? sort.asc ?
+                                                    <ArrowDropUp fontSize='inherit' /> : <ArrowDropDown fontSize='inherit' /> : null} {column.label}</div>
+                                    </TableCell>
                                 ))}
                             </TableRow>
                         </TableHead>
@@ -216,19 +218,30 @@ class ShoppingList extends React.Component {
                                                           blur={this.handleBlur} paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                           autoFocus={true} classes={classes.NameInput} focus={(e) => this.handleFocus(e)} value={flav.name} /></TableCell>
                                         : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
-                                        {!flav.auto ?<TableCell>
-                                        <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
-                                    </TableCell> : <TableCell /> }
+                                    {!flav.auto ?
+                                        <TableCell>
+                                        <div data-tip={ToolTip.INVENTORY_DELETE}>
+                                            <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
+                                        </div>
+
+                                        </TableCell> : <TableCell><div className={classes.EmptyDiv} data-tip={ToolTip.INVENTORY_CANT_DELETE}>
+                                        </div></TableCell> }
                                 </TableRow>
                             })}
-                            <TableRow><TableCell span={4}><Add className={classes.IconBtn}
-                                                               onClick={this.handleAdd} color={"primary"}/></TableCell></TableRow>
+                            <TableRow><TableCell span={4}><span data-tip={ToolTip.INVENTORY_PLUS_BUTTON}>
+                                    <button
+                                        key="plusBtn"
+                                        className={classes.PlusButton}
+                                        onClick={this.handleAdd}
+                                    >+</button>
+                                </span></TableCell></TableRow>
                         </TableBody>
                     </Table>
                 </DialogContent>
                     <div className={classes.AmtLeft}>
                         <p>Amount Left Cutoff:</p>
-                        <Input  focus={(e) => this.handleFocus(e)} blur={this.handleBlur} autoFocus={true} type="number" min="0" classes={classes.AmtLeftInput}
+                        <Input  tooltip={ToolTip.AMOUNT_LEFT_CUTOFF}
+                                focus={(e) => this.handleFocus(e)} blur={this.handleBlur} autoFocus={true} type="number" min="0" classes={classes.AmtLeftInput}
                                change={(e) => this.handleCutoffInput(e)} value={this.state.cutoff} maxLength="5"/>
                         <p>ML</p>
                     </div>

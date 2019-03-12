@@ -127,13 +127,11 @@ export const userInput = (e, row, control, list) => {
             else {
                 if ((e.keyCode > 47 && e.keyCode < 91 && !e.ctrlKey) || (e.keyCode > 95 && e.keyCode < 106) ||
                     e.keyCode === 8 || e.keyCode === 32 || e.keyCode > 145) {
-                    console.log(window.getSelection().toString().length);
                     if (window.getSelection().toString().length) {
                         const newStr = e.target.value.slice(0, e.target.value.length - window.getSelection().toString().length);
                         data[flavor] = {...data[flavor], [control]: newStr};
                     }
                     else if (e.keyCode === 8) {
-                        console.log(e.target.value);
                         data[flavor] = {...data[flavor], [control]:  e.target.value.slice(0, -1)};
                     }
 

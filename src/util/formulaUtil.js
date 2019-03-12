@@ -8,11 +8,7 @@ import {compareFlavors, createNextId, round} from "./shared";
  * @returns {boolean}   Boolean indicating the validity of all input values
  */
 export const validateInputs = (inputs, flavors, error) => {
-    if (inputs.name.value === "") {
-        error("Please enter a recipe name");
-        return false;
-    }
-    else if (inputs.mlToMake.value < 1) {
+    if (inputs.mlToMake.value < 1) {
         error("ML To Make must be greater than or equal to 1");
         return false;
     }

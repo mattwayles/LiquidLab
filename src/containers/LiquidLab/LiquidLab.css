@@ -17,7 +17,7 @@
     font-size: 4vw;
     margin: 0 0 0 1vw;
     padding: 0;
-    font-weight: bold;
+    font-weight: bolder;
     color: var(--main-color);
 }
 
@@ -35,7 +35,7 @@
 }
 
 .Input {
-    margin-top: 1.6vw;
+    margin-top: 4vh;
     width: 5vw;
 }
 
@@ -52,6 +52,14 @@
     display: flex;
 }
 
+.ResultPlaceholder {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    height: 99%;
+}
+
 .Results{
     box-shadow: 2px 2px 5px #ccc;
     border-radius: 5px;
@@ -62,9 +70,13 @@
     width: 40%;
     overflow-y: auto;
 }
+
+.Logo {
+    opacity: 0.2;
+    width: 10vw;
+}
+
 .Placeholder {
-    text-align: center;
-    line-height: 320px;
     font-size: 3em;
     opacity: 0.2;
 }

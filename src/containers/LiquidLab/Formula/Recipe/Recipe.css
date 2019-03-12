@@ -58,12 +58,10 @@
     border: none;
     color: #fff;
     outline: none;
-    border-radius: 25px;
+    border-radius: 50%;
     cursor: pointer;
     font-weight: bold;
-    font-size: 1em;
-    width: 10%;
-    height: 8%;
+    font-size: 1.25em;
 }
 
 .PlusButtonDisabled {

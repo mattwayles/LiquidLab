@@ -39,6 +39,11 @@
     font-size: inherit;
 }
 
+.EmptyDiv {
+    height: 2vh;
+    width: 3vw;
+}
+
 .NameInput {
     width: 8.5vw;
 }
@@ -60,4 +65,15 @@
     width: 60%;
     margin: 0 auto;
     justify-content: space-between;
+}
+
+.PlusButton {
+    background-color: var(--accent-color);
+    border: none;
+    color: #fff;
+    outline: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.5em;
 }

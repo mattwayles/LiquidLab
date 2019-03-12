@@ -1,5 +1,6 @@
 import React from 'react';
 import classes from './UserInput.css';
+import Auxil from "../../../hoc/Auxil";
 
 /**
  * User Input object
@@ -14,7 +15,8 @@ const userInput = (props) => {
     }
 
     return(
-            <div>
+        <Auxil>
+            <div data-tip={props.tooltip}>
                 <input
                     autoFocus={props.autofocus}
                     className={inputClasses.join(' ')}
@@ -26,6 +28,7 @@ const userInput = (props) => {
                     placeholder={props.placeholder}
                 />
             </div>
+        </Auxil>
     );
 };
 

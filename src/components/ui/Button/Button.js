@@ -1,6 +1,7 @@
 import React from 'react';
-
 import classes from './Button.css';
+import Auxil from "../../../hoc/Auxil";
+import ReactTooltip from 'react-tooltip';
 
 /**
  * A standard LiquidLab button
@@ -29,13 +30,18 @@ const button = (props) => {
             classname = classes.Button;
     }
     return(
-    <button
-        className={classname}
-        disabled={props.disabled}
-        onClick={props.clicked}
-    >
-        {props.children}
-    </button>
+        <Auxil>
+            <span data-tip={props.tooltip}>
+                <button
+                    className={classname}
+                    disabled={props.disabled}
+                    onClick={props.clicked}
+                >
+                    {props.children}
+                </button>
+            </span>
+            <ReactTooltip delayShow={500}/>
+        </Auxil>
     )};
 
 export default button;

@@ -6,6 +6,7 @@ import classes from './Results.css';
 import Auxil from "../../../hoc/Auxil";
 import ConfirmDialog from "../../../components/Dialog/ConfirmDialog";
 import {compareResults} from "../../../util/shared";
+import * as ToolTip from "../../../constants/Tooltip";
 import * as actions from "../../../store/actions";
 import Button from "../../../components/ui/Button/Button";
 import firebase from 'firebase';
@@ -117,7 +118,7 @@ class Results extends Component {
         const recipeName = results.recipeInfo.batch.value ?  results.recipeInfo.name.value + " [" + results.recipeInfo.batch.value + "] "
             : results.recipeInfo.name.value;
 
-        const columns = ['', 'ML', 'Grams', '%'];
+        const columns = [{name:'', tooltip: ToolTip.RESULT_INGREDIENT},  {name:'ML', tooltip: ToolTip.RESULT_ML}, {name:'Grams', tooltip: ToolTip.RESULT_GRAM}, {name: '%', tooltip: ToolTip.RESULT_PERCENT}];
 
         return (
             <Auxil>
@@ -137,7 +138,7 @@ class Results extends Component {
                     <TableHead>
                         <TableRow>
                             {columns.map(column => (
-                                <TableCell key={column}>{<p className={classes.Column}>{column}</p>}</TableCell>
+                                <TableCell key={column.name}>{<p data-tip={column.tooltip} className={classes.Column}>{column.name}</p>}</TableCell>
                             ))}
                         </TableRow>
                     </TableHead>
@@ -150,11 +151,11 @@ class Results extends Component {
                                 <TableCell><p className={classes.ResultCell}>{res.percent}</p></TableCell>
                             </TableRow>
                         })}
-                        <TableRow>
+                        {this.props.token !== null ? <TableRow>
                             <TableCell colSpan={4}>
-                                <Button classname="Results" clicked={this.recipeCompletedHandler}>I Made This</Button>
+                                <span data-tip={ToolTip.IMADETHIS}><Button classname="Results" clicked={this.recipeCompletedHandler}>I Made This</Button></span>
                             </TableCell>
-                        </TableRow>
+                        </TableRow> : null}
                     </TableBody>
                 </Table>
                 </div>
