@@ -146,9 +146,8 @@ export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, 
     return col1Controls.map(control => {
         if (control.type === 'button') {
             return (
-                <span data-tip={disabled ? ToolTip.PLUS_BUTTON_DISABLED : ToolTip.PLUS_BUTTON}>
+                <span key="plusBtn" data-tip={disabled ? ToolTip.PLUS_BUTTON_DISABLED : ToolTip.PLUS_BUTTON}>
                     <button
-                            key="plusBtn"
                             disabled={disabled}
                             className={disabled ? classes.PlusButtonDisabled : classes.PlusButton}
                             onClick={plusClickedHandler}

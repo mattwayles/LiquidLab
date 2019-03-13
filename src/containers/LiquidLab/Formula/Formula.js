@@ -45,7 +45,7 @@ class Formula extends Component {
      */
     handleDelete = () => {
         this.props.onDeleteRecipe(this.props.token, this.props.dbEntryId,
-            this.props.recipeKey, this.props.inputs.name, this.props.inputs.batch, this.props.flavors, this.props.inventory);
+            this.props.recipeKey, this.props.inputs.name, this.props.inputs.batch, this.props.flavors, this.props.inventory, this.props.inventoryBase);
     };
 
     handleAddImage = () => {
@@ -64,8 +64,8 @@ class Formula extends Component {
             this.setState({ saveConfirm: true, nonInventory: nonInventoriedFlavors })
         }
         else {
-            saveOrUpdateRecipe(nonInventoriedFlavors, this.props.inventory, this.props.flavors, this.props.inputs, this.props.userRecipes,
-                this.props.recipeKey, this.props.token, this.props.dbEntryId, this.props.error, this.props.onSaveFlavorData, this.props.onUpdateRecipe, this.props.onSaveRecipe);
+            saveOrUpdateRecipe(nonInventoriedFlavors, this.props.inventory, this.props.inventoryBase, this.props.flavors, this.props.inputs, this.props.userRecipes,
+                this.props.recipeKey, this.props.token, this.props.dbEntryId, this.props.error, this.props.onSaveInventoryData, this.props.onUpdateRecipe, this.props.onSaveRecipe);
             this.props.clear();
             this.setState({ addImage: false, saveConfirm: false, nonInventory: [] });
         }
@@ -158,6 +158,7 @@ const mapStateToProps = state => {
         dbEntryId: state.database.dbEntryId,
         userRecipes: state.database.userRecipes,
         inventory: state.inventory.flavors,
+        inventoryBase: state.inventory.base,
         results: state.results,
         image: state.formula.inputs.image.value
     }
@@ -167,11 +168,11 @@ const mapDispatchToProps = dispatch => {
     return {
         onClearRecipe: () => dispatch(actions.clearRecipe()),
         onDeleteRecipe: (token, db, key, name, batch, flavors, inventory) => dispatch(actions.deleteRecipe(token, db, key, name, batch, flavors, inventory)),
-        onSaveRecipe: (token, db, inventory, recipeData) => dispatch(actions.saveRecipe(token, db, inventory, recipeData)),
+        onSaveRecipe: (token, db, inventoryBase, inventory, recipeData) => dispatch(actions.saveRecipe(token, db, inventory, recipeData)),
         onUpdateRecipe: (token, db, key, recipeData, inventory, original) => dispatch(actions.updateRecipe(token, db, key, recipeData, inventory, original)),
         onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
         onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value)),
-        onSaveFlavorData: (token, dbEntryId, flavors) => dispatch(actions.saveFlavorData(token, dbEntryId, flavors)),
+        onSaveInventoryData: (token, dbEntryId, base, flavors) => dispatch(actions.saveInventoryData(token, dbEntryId, base, flavors)),
         onInputDataEntered: (control, value) => dispatch(actions.inputDataEntered(control, value))
     }
 };

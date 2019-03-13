@@ -1,28 +1,21 @@
 import React from 'react';
-import {Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions,
-    Table, TableHead, TableBody, TableRow, TableCell} from "@material-ui/core";
+import {Dialog, DialogContent, DialogTitle, DialogActions} from "@material-ui/core";
 import {connect} from "react-redux";
 import classes from './Inventory.css';
-import { Delete, ArrowDropUp, ArrowDropDown } from "@material-ui/icons";
-import Input from "../../components/ui/Input/Input";
 import Auxil from "../../hoc/Auxil";
-import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
-import * as ToolTip from '../../constants/Tooltip';
 import * as actions from "../../store/actions";
-import {createNextId, round} from "../../util/shared";
-import {detectRecipeInclusion, sortTable, userInput} from "../../util/inventoryUtil";
+import {detectRecipeInclusion} from "../../util/inventoryUtil";
 import Button from "../../components/ui/Button/Button";
+import InventoryFlavors from "./InventoryFlavors/InventoryFlavors";
+import InventoryBase from "./InventoryBase/InventoryBase";
 
 /**
  * Manage a user's inventory list
  */
 class Inventory extends React.Component {
     state = {
-        deleteDialog: false,
-        deleteRow: {},
-        edit: {},
+        base: [],
         flavors: [],
-        sort: {col: "name", asc: true}
     };
 
     /**
@@ -32,7 +25,8 @@ class Inventory extends React.Component {
         let flavors  = this.props.flavors.sort((a, b) => {
             return (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0)
         });
-        this.setState({ flavors: flavors });
+        let base = this.props.base;
+        this.setState({ base: base, flavors: flavors });
     }
 
     /**
@@ -43,113 +37,19 @@ class Inventory extends React.Component {
     };
 
     /**
-     * Handler for when a component comes into focus
-     * @param event The focus event
+     * Set base state
+     * @param base  The new base state
      */
-    handleFocus = (event) => {
-        event.target.select();
+    handleSetBase = (base) => {
+        this.setState({ base: base });
     };
 
     /**
-     * Handler for when a key is pressed in an Inventory Input object
-     * @param event The keyDown event
-     * @param row   The row of the control receiving the event
-     * @param control   The control receiving the event
+     * Set flavor state
+     * @param flavors The new flavor state
      */
-    handleKeyDown = (event, row, control) => {
-        if (event.keyCode === 9 && this.state.edit) {
-            event.preventDefault();
-            if (this.state.edit.cell === 'vendor') {
-                this.setState({edit: {...this.state.edit, cell: 'name'}})
-            }
-            else if (this.state.edit.cell === 'name') {
-                this.setState({edit: {...this.state.edit, cell: 'amount'}})
-            }
-            else if (this.state.edit.cell === 'amount') {
-                this.setState({edit: {...this.state.edit, cell: 'notes'}})
-            }
-            else if (this.state.edit.cell === 'notes') {
-                let index = this.state.flavors.indexOf(row);
-                if (index + 1 >= this.state.flavors.length) {
-                    this.handleAdd();
-                    this.setState({ edit: {row: createNextId(this.state.flavors), cell: "vendor"}})
-                }
-                else {
-                    this.setState({edit: {row: index + 1, cell: "vendor"}})
-                }
-            }
-        }
-        else {
-            const data = userInput(event, row, control, this.state.flavors);
-            this.setState({ flavors: data })
-        }
-    };
-
-    /**
-     * Handler for pasting data into an Inventory Input object
-     * @param e The paste event
-     * @param row   The row of the control receiving the event
-     * @param control   The control receiving the event
-     */
-    handlePaste = (e, row, control) => {
-        let data = [...this.state.flavors];
-        for (let flavor in data) {
-            if (data[flavor].id === row.id) {
-                const clipboardText = e.clipboardData.getData("Text");
-                data[flavor] = {...data[flavor], [control]: clipboardText};
-            }
-        }
-        this.setState({ flavors: data })
-    };
-
-    /**
-     * When an inventory component is clicked on, open an editable Input object
-     * @param e The click event
-     * @param row   The row of the component receiving the click event
-     * @param cell  The component receiving the click event
-     */
-    handleEditBegin = (e, row, cell) => {
-        this.setState({ edit: {row: this.state.flavors.indexOf(row), cell: cell}})
-    };
-
-    /**
-     * Set the new inventory value to state once an Input object is blurred
-     */
-    handleBlur = () => {
-        this.setState({ edit: {} })
-    };
-
-    /**
-     * Open the "Are you sure you want to delete" window
-     * @param e The delete event
-     * @param row   The row of the object being deleted
-     */
-    handleDelete = (e, row) => {
-        this.setState({ deleteDialog: !this.state.deleteDialog, deleteRow: row });
-    };
-
-    /**
-     * Confirm deletion of an inventory item
-     * @param e The delete event
-     * @param row   The row being deleted
-     */
-    handleDeleteConfirm = (e, row) => {
-        let data = [...this.state.flavors];
-        for (let flavor in data) {
-            if (data[flavor].id === row.id) {
-                data.splice(flavor, 1);
-            }
-        }
-        this.setState({ flavors: data, deleteDialog: false })
-    };
-
-    /**
-     * Handler for adding a new Inventory item
-     */
-    handleAdd = () => {
-        let data = [...this.state.flavors];
-        data.push({id: createNextId(data), vendor: '', name:'New Flavor', amount: 0, recipes: 0, notes: ''});
-        this.setState({flavors: data});
+    handleSetFlavors = (flavors) => {
+        this.setState({ flavors: flavors });
     };
 
     /**
@@ -162,103 +62,45 @@ class Inventory extends React.Component {
             this.setState({ flavors: newFlavors });
         }
 
-        this.props.onSaveFlavorData(this.props.token, this.props.dbEntryId, this.state.flavors);
+        this.props.onSaveInventoryData(this.props.token, this.props.dbEntryId, this.state.base, this.state.flavors);
         this.props.history.push("/");
-    };
-
-    /**
-     * Sort the list by column click
-     * @param e The column click event
-     * @param column    The column to be sorted
-     */
-    handleTableSort = (e, column) => {
-        const sortedTable = sortTable(this.state.flavors, column, this.state.sort);
-        this.setState({ flavors: sortedTable.flavors, sort: sortedTable.sort });
     };
 
 
     render() {
-        const { edit, flavors, deleteDialog, deleteRow, sort } = this.state;
-
-        const columns = [
-            { name: "vendor", label: "Vendor", tooltip: ToolTip.VENDOR },
-            { name: "name", label: "Flavor Name", tooltip: ToolTip.FLAVOR },
-            { name: "amount", label: "Amount Left (ml)", tooltip: ToolTip.INVENTORY_AMOUNT_LEFT },
-            { name: "recipes", label: "# of Recipes", tooltip: ToolTip.INVENTORY_RECIPE_COUNT },
-            { name: "notes", label: "Notes", tooltip: ToolTip.INVENTORY_NOTES },
-            { name: "remove", label: "Remove", tooltip: ToolTip.INVENTORY_DELETE }
-        ];
+        const { flavors, base, } = this.state;
 
         return(
             <Auxil>
                 <Dialog maxWidth={false} open={true} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle style={{marginTop: '1vw'}}><span className={classes.Header}>Inventory</span></DialogTitle>
-                <DialogContent>
-                    <DialogContentText style={{marginBottom: '2vw'}}>
-                        <span className={classes.SubHeader}>Manage your concentrated flavor inventory</span>
-                    </DialogContentText>
-                    <Table className={classes.Table}>
-                        <TableHead>
-                            <TableRow style={{height: '10px'}}>
-                                {columns.map(column => (
-                                    <TableCell onClick={column.name !== 'remove' ? (e) => this.handleTableSort(e, column.name, sort) : null}
-                                               key={column.name}><div data-tip={column.tooltip}>{sort.col === column.name ? sort.asc ?
-                                        <ArrowDropUp fontSize='inherit' /> : <ArrowDropDown fontSize='inherit' /> : null} {column.label}</div></TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {flavors.map(flav => {
-                                return <TableRow style={{height: '10px'}} key={flav.id}>
-                                        {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "vendor" ?
-                                            <TableCell><Input
-                                                              keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
-                                                              paste={(e) => this.handlePaste(e, flav, 'vendor')}
-                                                              blur={this.handleBlur} autoFocus={true} classes={classes.Input}
-                                                              value={flav.vendor} focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
-                                            : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
-                                    {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "name" ?
-                                        <TableCell><Input
-                                                          keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
-                                                          paste={(e) => this.handlePaste(e, flav, 'name')}
-                                                          blur={this.handleBlur} autoFocus={true} classes={classes.NameInput}
-                                                          value={flav.name} focus={(e) => this.handleFocus(e)} /></TableCell>
-                                        : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
-                                    {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "amount" ?
-                                        <TableCell><Input
-                                                            keyDown={(e) => this.handleKeyDown(e, flav, 'amount')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
-                                                          paste={(e) => this.handlePaste(e, flav, 'amount')}
-                                                          blur={this.handleBlur} autoFocus={true} classes={classes.Input}
-                                                          value={flav.amount} type="text" min="0" focus={(e) => this.handleFocus(e)} maxLength="4"/></TableCell>
-                                        : <TableCell  onClick={(e) => this.handleEditBegin(e, flav, "amount")} >{round(flav.amount)}</TableCell>}
-                                    <TableCell ><Auxil><span data-tip={ToolTip.INVENTORY_RECIPE_COUNT}>{flav.recipes}</span></Auxil></TableCell>
-                                    {edit.row === this.state.flavors.indexOf(flav) && edit.cell === "notes" ?
-                                        <TableCell><Input
-                                                        keyDown={(e) => this.handleKeyDown(e, flav, 'notes')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
-                                                          paste={(e) => this.handlePaste(e, flav, 'notes')}
-                                                          blur={this.handleBlur} autoFocus={true} classes={classes.NotesInput}
-                                                          value={flav.notes} type="text" min="0" focus={(e) => this.handleFocus(e)} /></TableCell>
-                                        : <TableCell  onClick={(e) => this.handleEditBegin(e, flav, "notes")} >{flav.notes}</TableCell>}
-                                    <TableCell>
-                                        <div data-tip={ToolTip.INVENTORY_DELETE}>
-                                            <Delete fontSize="inherit" className={classes.IconBtn} onClick={(e) => this.handleDelete(e, flav)} color={"secondary"} />
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            })}
-                            <TableRow>
-                                <TableCell span={4}>
-                                <span data-tip={ToolTip.INVENTORY_PLUS_BUTTON}>
-                                    <button
-                                        key="plusBtn"
-                                        className={classes.PlusButton}
-                                        onClick={this.handleAdd}
-                                    >+</button>
-                                </span>
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                    <DialogTitle style={{marginTop: '1vw'}}><span className={classes.Header}>Inventory</span></DialogTitle>
+                    <DialogContent>
+                        <InventoryBase
+                            classes={classes}
+                            data={base}
+                            handleSetBase={this.handleSetBase}
+                            handleKeyDown={this.handleKeyDown}
+                            handleBlur={this.handleBlur}
+                            handleFocus={this.handleFocus}
+                            handleEditBegin={this.handleEditBegin}
+                            handleTableSort={this.handleTableSort}
+                            handleSaveInventory={this.handleSaveInventory}
+                        />
+                        <br />
+                        <br />
+                        <InventoryFlavors
+                            classes={classes}
+                            data={flavors}
+                            handleSetFlavors={this.handleSetFlavors}
+                            handleKeyDown={this.handleKeyDown}
+                            handleBlur={this.handleBlur}
+                            handleFocus={this.handleFocus}
+                            handleEditBegin={this.handleEditBegin}
+                            handleAdd={this.handleAdd}
+                            handleDelete={this.handleDelete}
+                            handleTableSort={this.handleTableSort}
+                            handleSaveInventory={this.handleSaveInventory}
+                        />
                 </DialogContent>
                 <DialogActions>
                     <Button clicked={this.handleClose}>
@@ -269,8 +111,6 @@ class Inventory extends React.Component {
                     </Button>
                 </DialogActions>
             </Dialog>
-                <ConfirmDialog open={deleteDialog} close={this.handleDelete} confirm={(e) => this.handleDeleteConfirm(e, deleteRow)}
-                               message={deleteRow ? "Are you sure you want to delete " + deleteRow.vendor + " " + deleteRow.name + "?" : ''} />
             </Auxil>
         );
     }
@@ -278,6 +118,7 @@ class Inventory extends React.Component {
 
 const mapStateToProps = state => {
     return {
+        base: state.inventory.base,
         flavors: state.inventory.flavors,
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,
@@ -287,7 +128,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSaveFlavorData: (token, dbEntryId, flavors) => dispatch(actions.saveFlavorData(token, dbEntryId, flavors))
+        onSaveInventoryData: (token, dbEntryId, base, flavors) => dispatch(actions.saveInventoryData(token, dbEntryId, base, flavors))
     }
 };
 

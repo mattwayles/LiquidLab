@@ -112,7 +112,7 @@ export const loginStart = () => {
     }
 };
 
-export const loginSuccess = (idToken, userId) => {
+export const loginSuccess = (userId, idToken) => {
     return {
         type: actionTypes.LOGIN_SUCCESS,
         idToken,

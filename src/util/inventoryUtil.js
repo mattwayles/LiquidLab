@@ -1,14 +1,14 @@
-import {compareFlavors, createNextId, enforceInputConstraints} from "./shared";
+import {compareFlavors, createNextId} from "./shared";
 
 /**
  * Sort the inventory table base on column and direction
- * @param flavors   The list of inventory flavors
+ * @param data  The list of inventory flavors
  * @param column    The column to be sorted
  * @param sort  The sort direction
  * @returns {{flavors: (*[]|*), sort: {col: *, asc: boolean}}}
  */
-export const sortTable = (flavors, column, sort) => {
-    let preSort = [...flavors];
+export const sortTable = (data, column, sort) => {
+    let preSort = [...data];
     let emptyCell = [];
     let postSort;
     let newSort;
@@ -61,7 +61,7 @@ export const sortTable = (flavors, column, sort) => {
     }
 
     postSort = [...preSort, ...emptyCell];
-    return {flavors: postSort, sort: newSort};
+    return {data: postSort, sort: newSort};
 
 };
 
@@ -94,55 +94,6 @@ export const duplicateFlavor = (vendor, name, flavors) => {
         }
     }
     return false;
-};
-
-/**
- * Custom user input handling for inventory Input objects
- * @param e The user input event
- * @param row   The row receiving the event
- * @param control   The control receiving the event
- * @param list  The flavor/input list
- * @returns {*[]}
- */
-export const userInput = (e, row, control, list) => {
-    e.target.value = enforceInputConstraints(e.target.value, e.target.maxLength);
-    let data = [...list];
-    for (let flavor in data) {
-        if (data[flavor].id === row.id) {
-            if (control === 'amount') {
-                if (e.keyCode === 8 || e.keyCode === 190 || (e.keyCode > 47 && e.keyCode < 58) || (e.keyCode > 95 && e.keyCode < 106)) {
-                    if (window.getSelection().toString().length) {
-                        const newStr = e.target.value.slice(0, e.target.value.length - window.getSelection().toString().length);
-                        data[flavor] = {...data[flavor], [control]: newStr};
-                    }
-                    else if (e.keyCode === 8) {
-                        data[flavor] = {...data[flavor], [control]: e.target.value.slice(0, -1)};
-                    }
-
-                    let newVal = (e.keyCode === 8) ? data[flavor][control] : data[flavor][control] + e.key;
-
-                    data[flavor] = {...data[flavor], [control]: newVal};
-                }
-            }
-            else {
-                if ((e.keyCode > 47 && e.keyCode < 91 && !e.ctrlKey) || (e.keyCode > 95 && e.keyCode < 106) ||
-                    e.keyCode === 8 || e.keyCode === 32 || e.keyCode > 145) {
-                    if (window.getSelection().toString().length) {
-                        const newStr = e.target.value.slice(0, e.target.value.length - window.getSelection().toString().length);
-                        data[flavor] = {...data[flavor], [control]: newStr};
-                    }
-                    else if (e.keyCode === 8) {
-                        data[flavor] = {...data[flavor], [control]:  e.target.value.slice(0, -1)};
-                    }
-
-                    let newVal = (e.keyCode === 8) ? data[flavor][control] : data[flavor][control] + e.key;
-
-                    data[flavor] = {...data[flavor], [control]: newVal};
-                }
-            }
-        }
-    }
-    return data;
 };
 
 /**

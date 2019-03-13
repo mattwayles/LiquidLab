@@ -14,6 +14,9 @@ export const NOTES="Notes about this recipe";
 export const RECIPE_NAME="The name of the recipe as it will be stored in the database";
 export const BATCH="Indicator of the current batch of this recipe";
 
+export const BASE_INGREDIENT="Name of this base ingredient";
+export const BASE_AMOUNT_LEFT="The remaining amount of this ingredient";
+
 export const VENDOR="Vendor of this flavor";
 export const FLAVOR="The name of this flavor";
 export const PERCENT="The desired percentage of this flavor in the total volume of e-liquid produced";

@@ -2,7 +2,7 @@ import axios from '../../axios-ll';
 import ErrorMessage from './error/errorMessage';
 import * as actionTypes from './actionTypes';
 import {clearRecipe, selectUserRecipe, setWeightsRedux} from "./formula";
-import {modifyFlavorRecipeCountRedux, saveFlavorDataRedux, saveShoppingListRedux} from "./inventory";
+import {modifyFlavorRecipeCountRedux, saveInventoryDataRedux, saveShoppingListRedux} from "./inventory";
 import {compareFlavors} from "../../util/shared";
 import {loginSuccess, registerFailed, registerSuccess} from "./auth";
 
@@ -381,37 +381,42 @@ export const clearSuccessMessage = () => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// SAVE USER FLAVOR INVENTORY /////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const saveFlavorData = (token, dbEntryId, inventory) => {
+export const saveInventoryData = (token, dbEntryId, base, flavors) => {
     return dispatch => {
-        dispatch(saveFlavorDataStart());
-        axios.put('/users/' + dbEntryId + '/inventory.json?auth=' + token, inventory)
+        dispatch(saveInventoryDataStart());
+        axios.put('/users/' + dbEntryId + '/inventory/base.json?auth=' + token, base)
             .then(() => {
-                const successMessage = "Successfully saved to database";
-                dispatch(saveFlavorDataRedux(inventory));
-                dispatch(saveFlavorDataSuccess(successMessage));
+                axios.put('/users/' + dbEntryId + '/inventory/flavors.json?auth=' + token, flavors)
+                    .then(() => {
+                        const successMessage = "Successfully saved to database";
+                        dispatch(saveInventoryDataRedux(base, flavors));
+                        dispatch(saveInventoryDataSuccess(successMessage));
+                    }).catch(error => {
+                    dispatch(saveInventoryDataFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+                });
             }).catch(error => {
-            dispatch(saveFlavorDataFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+            dispatch(saveInventoryDataFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
     }
 };
 
 //Synchronous actions
-export const saveFlavorDataStart = () => {
+export const saveInventoryDataStart = () => {
     return {
-        type: actionTypes.SAVE_FLAVOR_DATA_DATABASE_START,
+        type: actionTypes.SAVE_INVENTORY_DATA_DATABASE_START,
     }
 };
 
-export const saveFlavorDataSuccess = (success) => {
+export const saveInventoryDataSuccess = (success) => {
     return {
-        type: actionTypes.SAVE_FLAVOR_DATA_DATABASE_SUCCESS,
+        type: actionTypes.SAVE_INVENTORY_DATA_DATABASE_SUCCESS,
         success,
     }
 };
 
-export const saveFlavorDataFailed = (error) => {
+export const saveInventoryDataFailed = (error) => {
     return {
-        type: actionTypes.SAVE_FLAVOR_DATA_DATABASE_FAILED,
+        type: actionTypes.SAVE_INVENTORY_DATA_DATABASE_FAILED,
         error: error
     };
 };
@@ -485,10 +490,11 @@ export const getUserInventoryStart = () => {
     }
 };
 
-export const getUserInventorySuccess = (flavors) => {
+export const getUserInventorySuccess = (response) => {
     return {
         type: actionTypes.GET_USER_INVENTORY_SUCCESS,
-        flavors
+        base: response.base,
+        flavors: response.flavors
     }
 };
 

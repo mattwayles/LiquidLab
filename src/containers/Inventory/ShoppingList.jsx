@@ -11,7 +11,7 @@ import * as ToolTip from '../../constants/Tooltip';
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
 import * as actions from "../../store/actions";
 import {enforceInputConstraints, createNextId} from "../../util/shared";
-import {populateShoppingList, sortTable, userInput} from "../../util/inventoryUtil";
+import {populateShoppingList, sortTable} from "../../util/inventoryUtil";
 
 class ShoppingList extends React.Component {
     state = {
@@ -61,9 +61,19 @@ class ShoppingList extends React.Component {
                 }
             }
         }
+        else if (event.keyCode === 13) {
+            this.handleSaveShoppingList();
+        }
         else {
-            const data = userInput(event, row, control, this.state.shoppingList);
-            this.setState({ shoppingList: data })
+            let value = enforceInputConstraints(event.target.value, event.target.maxLength);
+
+            let copiedShoppingList = this.state.shoppingList;
+            for (let i in copiedShoppingList) {
+                if (copiedShoppingList[i].id === row.id) {
+                    copiedShoppingList[i] = {...copiedShoppingList[i], [control]: value}
+                }
+            }
+            this.setState({ shoppingList: copiedShoppingList });
         }
     };
 
@@ -198,7 +208,7 @@ class ShoppingList extends React.Component {
                         <TableHead>
                             <TableRow style={{height: '10px'}}>
                                 {columns.map(column => (
-                                    <TableCell onClick={column.name !== 'remove' ? (e) => this.handleTableSort(e, column.name, sort) : null}
+                                    <TableCell className={classes.TableCell}  onClick={column.name !== 'remove' ? (e) => this.handleTableSort(e, column.name, sort) : null}
                                                key={column.name}><div data-tip={column.tooltip}>{sort.col === column.name ? sort.asc ?
                                                     <ArrowDropUp fontSize='inherit' /> : <ArrowDropDown fontSize='inherit' /> : null} {column.label}</div>
                                     </TableCell>
@@ -212,12 +222,12 @@ class ShoppingList extends React.Component {
                                             <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'vendor')} change={(e) => this.handleKeyDown(e, flav, 'vendor')}
                                                               blur={this.handleBlur} paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                               autoFocus={true} classes={classes.Input} focus={(e) => this.handleFocus(e)} value={flav.vendor} maxLength="4"/></TableCell>
-                                            : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
+                                            : <TableCell className={classes.TableCell} onClick={(e) => this.handleEditBegin(e, flav, "vendor")}>{flav.vendor}</TableCell>}
                                     {!flav.auto && edit.row === this.state.shoppingList.indexOf(flav) && edit.cell === "name" ?
                                         <TableCell><Input keyDown={(e) => this.handleKeyDown(e, flav, 'name')} change={(e) => this.handleKeyDown(e, flav, 'name')}
                                                           blur={this.handleBlur} paste={(e) => this.handlePaste(e, flav, 'vendor')}
                                                           autoFocus={true} classes={classes.NameInput} focus={(e) => this.handleFocus(e)} value={flav.name} /></TableCell>
-                                        : <TableCell onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
+                                        : <TableCell className={classes.TableCell} onClick={(e) => this.handleEditBegin(e, flav, "name")}>{flav.name}</TableCell>}
                                     {!flav.auto ?
                                         <TableCell>
                                         <div data-tip={ToolTip.INVENTORY_DELETE}>

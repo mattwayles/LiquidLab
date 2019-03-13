@@ -8,7 +8,7 @@ body {
     border-radius: 5px;
     width: 90%;
     height: 25px;
-    font: inherit;
+    font-family: 'Cabin', sans-serif;
     font-size: 0.65em;
     padding: 6px;
     box-sizing: border-box;

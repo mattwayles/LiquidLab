@@ -209,6 +209,7 @@ export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) 
  * Save or update a recipe, also verifying successful inventory update
  * @param nonInventoriedFlavors The list of non-inventoried flavors in the recipe
  * @param inventoryProps    The flavors included in the Redux inventory
+ * @param inventoryBase The base ingredients included in the Redux inventory
  * @param flavors   The flavors in the recipe
  * @param inputs    The user inputs in the recipe
  * @param userRecipes   All user recipes available in Redux
@@ -216,12 +217,12 @@ export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) 
  * @param token The user database token
  * @param dbEntryId The user database entry ID
  * @param error The error function
- * @param saveFlavorData    The saveFlavorData database function
+ * @param saveInventoryData    The saveInventoryData database function
  * @param updateRecipe  The updateRecipe database function
  * @param saveRecipe    The saveRecipe database function
  */
-export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, flavors, inputs, userRecipes, recipeKey, token, dbEntryId,
-                                   error, saveFlavorData, updateRecipe, saveRecipe) => {
+export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, inventoryBase, flavors, inputs, userRecipes, recipeKey, token, dbEntryId,
+                                   error, saveInventoryData, updateRecipe, saveRecipe) => {
     let inventory = [...inventoryProps];
     for (let f in nonInventoriedFlavors) {
         inventory.push({amount: 0, id: createNextId([...inventory]), name: nonInventoriedFlavors[f].flavor.value,
@@ -234,7 +235,7 @@ export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, flavor
                 original = userRecipes[r]
             }
         }
-        saveFlavorData(token, dbEntryId, inventory);
+        saveInventoryData(token, dbEntryId, inventoryBase, inventory);
         updateRecipe(token, dbEntryId, recipeKey,
             {...inputs, flavors: [...flavors]
             }, inventory, original);
@@ -245,7 +246,7 @@ export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, flavor
             error("The recipe " + nameBatch + " already exists in the database.");
         }
         else {
-            saveFlavorData(token, dbEntryId, inventory);
+            saveInventoryData(token, dbEntryId, inventoryBase, inventory);
             saveRecipe(token, dbEntryId, inventory, {
                 ...inputs,
                 flavors: [...flavors]

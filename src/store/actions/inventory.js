@@ -1,8 +1,9 @@
 import * as actionTypes from './actionTypes';
 
-export const saveFlavorDataRedux = (flavors) => {
+export const saveInventoryDataRedux = (base, flavors) => {
     return {
-        type: actionTypes.SAVE_FLAVOR_DATA_REDUX,
+        type: actionTypes.SAVE_INVENTORY_DATA_REDUX,
+        base,
         flavors
     }
 };
@@ -26,4 +27,4 @@ export const clearInventory = () => {
     return {
         type: actionTypes.CLEAR_INVENTORY_REDUX
     }
-}
+};

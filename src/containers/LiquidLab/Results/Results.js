@@ -55,8 +55,21 @@ class Results extends Component {
      */
     recipeCompletedConfirm = () => {
         let inventoryFlavors = [...this.props.inventory];
-        let resultFlavors = this.props.results.ingredients.flavors;
 
+        let resultBase = [...this.props.base]
+        for (let i in resultBase) {
+            if (resultBase[i].name === "NIC") {
+                resultBase[i].amount -= this.props.results.nic.ml;
+            }
+            else if (resultBase[i].name === "PG") {
+                resultBase[i].amount -= this.props.results.pg.ml;
+            }
+            else if (resultBase[i].name === "VG") {
+                resultBase[i].amount -= this.props.results.vg.ml;
+            }
+        }
+
+        let resultFlavors = this.props.results.ingredients.flavors;
         for (let r in resultFlavors) {
             for ( let i in inventoryFlavors) {
                 if (compareResults(resultFlavors[r], inventoryFlavors[i])) {
@@ -67,8 +80,8 @@ class Results extends Component {
                 }
             }
         }
-        this.props.madeHandler(true);
-        this.props.onSaveFlavorData(this.props.token, this.props.dbEntryId, inventoryFlavors);
+        //this.props.madeHandler(true);
+        this.props.onSaveInventoryData(this.props.token, this.props.dbEntryId, resultBase, inventoryFlavors);
         this.setState({ confirmDialog: false });
     };
 
@@ -176,6 +189,7 @@ const mapStateToProps = state => {
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,
         results: state.results,
+        base: state.inventory.base,
         inventory: state.inventory.flavors,
         image: state.formula.inputs.image
     }
@@ -183,7 +197,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSaveFlavorData: (token, dbEntryId, flavors) => dispatch(actions.saveFlavorData(token, dbEntryId, flavors))
+        onSaveInventoryData: (token, dbEntryId, base, flavors) => dispatch(actions.saveInventoryData(token, dbEntryId, base, flavors))
     }
 };
 

@@ -30,7 +30,7 @@
 }
 
 .TableCell {
-    font-size: .5vw !important;
+    font-family: "Cabin", sans-serif;
 }
 
 .Input, .NameInput, .NotesInput {
