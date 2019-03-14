@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
 import classes from './Input.css';
 
 /**
@@ -67,7 +66,6 @@ const input = (props) => {
                 <label>{props.label}</label>
                 {inputElement}
             </div>
-            <ReactTooltip type={props.valid === false ? "error" : "dark"} delayShow={500}/>
         </div>
     );
 };

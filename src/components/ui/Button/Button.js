@@ -17,14 +17,14 @@ const button = (props) => {
         case "Results":
             classname= classes.ResultsButton;
             break;
-        case "Weights":
-            classname = classes.WeightsButton;
-            break;
         case "Browse":
             classname = classes.BrowseButton;
             break;
         case "Round":
             classname = classes.RoundButton;
+            break;
+        case "Dialog":
+            classname = classes.DialogButton;
             break;
         default:
             classname = classes.Button;

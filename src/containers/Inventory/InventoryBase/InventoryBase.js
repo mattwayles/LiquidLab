@@ -135,7 +135,7 @@ class InventoryBase extends React.Component {
                                         keyDown={(e) => this.handleKeyDown(e, ing, 'amount')}
                                         change={(e) => this.handleKeyDown(e, ing, 'amount')}
                                         blur={this.handleBlur} autoFocus={true} classes={classes.Input}
-                                        value={ing.amount} type="text" min="0" focus={(e) => this.handleFocus(e)}
+                                        value={ing.amount} type="number" min="0" focus={(e) => this.handleFocus(e)}
                                         maxLength="4"/></TableCell>
                                     : <TableCell className={classes.TableCell}
                                                  onClick={(e) => this.handleEditBegin(e, ing, "amount")}>{round(ing.amount)}</TableCell>}

@@ -64,11 +64,6 @@
     font-size: 1.25em;
 }
 
-.PlusButtonDisabled {
-    background-color: gray;
-    cursor: not-allowed;
-}
-
 .RecipeButtons {
     position: absolute;
     margin: 0 10px 8px 0;

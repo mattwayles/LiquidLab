@@ -6,7 +6,7 @@ import {clearDbRedux, createDatabaseUser, getDatabaseUser} from "./database";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////// REGISTER A USER /////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const register = (username, email, password) => {
+export const register = (username, email, password, weights) => {
     return dispatch => {
         dispatch(registerStart());
         const authData = {
@@ -41,12 +41,13 @@ export const register = (username, email, password) => {
 
                         //If no duplicate display name is found, create DB user and login
                         else {
-                            dispatch(createDatabaseUser(username, email, response.data.localId, response.data.idToken));
+                            dispatch(createDatabaseUser(username, email, response.data.localId, response.data.idToken, weights));
                             dispatch(login(email, password));
                         }
                     })
                     .catch(error => {
                         //Error retrieving display names from database
+                        console.log(error);
                         dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
                     });
             }).catch(error => {

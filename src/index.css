@@ -16,3 +16,19 @@ body {
   -o-background-size: cover;
   background-size: cover;
 }
+
+button:hover:enabled {
+  background-color: #a87825;
+  transition: background-color .5s;
+}
+
+button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 2px #666;
+  transform: translateY(2px);
+}
+
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}

@@ -37,13 +37,13 @@ export const CALCULATE_BUTTON="Calculate this formula";
 export const RECIPE_DROPDOWN_DISABLED="You must be logged in to view recipes";
 export const RECIPE_DROPDOWN="View your recipes";
 
-export const WEIGHT_PG="Set the weight of your PG (default is 1.04)";
-export const WEIGHT_VG="Set the weight of your VG (default is 1.26)";
-export const WEIGHT_FLAVOR="Set the weight of your flavor concentrates (default is 1)";
-export const WEIGHT_NIC="Set the weight of your nicotine (default is 1.24)";
-export const STRENGTH_NIC="Set the strength of your nicotine in milligrams";
-export const PG_NIC="Set the PG base percentage of your nicotine";
-export const VG_NIC="Set the VG base percentage of your nicotine";
+export const WEIGHT_PG="Set the weight of your PG";
+export const WEIGHT_VG="Set the weight of your VG)";
+export const WEIGHT_FLAVOR="Set the weight of your flavors";
+export const WEIGHT_NIC="Set the weight of your nicotine";
+export const STRENGTH_NIC="Set the strength of your nicotine";
+export const PG_NIC="Set the PG base % of your nicotine";
+export const VG_NIC="Set the VG base % of your nicotine";
 export const SET_WEIGHT_BUTTON="Save weight settings to database";
 
 export const INVENTORY_AMOUNT_LEFT="The remaining amount of this flavor";

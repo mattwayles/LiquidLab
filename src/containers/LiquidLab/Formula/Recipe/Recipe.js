@@ -177,7 +177,7 @@ class Recipe extends Component {
                                 tooltip={isAuthenticated ? recipeKey === '' ? ToolTip.DELETE_RECIPE_BUTTON_DISABLED : ToolTip.DELETE_RECIPE_BUTTON : ToolTip.DELETE_RECIPE_BUTTON_GUEST}
                                 clicked={this.props.delete} >Delete</Button>
                         <Button classname="Main" disabled={!token || input.name.value === ""}
-                                tooltip={isAuthenticated ? !token || input.name.value === "" === '' ? ToolTip.SAVE_RECIPE_BUTTON : ToolTip.SAVE_RECIPE_BUTTON_DISABLED : ToolTip.SAVE_RECIPE_BUTTON_GUEST}
+                                tooltip={isAuthenticated ? (!token || input.name.value === "" ? ToolTip.SAVE_RECIPE_BUTTON_DISABLED : ToolTip.SAVE_RECIPE_BUTTON) : ToolTip.SAVE_RECIPE_BUTTON_GUEST}
                                 clicked={this.props.save} >{recipeKey ? "Update" : "Save"}</Button>
                         <Button classname="Main" disabled={formulaIsEmpty(this.props.input, this.props.flavors)}
                                 tooltip={formulaIsEmpty(this.props.input, this.props.flavors) ? ToolTip.CLEAR_BUTTON_DISABLED : ToolTip.CLEAR_BUTTON}

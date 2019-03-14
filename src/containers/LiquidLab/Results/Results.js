@@ -59,13 +59,16 @@ class Results extends Component {
         let resultBase = [...this.props.base]
         for (let i in resultBase) {
             if (resultBase[i].name === "NIC") {
-                resultBase[i].amount -= this.props.results.nic.ml;
+                let nicAmount = resultBase[i].amount - this.props.results.ingredients.nic.ml;
+                resultBase[i].amount = nicAmount > 0 ? nicAmount : 0;
             }
             else if (resultBase[i].name === "PG") {
-                resultBase[i].amount -= this.props.results.pg.ml;
+                let pgAmount = resultBase[i].amount - this.props.results.ingredients.pg.ml;
+                resultBase[i].amount = pgAmount > 0 ? pgAmount : 0;
             }
             else if (resultBase[i].name === "VG") {
-                resultBase[i].amount -= this.props.results.vg.ml;
+                let vgAmount = resultBase[i].amount - this.props.results.ingredients.vg.ml;
+                resultBase[i].amount = vgAmount > 0 ? vgAmount : 0;
             }
         }
 
@@ -73,10 +76,8 @@ class Results extends Component {
         for (let r in resultFlavors) {
             for ( let i in inventoryFlavors) {
                 if (compareResults(resultFlavors[r], inventoryFlavors[i])) {
-                    inventoryFlavors[i].amount = inventoryFlavors[i].amount - resultFlavors[r].ml;
-                    if (inventoryFlavors[i].amount < 0) {
-                        inventoryFlavors[i].amount = 0;
-                    }
+                    let flavorAmount = inventoryFlavors[i].amount - resultFlavors[r].ml;
+                    inventoryFlavors[i].amount =  flavorAmount > 0 ? flavorAmount : 0;
                 }
             }
         }
@@ -127,9 +128,9 @@ class Results extends Component {
             }
         });
 
-
-        const recipeName = results.recipeInfo.batch.value ?  results.recipeInfo.name.value + " [" + results.recipeInfo.batch.value + "] "
-            : results.recipeInfo.name.value;
+        let recipeName = results.recipeInfo.name.value ? results.recipeInfo.name.value : "No-Name Recipe";
+        recipeName += results.recipeInfo.batch.value ? + " [" + results.recipeInfo.batch.value + "] "
+            : "";
 
         const columns = [{name:'', tooltip: ToolTip.RESULT_INGREDIENT},  {name:'ML', tooltip: ToolTip.RESULT_ML}, {name:'Grams', tooltip: ToolTip.RESULT_GRAM}, {name: '%', tooltip: ToolTip.RESULT_PERCENT}];
 
@@ -139,7 +140,7 @@ class Results extends Component {
                     <div className={classes.HeaderDiv}>
                         {imgUrl ? <img className={classes.RecipeImg} src={imgUrl} alt={results.recipeInfo.name.value} /> : null}
                             <p className={classes.Header}>
-                                {results.recipeInfo.name.value + " "}
+                                {recipeName + " "}
                                 {results.recipeInfo.batch.value ?
                                     <span style={{fontSize: '0.75em'}}>({results.recipeInfo.batch.value})</span>
                                     : null}

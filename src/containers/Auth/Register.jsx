@@ -55,7 +55,7 @@ class Register extends React.Component {
             this.setState({ clientError: invalid });
         } else {
             this.setState({ clientError: null });
-            this.props.onRegister(this.state.username, this.state.email, this.state.password);
+            this.props.onRegister(this.state.username, this.state.email, this.state.password, this.props.weights);
         }
     };
 
@@ -147,6 +147,7 @@ class Register extends React.Component {
 
 const mapStateToProps = state => {
     return {
+        weights: state.formula.weights,
         error: state.auth.error,
         loading: state.auth.loading
     }
@@ -154,7 +155,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onRegister: (username, email, password) => dispatch(actions.register(username, email, password)),
+        onRegister: (username, email, password, weights) => dispatch(actions.register(username, email, password, weights)),
         clearAuthError: () => dispatch(actions.clearAuthError())
     }
 };

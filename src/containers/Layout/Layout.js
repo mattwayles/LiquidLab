@@ -17,11 +17,11 @@ class Layout extends Component {
     toggleSideDrawerHandler = () => {
         this.setState( { sideDrawerOpen: !this.state.sideDrawerOpen });
     };
-    
+
     render() {
         return (
             <Auxil>
-                <Toolbar isAuthenticated={this.props.isAuthenticated} clicked={this.toggleSideDrawerHandler} />
+                <Toolbar isAuthenticated={this.props.isAuthenticated} clicked={this.toggleSideDrawerHandler} history={this.props.history} />
                 <SideDrawer isAuthenticated={this.props.isAuthenticated} open={this.state.sideDrawerOpen} close={this.toggleSideDrawerHandler} />
                 <main>
                     {this.props.children}

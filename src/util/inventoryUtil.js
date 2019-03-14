@@ -72,10 +72,22 @@ export const sortTable = (data, column, sort) => {
  * @param cutoff    The ML cutoff to stop accepting flavors as low-inventory
  * @returns {*}
  */
-export const populateShoppingList = (shoppingList, flavors, cutoff) => {
+export const populateShoppingList = (shoppingList, inventory, cutoff) => {
     let list = shoppingList ? [...shoppingList] : [];
-    for (let i in flavors) {
-        const flavor = flavors[i];
+
+    //Base
+    for (let i in inventory.base) {
+        const ingredient = inventory.base[i];
+
+        if ((ingredient.amount || ingredient.amount === 0) && parseFloat(ingredient.amount.toString()) <= parseFloat(cutoff) && !duplicateBase(ingredient.name, list)) {
+            list = [...list,
+                {id: createNextId(list), name: ingredient.name, auto: true}];
+        }
+    }
+
+    //Flavors
+    for (let i in inventory.flavors) {
+        const flavor = inventory.flavors[i];
 
         if ((flavor.amount || flavor.amount === 0) && parseFloat(flavor.amount.toString()) <= parseFloat(cutoff) && !duplicateFlavor(flavor.vendor, flavor.name, list)) {
             list = [...list,
@@ -85,6 +97,15 @@ export const populateShoppingList = (shoppingList, flavors, cutoff) => {
     return list.sort((a, b) => {
         return (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0)
     });
+};
+
+export const duplicateBase = (name, list) => {
+    for (let i in list) {
+        if (list[i].name === name) {
+            return true;
+        }
+    }
+    return false;
 };
 
 export const duplicateFlavor = (vendor, name, flavors) => {

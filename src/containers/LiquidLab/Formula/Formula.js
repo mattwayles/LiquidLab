@@ -168,7 +168,7 @@ const mapDispatchToProps = dispatch => {
     return {
         onClearRecipe: () => dispatch(actions.clearRecipe()),
         onDeleteRecipe: (token, db, key, name, batch, flavors, inventory) => dispatch(actions.deleteRecipe(token, db, key, name, batch, flavors, inventory)),
-        onSaveRecipe: (token, db, inventoryBase, inventory, recipeData) => dispatch(actions.saveRecipe(token, db, inventory, recipeData)),
+        onSaveRecipe: (token, db, inventory, recipeData) => dispatch(actions.saveRecipe(token, db, inventory, recipeData)),
         onUpdateRecipe: (token, db, key, recipeData, inventory, original) => dispatch(actions.updateRecipe(token, db, key, recipeData, inventory, original)),
         onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
         onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value)),

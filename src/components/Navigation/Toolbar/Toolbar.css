@@ -18,6 +18,7 @@
 }
 
 .Logo, .Menu {
+    cursor: pointer;
     height: 90%;
 }
 

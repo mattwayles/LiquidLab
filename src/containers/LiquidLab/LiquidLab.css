@@ -87,11 +87,11 @@
     font-weight: 700;
 }
 
-
 .Success {
     text-align: center;
     color: darkgreen;
     font-weight: 700;
+    opacity: 0;
     animation-name: success;
     animation-duration: 4s;
 }

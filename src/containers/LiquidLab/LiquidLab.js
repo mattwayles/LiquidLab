@@ -140,7 +140,7 @@ class LiquidLab extends Component {
                 <header className={classes.HeaderDiv}>
                     <p className={classes.Header}>LiquidLab</p>
                     <div>
-                        {loading ? <CircularProgress size={60} /> : null}
+                        {loading ? <CircularProgress size={50} /> : null}
                     </div>
                     <div className={classes.MlToMake}>
                         <p>ML To Make:</p>

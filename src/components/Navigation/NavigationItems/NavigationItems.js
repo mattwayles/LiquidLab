@@ -15,8 +15,8 @@ const navigationItems = (props) => (
                 <NavigationItem link="/logout">Logout</NavigationItem>
             </Auxil>
             : <Auxil>
-            <NavigationItem link="/login">Login</NavigationItem>
-            <NavigationItem link="/register">Register</NavigationItem>
+                <NavigationItem link="/login">Login</NavigationItem>
+                <NavigationItem link="/register">Register</NavigationItem>
         </Auxil>
         }
     </ul>

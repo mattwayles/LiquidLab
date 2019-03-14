@@ -7,6 +7,7 @@ import {
     DialogTitle, DialogContent
 } from "@material-ui/core";
 import Button from "../ui/Button/Button";
+import Input from "../ui/Input/Input";
 
 
 /**
@@ -17,16 +18,16 @@ const addImageDialog = (props) => (
             <DialogTitle id="form-dialog-title">{props.message}</DialogTitle>
             <DialogContent>
                 <div style={{display: 'flex', flexFlow: 'row', margin: '2%', width: '65%'}}>
-                    <input placeholder="Recipe Image" value={props.imgFile ? props.imgFile.name : ''} style={{margin: '0 3% 0 0', width: '70%'}} />
+                    <Input placeholder="Recipe Image" value={props.imgFile ? props.imgFile.name : ''} style={{margin: '0 3% 0 0', width: '70%'}} />
                     <input type="file" onChange={props.uploadImg} ref={(ref) => this.upload = ref} style={{display: 'none'}} />
                     <Button classname="Round" clicked={(e) => this.upload.click(e) } >...</Button>
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button clicked={props.confirm} color="primary">
-                    No, thanks
+                <Button classname="Dialog" clicked={props.confirm} color="primary">
+                    No
                 </Button>
-                <Button clicked={props.confirm}  color="primary">
+                <Button classname="Dialog" clicked={props.confirm}  color="primary">
                     Add
                 </Button>
             </DialogActions>

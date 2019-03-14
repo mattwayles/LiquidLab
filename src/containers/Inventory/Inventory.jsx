@@ -103,10 +103,10 @@ class Inventory extends React.Component {
                         />
                 </DialogContent>
                 <DialogActions>
-                    <Button clicked={this.handleClose}>
+                    <Button classname="Dialog" clicked={this.handleClose}>
                         Close
                     </Button>
-                    <Button clicked={this.handleSaveInventory}>
+                    <Button classname="Dialog" clicked={this.handleSaveInventory}>
                         Save
                     </Button>
                 </DialogActions>

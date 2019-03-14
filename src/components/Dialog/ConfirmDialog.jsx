@@ -3,10 +3,10 @@ import React from 'react';
 
 //@material-ui/core Imports
 import {
-    Button,
     Dialog, DialogActions,
     DialogTitle, DialogContent, DialogContentText
 } from "@material-ui/core";
+import Button from "../ui/Button/Button";
 
 
 /**
@@ -21,10 +21,10 @@ const confirmDialog = (props) => (
             </DialogContentText>
             </DialogContent>: null }
             <DialogActions>
-                <Button onClick={props.close} color="primary">
+                <Button classname="Dialog" clicked={props.close}>
                     No
                 </Button>
-                <Button onClick={props.confirm}  color="primary">
+                <Button classname="Dialog" clicked={props.confirm}>
                     Yes
                 </Button>
             </DialogActions>

@@ -203,7 +203,7 @@ class InventoryFlavors extends React.Component {
                                         keyDown={(e) => this.handleKeyDown(e, flav, 'amount')}
                                         change={(e) => this.handleKeyDown(e, flav, 'amount')}
                                         blur={this.handleBlur} autoFocus={true} classes={classes.Input}
-                                        value={flav.amount} type="text" min="0" focus={(e) => this.handleFocus(e)}
+                                        value={flav.amount} type="number" min="0" focus={(e) => this.handleFocus(e)}
                                         maxLength="4"/></TableCell>
                                     : <TableCell className={classes.TableCell}
                                                  onClick={(e) => this.handleEditBegin(e, flav, "amount")}>{round(flav.amount)}</TableCell>}

@@ -3,41 +3,43 @@
 ============================================================================
 
 ===== LIQUIDLAB =====
-- Clicking logo should take you back to root
-- Ensure "Making" a recipe properly depletes new PG/VG/NIC inventory
 - Make Target PG/VG/NIC red if I don't have enough in inventory!
-- On user create, set default weight & default base ingredients
+- I Made It should give the opportunity to add flavors to inventory
+- I Made It should give a better success message
+- Success message 'drawer', grow open, shrink closed
 
-===== INVENTORY =====
-- Bottom buttons need spacing
-- Pasting data into Amount Left results in NaN and an error
 
-===== SHOPPING LIST =====
-- Set and close are too close
-- Ensure PG/VG/NIC are applied
+===== ADD FLV TO INVENTORY =====
+- When adding flavor to inventory, present a grid with amount to add. Give user the chance to input flavor amount there, instead of it adding at 0ml
 
-===== WEIGHTS =====
-- Set and Close button are too close
-- Ensure database commit works correctly, big changes were made without being tested.
 
-===== DIALOGS =====
-- Material-UI dialog buttons don't conform to the rest of app. Pick one and stick with it.
-
+===== RESULTS =====
+- Maybe alphabetize? Or alphabetize when database I/O? Do users want alphabetization?
 
 ======================================================================
 ============================ FEATURES ================================
 ======================================================================
 
+- Add image to recipe preview
+- Warn when token is about to expire
+- Expand AutoComplete capabilities in InputOption to actually populate the textbox with the top result.
 - Global Recipes
     - What can I make from global recipes? (Filter out local flavors)
     - Browse global with intense search
     - Global flavors "Add to Make List / Remove from Make List"
-
-- Warn when token is about to expire
-- Mobile / Tablet / Responsive Optimization
-- First-run wizard tutorial
-- Expand AutoComplete capabilities in InputOption to actually populate the textbox with the top result.
-- Firebase SMTP (email verification, forgot password e-mail, password reset, tier 0 until verified otherwise)
-- Paid Tiers with credit card app embedded
-- Performance testing: what happens when recipes, inventory, shoppingList get massive?
+- Settings section:
+    - Include base ingredients in inventory?
+    - Auto-add items to shopping list?
+    - Delete auto-added items from your shopping list?
 - Support page with About section, Help section, Walkthrough, Donate/Contact, and TOC
+- Mobile / Tablet / Responsive Optimization (Mobile- snap to top when updating DB so success message can be seen!)
+
+===== REGISTRATION ENHANCEMENTS =====
+- Stronger password enforcement
+- Character limit & filtering for username
+- Firebase SMTP (email verification, forgot password e-mail, password reset, tier 0 until verified otherwise)
+- Newly-registered users should set initial base ingredient values
+- First-run wizard tutorial: Set weights, set PG/VG/NIC, introduce to app components
+- Paid Tiers with credit card app embedded
+
+- Performance testing: what happens when recipes, inventory, shoppingList get massive?

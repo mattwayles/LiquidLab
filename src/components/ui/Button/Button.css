@@ -1,4 +1,4 @@
-.Button, .MainButton, .WeightsButton, .ResultsButton, .BrowseButton {
+.Button, .MainButton, .ResultsButton, .BrowseButton, .DialogButton {
     z-index: 3;
     margin: 2vw auto;
     background-color: var(--accent-color);
@@ -12,16 +12,12 @@
     padding: 8px;
     font-weight: bold;
     box-shadow: 1px 1px 8px #888;
+    transition: background-color .5s;
 }
 
 .MainButton {
     margin: 0 auto;
     font-size: 0.8vw;
-}
-
-.WeightsButton {
-    margin-top: 0;
-    width: 5vw;
 }
 
 .ResultsButton {
@@ -43,15 +39,7 @@
     font-size: 1em;
 }
 
-.Button:disabled, .MainButton:disabled, .WeightsButton:disabled {
-    background-color: gray;
-    cursor: not-allowed;
-}
-
-.Success {
-    color: #5C9210;
-}
-
-.Danger {
-    color: #944317;
+.DialogButton {
+    width: 5vw;
+    margin-right: 1vw;
 }

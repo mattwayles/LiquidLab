@@ -27,7 +27,7 @@ class ShoppingList extends React.Component {
      * When opening shopping list, populate with all low-inventory items
      */
     componentWillMount() {
-        let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.flavors, this.props.cutoff);
+        let shoppingList  = populateShoppingList(this.props.shoppingList, this.props.inventory, this.props.cutoff);
         this.setState({ cutoff: this.props.cutoff, shoppingList: shoppingList });
     }
 
@@ -192,7 +192,7 @@ class ShoppingList extends React.Component {
 
         const columns = [
             { name: "vendor", label: "Vendor", tooltip: ToolTip.VENDOR},
-            { name: "name", label: "Flavor Name", tooltip:  ToolTip.FLAVOR},
+            { name: "name", label: "Name", tooltip:  ToolTip.FLAVOR},
             { name: 'remove', label: "Remove", tooltip:  ToolTip.INVENTORY_DELETE}
         ];
 
@@ -256,10 +256,10 @@ class ShoppingList extends React.Component {
                         <p>ML</p>
                     </div>
                 <DialogActions>
-                    <Button clicked={this.handleClose} color="primary">
+                    <Button classname="Dialog" clicked={this.handleClose} color="primary">
                         Close
                     </Button>
-                    <Button clicked={this.handleSaveShoppingList} color="primary">
+                    <Button classname="Dialog" clicked={this.handleSaveShoppingList} color="primary">
                         Save
                     </Button>
                 </DialogActions>
@@ -274,7 +274,7 @@ class ShoppingList extends React.Component {
 const mapStateToProps = state => {
     return {
         cutoff: state.inventory.cutoff,
-        flavors: state.inventory.flavors,
+        inventory: state.inventory,
         shoppingList: state.inventory.shoppingList,
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,

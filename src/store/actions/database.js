@@ -10,18 +10,28 @@ import {loginSuccess, registerFailed, registerSuccess} from "./auth";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// CREATE USER DATABASE ENTRY ////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const createDatabaseUser = (username, email, userId, token) => {
+export const createDatabaseUser = (username, email, userId, token, weights) => {
     return dispatch => {
         dispatch(createDbUserStart());
-        const payload = {displayName: username, email: email, id: userId};
 
-        axios.post('/users.json?auth=' + token, payload)
+        const authPayload = {
+            displayName: username,
+            email: email,
+            id: userId,
+            weights,
+            inventory: {base: [
+                    {name: "NIC", amount: 0, id: 0},
+                    {name: "PG", amount: 0, id: 1},
+                    {name: "VG", amount: 0, id: 2}]
+            }};
+        axios.post('/users.json?auth=' + token, authPayload)
             .then(response => {
                 dispatch(createDbUserSuccess(response.data.name));
                 dispatch(registerSuccess(userId, token));
+
             }).catch(error => {
-                dispatch(createDbUserFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
-                dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+            dispatch(createDbUserFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
+            dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
     };
 };
@@ -110,6 +120,7 @@ export const saveRecipe = (token, dbEntryId, inventory, recipe) => {
                 dispatch(getUserRecipes(token, dbEntryId));
                 dispatch(selectUserRecipe(response.data.name, recipe));
             }).catch(error => {
+                console.log(error);
             dispatch(saveRecipeFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
@@ -379,7 +390,7 @@ export const clearSuccessMessage = () => {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////// SAVE USER FLAVOR INVENTORY /////////////////////////////////////////////////////
+/////////////////////////////////////// SAVE USER INVENTORY ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export const saveInventoryData = (token, dbEntryId, base, flavors) => {
     return dispatch => {
@@ -388,7 +399,7 @@ export const saveInventoryData = (token, dbEntryId, base, flavors) => {
             .then(() => {
                 axios.put('/users/' + dbEntryId + '/inventory/flavors.json?auth=' + token, flavors)
                     .then(() => {
-                        const successMessage = "Successfully saved to database";
+                        const successMessage = "Successfully saved inventory";
                         dispatch(saveInventoryDataRedux(base, flavors));
                         dispatch(saveInventoryDataSuccess(successMessage));
                     }).catch(error => {
