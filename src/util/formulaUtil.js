@@ -85,6 +85,52 @@ export const mapInputs = (inputs, weights) => {
 };
 
 /**
+ * Calculate the availability of a base ingredient in inventory based on user input
+ */
+export const checkBaseInputValidity = (control, value, mlToMake, flavors, inputs, weights, baseInventory) => {
+    //1 - Get flavor ML
+    let flavorMlTotal = 0;
+    if (flavors) {
+        for (let i = 0; i < flavors.length; i++) {
+            const flavorResult = calculateFlavorResults(inputs, weights, flavors[i]);
+            flavorMlTotal = flavorMlTotal + flavorResult.ml;
+        }
+    }
+
+    return calcBaseResults({...inputs, [control]: value}, weights, flavorMlTotal);
+    //2 - Get base ML
+    // const targetNic = inputs.targetNic.value;
+    // const nicMl = round(mlToMake / weights.nicStrength * value);
+    // if (control === 'targetNic') {
+    //     console.log("NICMl: ", nicMl);
+    //     return nicMl < baseInventory[0].amount
+    // } else if (control === 'targetPg') {
+    //     const pgTarget = round(mlToMake * (value / 100) - targetNic * (weights.nicBasePg / 100));
+    //     console.log("PG ML to make: ", mlToMake);
+    //     console.log("PG Value: ", value);
+    //     console.log("PG TargetNic: ", targetNic);
+    //     console.log("PG Weights NicbaseVG: ", weights.nicBasePg);
+    //     const ml = round(pgTarget - (nicMl - targetNic) * (weights.nicBasePg / 100) - flavorMlTotal);
+    //
+    //     console.log("PGMl: ", ml);
+    //     return !value || (+value + +inputs.targetPg.value === 100 && ml <= baseInventory[1].amount);
+    // } else if (control === 'targetVg') {
+    //     console.log("ML to make: ", mlToMake);
+    //     console.log("Value: ", value);
+    //     console.log("TargetNic: ", targetNic);
+    //     console.log("Weights NicbaseVG: ", weights.nicBaseVg);
+
+    //     const vgTarget = round(mlToMake * (value / 100) - targetNic * (weights.nicBaseVg / 100));
+    //     console.log("VGTarget: ", vgTarget);
+    //     const ml = round(vgTarget - (nicMl - targetNic) * (weights.nicBaseVg / 100));
+    //     console.log("VGMl: ", ml);
+    //     return !value || (+value + +inputs.targetPg.value === 100 && ml < baseInventory[2].amount);
+    // }
+
+    return true;
+};
+
+/**
  * Calculate the recipe results for base (target) ingredients
  * @param inputs    The user inputs for formula ingredients
  * @param weights   The ingredient weights
@@ -99,6 +145,7 @@ export const calcBaseResults = (inputs, weights, flavorMlTotal) => {
     const nicMl = round(input.mlToMake / input.nicStrength * input.inputNic);
     const pgMl = round(pgTarget - (nicMl - targetNic) * input.nicBasePg - flavorMlTotal);
     const vgMl = round(vgTarget - (nicMl - targetNic) * input.nicBaseVg);
+
     return {
         ...input,
         nicMl: nicMl,

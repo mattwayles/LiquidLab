@@ -3,10 +3,18 @@
 ============================================================================
 
 ===== LIQUIDLAB =====
-- Make Target PG/VG/NIC red if I don't have enough in inventory!
+- CAN'T TYPE INTO NOTES
+- Select a Recipe from dropdown can be selected, and causes an error
+- Base ingredient sufficiency needs to be updated on mlToMake change
+- Extract setBaseValidity to util to handle LiquidLab and Target usages
 - I Made It should give the opportunity to add flavors to inventory
 - I Made It should give a better success message
 - Success message 'drawer', grow open, shrink closed
+-Non-authenticated users should not 'checkBaseAvailability'
+
+===== INVENTORY =====
+- Tab to next base ingredient
+- Cut off base ingredients (and possible flavors) at 2 decimal places
 
 
 ===== ADD FLV TO INVENTORY =====

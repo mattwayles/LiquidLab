@@ -1,73 +1,86 @@
 import React, { Component } from 'react';
 import * as actions from '../../../../store/actions/index';
 import { connect } from 'react-redux';
-import { enforceInputConstraints } from '../../../../util/shared';
+import {enforceInputConstraints} from '../../../../util/shared';
 import ReactTooltip from 'react-tooltip';
 import * as ToolTip from '../../../../constants/Tooltip';
 
 import Auxil from '../../../../hoc/Auxil';
 import TargetControl from '../../../../components/TargetControl/TargetControl';
 import classes from './Target.css';
+import { checkBaseInputValidity } from "../../../../util/formulaUtil";
 
 class Target extends Component {
+
+    componentDidMount() {
+        if (this.props.inputs.targetNic.value) { this.setValidity('targetNic', this.props.inputs.targetNic.value); }
+        if (this.props.inputs.targetPg.value) { this.setValidity('targetPg', this.props.inputs.targetPg.value); }
+        if (this.props.inputs.targetVg.value) { this.setValidity('targetVg', this.props.inputs.targetVg.value); }
+    }
 
     /**
      * Handle user input entered into Target components
      * @param event The user input event
-     * @param control   The control receiving the user input
      */
-    dataEnteredHandler = (event, control) => {
+    dataEnteredHandler = (event) => {
         event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
+        this.setValidity(event.target.name, event.target.value);
+    };
 
-        let valid = event.target.value >= 0;
+    setValidity = (control, value) => {
+        let valid = value >= 0 && checkBaseInputValidity(control, value, this.props.inputs.mlToMake.value,
+            this.props.flavors, this.props.inputs, this.props.weights, this.props.baseInventory);
+
+        this.props.onDataEntered(control, value, valid);
+
         if (control === 'targetPg') {
-            valid = +event.target.value + +this.props.targetVg.value === 100;
-            this.props.onDataEntered('targetPg', event.target.value, valid);
-            this.props.onDataEntered('targetVg', this.props.targetVg.value, valid);
+            this.props.onDataEntered('targetVg', this.props.inputs.targetVg.value, valid);
         }
         else if (control === 'targetVg') {
-            valid = +event.target.value + +this.props.targetPg.value === 100;
-            this.props.onDataEntered('targetPg', this.props.targetPg.value, valid);
-            this.props.onDataEntered('targetVg', event.target.value, valid);
-        }
-        else {
-            this.props.onDataEntered(control, event.target.value, valid);
+            this.props.onDataEntered('targetPg', this.props.inputs.targetPg.value, valid);
         }
     };
 
     render() {
+        const {inputs} = this.props;
+        
+        
+        const baseSum = +inputs.targetPg.value + +inputs.targetVg.value === 100;
+
         let controls =
             <Auxil>
                 <p className={classes.Header}>Target</p>
                 <div className={classes.TargetGrid}>
-                    <TargetControl
-                        autoPopulate={!this.props.targetNic.touched && this.props.targetNic.value > 0}
-                        value={this.props.targetNic.value !== undefined ? this.props.targetNic.value : ''}
-                        valid={this.props.targetNic.valid}
-                        tooltip={this.props.targetNic.valid ? ToolTip.TARGET_NIC : ToolTip.TARGET_NIC_ERROR}
-                        change={(event) => this.dataEnteredHandler(event, 'targetNic')}
+                    <TargetControl name="targetNic"
+                        autoPopulate={!inputs.targetNic.touched && inputs.targetNic.value > 0}
+                        value={inputs.targetNic.value !== undefined ? inputs.targetNic.value : ''}
+                        valid={inputs.targetNic.valid}
+                        tooltip={inputs.targetNic.valid ? ToolTip.TARGET_NIC : ToolTip.TARGET_NIC_ERROR}
+                        change={(event) => this.dataEnteredHandler(event)}
                         label="Target Nic:"
                         type="number"
                         suffix="mg"
                         min="0"
                         maxLength="3" />
-                    <TargetControl
-                        autoPopulate={!this.props.targetPg.touched && this.props.targetPg.value > 0}
-                        value={this.props.targetPg.value}
-                        valid={this.props.targetPg.valid}
-                        tooltip={this.props.targetPg.valid ? ToolTip.TARGET_PG : ToolTip.TARGET_PG_ERROR}
-                        change={(event) => this.dataEnteredHandler(event, 'targetPg')}
+                    <TargetControl name="targetPg"
+                        autoPopulate={!inputs.targetPg.touched && inputs.targetPg.value > 0}
+                        value={inputs.targetPg.value}
+                        valid={inputs.targetPg.valid}
+                        tooltip={inputs.targetPg.valid ? ToolTip.TARGET_PG :
+                            baseSum ? ToolTip.TARGET_INSUFFICIENT_ERROR : ToolTip.TARGET_PG_SUM_ERROR}
+                        change={(event) => this.dataEnteredHandler(event)}
                         label="Target PG:"
                         type="number"
                         suffix="%"
                         min="0"
                         maxLength="3" />
-                    <TargetControl
-                        autoPopulate={!this.props.targetVg.touched &&this.props.targetVg.value > 0}
-                        value={this.props.targetVg.value}
-                        valid={this.props.targetVg.valid}
-                        tooltip={this.props.targetVg.valid ? ToolTip.TARGET_VG : ToolTip.TARGET_VG_ERROR}
-                        change={(event) => this.dataEnteredHandler(event, 'targetVg')}
+                    <TargetControl name="targetVg"
+                        autoPopulate={!inputs.targetVg.touched &&inputs.targetVg.value > 0}
+                        value={inputs.targetVg.value}
+                        valid={inputs.targetVg.valid}
+                        tooltip={inputs.targetVg.valid ? ToolTip.TARGET_VG :
+                            baseSum ? ToolTip.TARGET_INSUFFICIENT_ERROR : ToolTip.TARGET_VG_SUM_ERROR}
+                        change={(event) => this.dataEnteredHandler(event)}
                         label="Target VG:"
                         type="number"
                         suffix="%"
@@ -75,8 +88,8 @@ class Target extends Component {
                         maxLength="3" />
                 </div>
                 <textarea data-tip={ToolTip.NOTES}
-                    value={this.props.notes.value}
-                          className={!this.props.notes.touched && this.props.notes.value !== '' ? classes.TextAreaAuto : classes.TextArea}
+                    value={inputs.notes.value}
+                          className={!inputs.notes.touched && inputs.notes.value !== '' ? classes.TextAreaAuto : classes.TextArea}
                           onChange={(event) => this.dataEnteredHandler(event, 'notes')}
                           placeholder="Notes" />
                 <ReactTooltip type={"dark"} delayShow={500}/>
@@ -91,11 +104,9 @@ class Target extends Component {
 
 const mapStateToProps = state => {
     return {
-        mlToMake: state.formula.inputs.mlToMake,
-        targetNic: state.formula.inputs.targetNic,
-        targetPg: state.formula.inputs.targetPg,
-        targetVg: state.formula.inputs.targetVg,
-        notes: state.formula.inputs.notes
+        inputs: state.formula.inputs,
+        weights: state.formula.weights,
+        baseInventory: state.inventory.base
     }
 };
 

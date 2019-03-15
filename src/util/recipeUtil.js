@@ -7,7 +7,9 @@ import * as ToolTip from '../constants/Tooltip';
 
 /**
  * When user flavor input is received, update flavor data
- * @param event The user input event
+ * @param id    The flavor ID
+ * @param name The flavor name
+ * @param value The flavor value
  * @param flavors   The current list of recipe flavors
  * @param input The user input object
  * @param weights   The ingredient weights
@@ -15,16 +17,16 @@ import * as ToolTip from '../constants/Tooltip';
  * @param mlToMakeVal   The MLToMake value
  * @returns {*[]}
  */
-export const updateFlavors = (event, flavors, input, weights, inventory, mlToMakeVal) => {
+export const updateFlavors = (id, name, value, flavors, input, weights, inventory, mlToMakeVal) => {
     let exists = false;
     let updatedFlavors = [...flavors];
     for(let i = 0; i < updatedFlavors.length; i++) {
-        if (updatedFlavors[i].control === event.target.id) {
+        if (updatedFlavors[i].control === id) {
             let updatedFlavor = {
                 ...updatedFlavors[i],
-                [event.target.name]: {value: event.target.value, touched: true}};
+                [name]: {value: value, touched: true}};
             exists = true;
-            if (event.target.name === 'percent') {
+            if (name === 'percent') {
                 const valid = setInvalidFlavor(updatedFlavor, input, weights, inventory, mlToMakeVal).valid;
                 updatedFlavor = {...updatedFlavor, valid: valid};
             }
@@ -33,8 +35,8 @@ export const updateFlavors = (event, flavors, input, weights, inventory, mlToMak
     }
     if (!exists) {
         updatedFlavors.push({
-            control: event.target.id,
-            [event.target.name]: {value: event.target.value, touched: true}})
+            control: id,
+            [name]: {value: value, touched: true}})
     }
     return updatedFlavors;
 };

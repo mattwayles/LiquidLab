@@ -135,7 +135,7 @@ class Formula extends Component {
                 <AddImageDialog open={addImage} close={this.handleClose} confirm={this.handleSave}
                                 imgFile={imgFile} uploadImg={this.uploadImg} message={addMsg} />
                 <div className={classes.Formula}>
-                    <Target  />
+                    <Target  calculate={() => this.handleCalculate()}/>
                     <Recipe
                         recipes={recipes}
                         delete={this.handleDelete}

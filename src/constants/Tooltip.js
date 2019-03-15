@@ -4,11 +4,12 @@ export const ML_TO_MAKE="The total volume of e-liquid to produce, in milliliters
 export const ML_TO_MAKE_ERROR="This value must be greater than zero to calculate a result";
 
 export const TARGET_NIC="The desired level of nicotine in the total volume of e-liquid produced";
-export const TARGET_NIC_ERROR="This value must be greater than or equals to zero to calculate a result";
+export const TARGET_NIC_ERROR="Insufficient nicotine volume in inventory";
 export const TARGET_PG="The desired percentage of propylene glycol (PG) in the total volume of e-liquid produced";
-export const TARGET_PG_ERROR="This value and the Target VG value must equal 100";
+export const TARGET_PG_SUM_ERROR="This value and the Target VG value must equal 100";
+export const TARGET_INSUFFICIENT_ERROR="Insufficient base ingredient volume in inventory";
 export const TARGET_VG="The desired level of vegetable glycerine (VG) in the total volume of e-liquid produced";
-export const TARGET_VG_ERROR="This value and the Target PG value must equal 100";
+export const TARGET_VG_SUM_ERROR="This value and the Target PG value must equal 100";;
 export const NOTES="Notes about this recipe";
 
 export const RECIPE_NAME="The name of the recipe as it will be stored in the database";
@@ -20,7 +21,7 @@ export const BASE_AMOUNT_LEFT="The remaining amount of this ingredient";
 export const VENDOR="Vendor of this flavor";
 export const FLAVOR="The name of this flavor";
 export const PERCENT="The desired percentage of this flavor in the total volume of e-liquid produced";
-export const PERCENT_ERROR="Insufficient flavor amount in inventory";
+export const PERCENT_ERROR="Insufficient flavor volume in inventory";
 
 export const PLUS_BUTTON_DISABLED="Available flavor rows must be used before adding more";
 export const PLUS_BUTTON="Add more flavors";

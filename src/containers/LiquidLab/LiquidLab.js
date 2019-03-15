@@ -12,6 +12,7 @@ import {enforceInputConstraints} from "../../util/shared";
 import {setInvalidFlavor, setInvalidRecipes} from "../../util/recipeUtil";
 import {CircularProgress} from "@material-ui/core";
 import ErrorDialog from "../../components/Dialog/ErrorDialog";
+import {checkBaseInputValidity} from "../../util/formulaUtil";
 
 class LiquidLab extends Component {
     state = {
@@ -88,6 +89,11 @@ class LiquidLab extends Component {
         let valid = event.target.value >= 1;
         this.props.onDataEntered('mlToMake', event.target.value, valid);
 
+        if (this.props.inputs.targetNic.value) { this.setBaseValidity('targetNic', this.props.inputs.targetNic.value, event.target.value); }
+        if (this.props.inputs.targetPg.value) { this.setBaseValidity('targetPg', this.props.inputs.targetPg.value, event.target.value); }
+        if (this.props.inputs.targetVg.value) { this.setBaseValidity('targetVg', this.props.inputs.targetVg.value, event.target.value); }
+
+
         let recipes = [...this.props.userRecipes];
         let flavors = [...this.props.flavors];
 
@@ -98,6 +104,15 @@ class LiquidLab extends Component {
 
         let filteredRecipes = setInvalidRecipes(recipes, this.props.inputs, this.props.weights, this.props.inventory, event.target.value);
         this.props.onRecipeValidation(filteredRecipes);
+    };
+
+    //TODO: Extract this to util to handle LiquidLab and Target usages
+    setBaseValidity = (control, value, mlToMake) => {
+        let valid = value >= 0 && checkBaseInputValidity(control, value, mlToMake,
+            this.props.flavors, this.props.inputs, this.props.weights, this.props.baseInventory);
+
+        console.log(control + ": ", valid);
+        this.props.onDataEntered(control, value, valid);
     };
 
     /**
@@ -190,6 +205,7 @@ const mapStateToProps = state => {
         recipeKey: state.formula.key,
         flavors: state.formula.flavors,
         inventory: state.inventory.flavors,
+        baseInventory: state.inventory.base,
         loading: state.auth.loading || state.database.loading || state.formula.loading || state.inventory.loading
     }
 };

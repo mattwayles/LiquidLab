@@ -27,18 +27,37 @@ class Recipe extends Component {
      * Set flavor controls on mount
      */
     componentWillMount () {
+
+        //Display flavors column 1
         let col1ControlArray = [...this.state.col1Controls];
         let controlId = this.state.index;
-
         for (let i = 0; i < 8; i++) {
             col1ControlArray.push({id: controlId});
             controlId++;
         }
 
+        //Display flavors column 2
         let col2ControlArray = [...this.state.col2Controls];
+        if (this.props.flavors.length > 8) {
+            for (let i = 8; i < this.props.flavors.length; i++) {
+                col2ControlArray.push({id: controlId});
+                controlId++
+            }
+        }
         col2ControlArray.push({ type: 'button'});
 
-        this.setState({ col1Controls: col1ControlArray, col2Controls: col2ControlArray, index: controlId });
+        //Re-validate flavors
+        let flavorsCopy = [...this.props.flavors];
+        for (let i in flavorsCopy) {
+            flavorsCopy[i] = {...flavorsCopy[i], valid: true};
+        }
+
+        this.props.onDataEntered(flavorsCopy);
+
+        this.setState({
+            col1Controls: col1ControlArray,
+            col2Controls: col2ControlArray,
+            index: controlId });
     }
 
     /**
@@ -64,8 +83,7 @@ class Recipe extends Component {
      */
     flavorDataEnteredHandler = (event) => {
         event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
-
-        let updatedFlavors = updateFlavors(event, this.props.flavors, this.props.input, this.props.weights,
+        let updatedFlavors = updateFlavors(event.target.id, event.target.name, event.target.value, this.props.flavors, this.props.input, this.props.weights,
             this.props.inventory, this.props.input.mlToMake.value);
 
         this.props.onDataEntered(updatedFlavors);

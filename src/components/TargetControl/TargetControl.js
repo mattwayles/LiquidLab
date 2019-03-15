@@ -11,6 +11,7 @@ const TargetControl = (props) => (
                 <p>{props.label}</p>
                 {props.autofocus ?
                     <Input
+                        name={props.name}
                         autoPopulate={props.autoPopulate}
                         value={props.value}
                         valid={props.valid}
@@ -19,8 +20,9 @@ const TargetControl = (props) => (
                         maxLength={props.maxLength}
                         tooltip={props.tooltip}
                         placeholder="0"
-                        autoFocus/>
+                        />
                     : <Input
+                        name={props.name}
                         autoPopulate={props.autoPopulate}
                         value={props.value}
                         valid={props.valid}
