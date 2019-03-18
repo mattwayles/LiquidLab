@@ -12,6 +12,7 @@ import {enforceInputConstraints} from "../../util/shared";
 import {setInvalidFlavor, setInvalidRecipes} from "../../util/recipeUtil";
 import {CircularProgress} from "@material-ui/core";
 import ErrorDialog from "../../components/Dialog/ErrorDialog";
+import {validateTargetInput} from "../../util/formulaUtil";
 
 class LiquidLab extends Component {
     state = {
@@ -91,6 +92,17 @@ class LiquidLab extends Component {
         let recipes = [...this.props.userRecipes];
         let flavors = [...this.props.flavors];
 
+        //Validate base ingredients
+        let baseArr = ['targetNic', 'targetPg', 'targetVg'];
+        for (let i in baseArr) {
+            let updatedInputs = {...this.props.inputs, mlToMake: {...this.props.inputs["mlToMake"], value: event.target.value}};
+            let valid = validateTargetInput(baseArr[i], updatedInputs, this.props.weights, this.props.flavors, this.props.baseInventory);
+            console.log(this.props.inputs[baseArr[i]]);
+            this.props.onDataEntered(baseArr[i], this.props.inputs[baseArr[i]].value, valid);
+        }
+
+
+        //Validate flavors
         for(let f in flavors) {
             flavors[f] = setInvalidFlavor(flavors[f], this.props.inputs, this.props.weights, this.props.inventory, event.target.value);
         }
@@ -189,6 +201,7 @@ const mapStateToProps = state => {
         weights: state.formula.weights,
         recipeKey: state.formula.key,
         flavors: state.formula.flavors,
+        baseInventory: state.inventory.base,
         inventory: state.inventory.flavors,
         loading: state.auth.loading || state.database.loading || state.formula.loading || state.inventory.loading
     }

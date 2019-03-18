@@ -4,8 +4,9 @@ export const ML_TO_MAKE="The total volume of e-liquid to produce, in milliliters
 export const ML_TO_MAKE_ERROR="This value must be greater than zero to calculate a result";
 
 export const TARGET_NIC="The desired level of nicotine in the total volume of e-liquid produced";
-export const TARGET_NIC_ERROR="This value must be greater than or equals to zero to calculate a result";
+export const TARGET_SUFFICIENT_NIC_ERROR="There is insufficient nicotine volume in inventory";
 export const TARGET_PG="The desired percentage of propylene glycol (PG) in the total volume of e-liquid produced";
+export const TARGET_SUFFICIENT_BASE_ERROR="There is an insufficient amount of this ingredient in the inventory";
 export const TARGET_PG_ERROR="This value and the Target VG value must equal 100";
 export const TARGET_VG="The desired level of vegetable glycerine (VG) in the total volume of e-liquid produced";
 export const TARGET_VG_ERROR="This value and the Target PG value must equal 100";

@@ -62,6 +62,40 @@ export const formulaIsEmpty = (inputs, flavors) => {
     return true;
 };
 
+export const validateTargetInput = (control, inputs, weights, flavors, baseInventory) => {
+    let flavorMlTotal = 0;
+
+    if (flavors) {
+        for (let i = 0; i < flavors.length; i++) {
+            const flavorResult = calculateFlavorResults(inputs, weights, flavors[i]);
+            flavorMlTotal += flavorResult.ml;
+        }
+    }
+
+    //Get required amount
+    const baseResults = calcBaseResults(inputs, weights, flavorMlTotal);
+
+    let mlInventory = 0;
+    let mlRequired = 0;
+    if (control === "targetNic") {
+        mlInventory = baseInventory[0].amount;
+        mlRequired = baseResults["nicMl"];
+    }
+   else if (control === "targetPg") {
+        mlInventory = baseInventory[1].amount;
+        mlRequired = baseResults["pgMl"];
+        } else {
+        mlInventory = baseInventory[2].amount;
+        mlRequired = baseResults["vgMl"];
+    }
+
+
+    // console.log("For the control " + control + ", I require " + mlRequired + "ml and I have " + mlInventory + "ml in inventory." +
+    //     "Therefore, the control's validity is: " + (mlInventory >= mlRequired));
+
+    return mlInventory >= mlRequired;
+};
+
 /**
  * Map user inputs to variables
  * @param inputs    User inputs
@@ -70,8 +104,8 @@ export const formulaIsEmpty = (inputs, flavors) => {
  */
 export const mapInputs = (inputs, weights) => {
     return {
-        mlToMake: parseInt(inputs.mlToMake.value, 10),
-        inputNic: inputs.targetNic.value ? parseInt( inputs.targetNic.value, 10) : 0,
+        mlToMake: inputs.mlToMake.value ? parseFloat(inputs.mlToMake.value) : 0,
+        inputNic: inputs.targetNic.value ? parseFloat(inputs.targetNic.value) : 0,
         inputPg: inputs.targetPg.value / 100,
         inputVg: inputs.targetVg.value / 100,
         nicStrength: weights.nicStrength,

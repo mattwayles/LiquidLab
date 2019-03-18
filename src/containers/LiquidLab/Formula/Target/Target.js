@@ -8,6 +8,7 @@ import * as ToolTip from '../../../../constants/Tooltip';
 import Auxil from '../../../../hoc/Auxil';
 import TargetControl from '../../../../components/TargetControl/TargetControl';
 import classes from './Target.css';
+import {validateTargetInput} from "../../../../util/formulaUtil";
 
 class Target extends Component {
 
@@ -19,32 +20,31 @@ class Target extends Component {
     dataEnteredHandler = (event, control) => {
         event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
 
-        let valid = event.target.value >= 0;
-        if (control === 'targetPg') {
-            valid = +event.target.value + +this.props.targetVg.value === 100;
-            this.props.onDataEntered('targetPg', event.target.value, valid);
-            this.props.onDataEntered('targetVg', this.props.targetVg.value, valid);
+        let updatedInputs = {...this.props.inputs, [control]: {...this.props.inputs[control], value: event.target.value}};
+         let valid = validateTargetInput(control, updatedInputs, this.props.weights, this.props.flavors, this.props.baseInventory);
+
+        if (control === 'targetPg' || control === 'targetVg') {
+            const oppControl = control === 'targetPg' ? 'targetVg' : 'targetPg';
+            valid = valid && +event.target.value + +this.props.inputs[oppControl].value === 100;
+            this.props.onDataEntered(oppControl, this.props.inputs[oppControl].value, valid);
         }
-        else if (control === 'targetVg') {
-            valid = +event.target.value + +this.props.targetPg.value === 100;
-            this.props.onDataEntered('targetPg', this.props.targetPg.value, valid);
-            this.props.onDataEntered('targetVg', event.target.value, valid);
-        }
-        else {
-            this.props.onDataEntered(control, event.target.value, valid);
-        }
+
+        this.props.onDataEntered(control, event.target.value, valid);
     };
 
     render() {
+        const {targetNic, targetPg, targetVg, notes} = this.props.inputs;
+        const baseSum = +targetPg.value + +targetVg.value === 100;
+
         let controls =
             <Auxil>
                 <p className={classes.Header}>Target</p>
                 <div className={classes.TargetGrid}>
                     <TargetControl
-                        autoPopulate={!this.props.targetNic.touched && this.props.targetNic.value > 0}
-                        value={this.props.targetNic.value !== undefined ? this.props.targetNic.value : ''}
-                        valid={this.props.targetNic.valid}
-                        tooltip={this.props.targetNic.valid ? ToolTip.TARGET_NIC : ToolTip.TARGET_NIC_ERROR}
+                        autoPopulate={!targetNic.touched && targetNic.value > 0}
+                        value={targetNic.value !== undefined ? targetNic.value : ''}
+                        valid={targetNic.valid}
+                        tooltip={targetNic.valid ? ToolTip.TARGET_NIC : ToolTip.TARGET_SUFFICIENT_NIC_ERROR}
                         change={(event) => this.dataEnteredHandler(event, 'targetNic')}
                         label="Target Nic:"
                         type="number"
@@ -52,10 +52,10 @@ class Target extends Component {
                         min="0"
                         maxLength="3" />
                     <TargetControl
-                        autoPopulate={!this.props.targetPg.touched && this.props.targetPg.value > 0}
-                        value={this.props.targetPg.value}
-                        valid={this.props.targetPg.valid}
-                        tooltip={this.props.targetPg.valid ? ToolTip.TARGET_PG : ToolTip.TARGET_PG_ERROR}
+                        autoPopulate={!targetPg.touched && targetPg.value > 0}
+                        value={targetPg.value}
+                        valid={targetPg.valid}
+                        tooltip={targetPg.valid ? ToolTip.TARGET_PG : baseSum ? ToolTip.TARGET_SUFFICIENT_BASE_ERROR : ToolTip.TARGET_PG_ERROR}
                         change={(event) => this.dataEnteredHandler(event, 'targetPg')}
                         label="Target PG:"
                         type="number"
@@ -63,10 +63,10 @@ class Target extends Component {
                         min="0"
                         maxLength="3" />
                     <TargetControl
-                        autoPopulate={!this.props.targetVg.touched &&this.props.targetVg.value > 0}
-                        value={this.props.targetVg.value}
-                        valid={this.props.targetVg.valid}
-                        tooltip={this.props.targetVg.valid ? ToolTip.TARGET_VG : ToolTip.TARGET_VG_ERROR}
+                        autoPopulate={!targetVg.touched &&targetVg.value > 0}
+                        value={targetVg.value}
+                        valid={targetVg.valid}
+                        tooltip={targetVg.valid ? ToolTip.TARGET_VG : baseSum ? ToolTip.TARGET_SUFFICIENT_BASE_ERROR : ToolTip.TARGET_VG_ERROR}
                         change={(event) => this.dataEnteredHandler(event, 'targetVg')}
                         label="Target VG:"
                         type="number"
@@ -75,11 +75,10 @@ class Target extends Component {
                         maxLength="3" />
                 </div>
                 <textarea data-tip={ToolTip.NOTES}
-                    value={this.props.notes.value}
-                          className={!this.props.notes.touched && this.props.notes.value !== '' ? classes.TextAreaAuto : classes.TextArea}
+                    value={notes.value}
+                          className={!notes.touched && notes.value !== '' ? classes.TextAreaAuto : classes.TextArea}
                           onChange={(event) => this.dataEnteredHandler(event, 'notes')}
                           placeholder="Notes" />
-                <ReactTooltip type={"dark"} delayShow={500}/>
             </Auxil>;
         return (
             <div className={classes.Target}>
@@ -91,11 +90,10 @@ class Target extends Component {
 
 const mapStateToProps = state => {
     return {
-        mlToMake: state.formula.inputs.mlToMake,
-        targetNic: state.formula.inputs.targetNic,
-        targetPg: state.formula.inputs.targetPg,
-        targetVg: state.formula.inputs.targetVg,
-        notes: state.formula.inputs.notes
+        inputs: state.formula.inputs,
+        flavors: state.formula.flavors,
+        weights: state.formula.weights,
+        baseInventory: state.inventory.base
     }
 };
 

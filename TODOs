@@ -31,6 +31,7 @@
     - Include base ingredients in inventory?
     - Auto-add items to shopping list?
     - Delete auto-added items from your shopping list?
+- Better logout acknowledgement
 - Support page with About section, Help section, Walkthrough, Donate/Contact, and TOC
 - Mobile / Tablet / Responsive Optimization (Mobile- snap to top when updating DB so success message can be seen!)
 
