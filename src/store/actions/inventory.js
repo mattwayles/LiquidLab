@@ -1,10 +1,10 @@
 import * as actionTypes from './actionTypes';
 
-export const saveInventoryDataRedux = (base, flavors) => {
+export const saveInventoryDataRedux = (inventory) => {
     return {
         type: actionTypes.SAVE_INVENTORY_DATA_REDUX,
-        base,
-        flavors
+        base: inventory.base,
+        flavors: inventory.flavors
     }
 };
 

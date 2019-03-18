@@ -222,7 +222,7 @@ const saveInventoryDataStart = (state) => {
 
 const saveInventoryDataSuccess = (state, action) => {
     return updateObject(state, {
-        success: action.success,
+        success: action.success ? action.success : state.success,
         error: null,
         loading: false });
 };

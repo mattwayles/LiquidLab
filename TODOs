@@ -2,21 +2,17 @@
 ============================ BUGS / CLEANUP ================================
 ============================================================================
 
-===== DECISION ======
-- Should saving a recipe save the target data (ML to make, target Nic, tartget PG, target VG)?
-
 ===== LIQUIDLAB =====
-- Target inputs should not remove themselves when selecting a new recipe
-- I Made It should give the opportunity to add flavors to inventory
-- I Made It should give a better success message
+- Modify Overwrite dialog to allow user to either Continue or Create New
 - Success message 'drawer', grow open, shrink closed
 - Warning message when calculating recipe with invalid inputs
-- Saving/updating recipe briefly gives correct success message, then fades into "Successfully updated inventory". This is not the message I want.
 - Sub-directories for each batch under the same name (So I'm not populating recipe list with a ton of different batches of the same recipe)
 
 ===== INVENTORY =====
 - On plus button click, open the Vendor textbox to await data input
 - Tab button in base should move to next base ingredient
+- # of Recipes is not updating correctly
+- Inventory flavor ID is not incrementing, but it doesn't seem to affect much; do I need a flavor ID?
 
 ===== ADD FLV TO INVENTORY =====
 - When adding flavor to inventory, present a grid with amount to add. Give user the chance to input flavor amount there, instead of it adding at 0ml
@@ -51,5 +47,6 @@
 - Newly-registered users should set initial base ingredient values
 - First-run wizard tutorial: Set weights, set PG/VG/NIC, introduce to app components
 - Paid Tiers with credit card app embedded
-
+- Clean up the code. Extract util methods into smaller, more logical methods. Pull logical code out of classes into util.
+    Stop doing the same thing three different ways, analyze the inputs/outputs and write reusable functions accordingly.
 - Performance testing: what happens when recipes, inventory, shoppingList get massive?

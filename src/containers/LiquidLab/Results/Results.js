@@ -5,16 +5,20 @@ import {Table, TableHead, TableBody, TableRow, TableCell} from "@material-ui/cor
 import classes from './Results.css';
 import Auxil from "../../../hoc/Auxil";
 import ConfirmDialog from "../../../components/Dialog/ConfirmDialog";
-import {compareResults} from "../../../util/shared";
+import {compareResults, createNextId} from "../../../util/shared";
 import * as ToolTip from "../../../constants/Tooltip";
 import * as actions from "../../../store/actions";
 import Button from "../../../components/ui/Button/Button";
 import firebase from 'firebase';
+import AddInventoryDialog from "../../../components/Dialog/AddInventoryDialog";
+import {populateNonInventoriedFlavors} from "../../../util/formulaUtil";
 
 class Results extends Component {
     state = {
         confirmDialog: false,
-        imgUrl: null
+        addInventoryDialog: false,
+        imgUrl: null,
+        nonInventory: []
     };
 
     /**
@@ -51,12 +55,31 @@ class Results extends Component {
     };
 
     /**
+     * Open the 'add to inventory' dialog
+     */
+    addToInventoryHandler = () => {
+        let nonInventoriedFlavors = populateNonInventoriedFlavors(this.state.nonInventory, this.props.flavors, this.props.inventory);
+
+        if (!this.state.addInventoryDialog && nonInventoriedFlavors.length > 0) {
+            this.setState({ confirmDialog: false, addInventoryDialog: true, nonInventory: nonInventoriedFlavors });
+        } else {
+            this.recipeCompletedConfirm();
+            this.setState({ confirmDialog: false, nonInventory: [] });
+        }
+    };
+
+    /**
+     * Handler for closing the Save Confirm dialog
+     */
+    handleClose = () => {
+        this.setState({ addInventoryDialog: false, nonInventory: [] });
+    };
+
+    /**
      * Confirm a made recipe and subtract values from inventory
      */
-    recipeCompletedConfirm = () => {
-        let inventoryFlavors = [...this.props.inventory];
-
-        let resultBase = [...this.props.base]
+    recipeCompletedConfirm = (addToInventory) => {
+        let resultBase = [...this.props.base];
         for (let i in resultBase) {
             if (resultBase[i].name === "NIC") {
                 let nicAmount = resultBase[i].amount - this.props.results.ingredients.nic.ml;
@@ -72,6 +95,20 @@ class Results extends Component {
             }
         }
 
+        let inventoryFlavors = [...this.props.inventory];
+        if (addToInventory) {
+            for (let f in this.state.nonInventory) {
+                inventoryFlavors.push({
+                    amount: 0,
+                    id: createNextId([...this.props.inventory]),
+                    name: this.state.nonInventory[f].flavor.value,
+                    vendor: this.state.nonInventory[f].ven ? this.state.nonInventory[f].ven.value : '',
+                    recipes: 0,
+                    notes: ''
+                })
+            }
+        }
+
         let resultFlavors = this.props.results.ingredients.flavors;
         for (let r in resultFlavors) {
             for ( let i in inventoryFlavors) {
@@ -81,13 +118,18 @@ class Results extends Component {
                 }
             }
         }
-        //this.props.madeHandler(true);
-        this.props.onSaveInventoryData(this.props.token, this.props.dbEntryId, resultBase, inventoryFlavors);
-        this.setState({ confirmDialog: false });
+        const inventory = {
+            base: [...resultBase],
+            flavors: [...inventoryFlavors]
+        };
+
+        this.props.madeHandler(true);
+        this.props.onSaveInventoryData(this.props.token, this.props.dbEntryId, inventory);
+        this.setState({ confirmDialog: false, addInventoryDialog: false });
     };
 
     render () {
-        const { confirmDialog, imgUrl } = this.state;
+        const { confirmDialog, addInventoryDialog, nonInventory, imgUrl } = this.state;
         const { results, navWarnHandler, navWarn } = this.props;
 
         let displayedResults = [];
@@ -171,13 +213,16 @@ class Results extends Component {
                     </TableBody>
                 </Table>
                 </div>
-                <ConfirmDialog open={confirmDialog} close={this.recipeCompletedHandler} confirm={(e) => this.recipeCompletedConfirm(e, displayedResults)}
+
+                <ConfirmDialog open={confirmDialog} close={this.recipeCompletedHandler} confirm={this.addToInventoryHandler}
                                message={"Subtract ingredient usage for " + results.recipeInfo.mlToMake.value + " ml of "
                                + recipeName + " from inventory?"}  />
-                <ConfirmDialog open={navWarn} close={ navWarnHandler } confirm={(e) => this.recipeCompletedConfirm(e, displayedResults)}
+                <ConfirmDialog open={navWarn} close={ navWarnHandler } confirm={this.addToInventoryHandler }
                                subtitle="Click YES to subtract flavor usage from inventory"
                                message={"You calculated results for " + results.recipeInfo.mlToMake.value + " ml of "
                                + recipeName + ". Did you make it?"}  />
+                <AddInventoryDialog open={addInventoryDialog} close={this.handleClose} save={this.recipeCompletedConfirm}
+                                    addAndSave={ this.recipeCompletedConfirm } inventoryList={nonInventory}/>
             </Auxil>
         );
     }
@@ -188,6 +233,7 @@ const mapStateToProps = state => {
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,
         results: state.results,
+        flavors: state.formula.flavors,
         base: state.inventory.base,
         inventory: state.inventory.flavors,
         image: state.formula.inputs.image
@@ -196,7 +242,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSaveInventoryData: (token, dbEntryId, base, flavors) => dispatch(actions.saveInventoryData(token, dbEntryId, base, flavors))
+        onSaveInventoryData: (token, dbEntryId, inventory) => dispatch(actions.saveInventoryData(token, dbEntryId, inventory))
     }
 };
 

@@ -14,7 +14,7 @@ import Button from "../ui/Button/Button";
  */
 const confirmDialog = (props) => (
         <Dialog open={props.open} onClose={props.close} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">{props.message}</DialogTitle>
+            <DialogTitle id="form-dialog-title">Add the following flavors to inventory?</DialogTitle>
             <DialogContent>
                 {props.inventoryList.map(flavor => {
                     return <p style={{marginLeft: '5%'}} key={flavor.control}>{flavor.ven ? flavor.ven.value + " " + flavor.flavor.value : flavor.flavor.value}</p>
@@ -24,8 +24,11 @@ const confirmDialog = (props) => (
                 <Button classname="Dialog" clicked={props.close}>
                     Cancel
                 </Button>
-                <Button classname="Dialog" clicked={props.confirm}>
-                    {props.recipeKey ? "Update" : "Save"}
+                <Button classname="Dialog" clicked={() => props.save(false)}>
+                    No
+                </Button>
+                <Button classname="Dialog" clicked={() => props.save(true)}>
+                    Yes
                 </Button>
             </DialogActions>
         </Dialog>

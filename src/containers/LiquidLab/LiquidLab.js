@@ -23,7 +23,6 @@ class LiquidLab extends Component {
 
     componentWillMount() {
         if(this.props.isAuthenticated) {
-            console.log("Validating from LiquidLabMount");
             this.validateSufficientInventory(this.props.inputs.mlToMake.value);
         }
     }

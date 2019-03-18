@@ -47,7 +47,6 @@ export const register = (username, email, password, weights) => {
                     })
                     .catch(error => {
                         //Error retrieving display names from database
-                        console.log(error);
                         dispatch(registerFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
                     });
             }).catch(error => {

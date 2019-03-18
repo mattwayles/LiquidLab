@@ -79,24 +79,9 @@ const userRecipeSelected = (state, action) => {
 
     return updateObject(state,
         {inputs: {
-            mlToMake: state.inputs.mlToMake,
+                ...state.inputs,
             name: {
                 value: action.recipe.name ? action.recipe.name.value : initialState.inputs.name,
-                valid: true,
-                touched: false
-            },
-            targetNic: {
-                value: action.recipe.targetNic ? action.recipe.targetNic.value : initialState.inputs.targetNic,
-                valid: true,
-                touched: false
-            },
-            targetPg: {
-                value: action.recipe.targetPg ? action.recipe.targetPg.value : initialState.inputs.targetPg,
-                valid: true,
-                touched: false
-            },
-            targetVg: {
-                value: action.recipe.targetVg ? action.recipe.targetVg.value : initialState.inputs.targetVg,
                 valid: true,
                 touched: false
             },

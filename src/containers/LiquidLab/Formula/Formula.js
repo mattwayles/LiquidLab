@@ -13,13 +13,16 @@ import {
     validateInputs
 } from "../../../util/formulaUtil";
 import Auxil from "../../../hoc/Auxil";
-import ConfirmSaveDialog from "../../../components/Dialog/ConfirmSaveDialog";
+import AddInventoryDialog from "../../../components/Dialog/AddInventoryDialog";
 import AddImageDialog from "../../../components/Dialog/AddImageDialog";
 import firebase from "firebase";
+import ConfirmDialog from "../../../components/Dialog/ConfirmDialog";
 
 class Formula extends Component {
     state = {
         saveConfirm: false,
+        overwriteDialog: false,
+        overwriteRecipe: '',
         nonInventory: [],
         addImage: false,
         imgFile: ''
@@ -29,7 +32,7 @@ class Formula extends Component {
      * Handler for closing the Save Confirm dialog
      */
     handleClose = () => {
-        this.setState({ addImage: false, saveConfirm: false, nonInventory: [] });
+        this.setState({ overwriteDialog: false, addImage: false, saveConfirm: false, nonInventory: [], overwriteRecipe: '' });
     };
 
     /**
@@ -48,23 +51,45 @@ class Formula extends Component {
             this.props.recipeKey, this.props.inputs.name, this.props.inputs.batch, this.props.flavors, this.props.inventory, this.props.inventoryBase);
     };
 
-    handleAddImage = () => {
-        this.setState({ addImage: true });
+    handleOverwriteWarning = () => {
+        //TODO: Pull into util method
+        let original = {};
+        let found = false;
+        for (let r in this.props.userRecipes) {
+            if (this.props.userRecipes[r].dbKey === this.props.recipeKey) {
+                original = this.props.userRecipes[r]
+                if (this.props.inputs.name.value !== original.name.value) {
+                    found = true;
+                    this.setState({ overwriteDialog: true, overwriteRecipe: original.name.value });
+                    break;
+                }
+            }
+        }
+
+        if (!found) {
+            this.handleAddImage();
+        }
     };
+
+    handleAddImage = () => {
+        this.setState({ overwriteDialog: false, addImage: true });
+    };
+
     /**
-     * Handler for user click of the 'Save' button, to save a recipe to redux and database
+     * Handler for user click of the 'Save/Update' button, to save a recipe to redux and database
      */
-    handleSave = () => {
+    handleSave = (addFlavorsToInventory) => {
         if (this.state.addImage) {
             this.setState({ addImage: false, imgFile: '' });
         }
         
         let nonInventoriedFlavors = populateNonInventoriedFlavors(this.state.nonInventory, this.props.flavors, this.props.inventory);
+
         if (!this.state.saveConfirm && nonInventoriedFlavors.length > 0) {
             this.setState({ saveConfirm: true, nonInventory: nonInventoriedFlavors })
         }
         else {
-            saveOrUpdateRecipe(nonInventoriedFlavors, this.props.inventory, this.props.inventoryBase, this.props.flavors, this.props.inputs, this.props.userRecipes,
+            saveOrUpdateRecipe(addFlavorsToInventory ? nonInventoriedFlavors : [], this.props.inventory, this.props.inventoryBase, this.props.flavors, this.props.inputs, this.props.userRecipes,
                 this.props.recipeKey, this.props.token, this.props.dbEntryId, this.props.error, this.props.onSaveInventoryData, this.props.onUpdateRecipe, this.props.onSaveRecipe);
             this.props.clear();
             this.setState({ addImage: false, saveConfirm: false, nonInventory: [] });
@@ -121,26 +146,27 @@ class Formula extends Component {
 
 
     render () {
-        const { saveConfirm, nonInventory, addImage, imgFile } = this.state;
-        const { recipeKey, recipes, image} = this.props;
+        const { saveConfirm, overwriteDialog, overwriteRecipe, nonInventory, addImage, imgFile } = this.state;
+        const { recipeKey, recipes, image, inputs} = this.props;
 
         let addMsg = recipeKey && image !== '' ? "Update the Recipe Image? " : "Add an Image to this Recipe?";
 
 
         return (
             <Auxil>
-                <ConfirmSaveDialog open={saveConfirm} close={this.handleClose} confirm={this.handleSave}
-                                   recipeKey={recipeKey} inventoryList={nonInventory}
-                                   message={"The following flavors will be added to the Inventory:"} />
+                <AddInventoryDialog open={saveConfirm} close={this.handleClose} save={this.handleSave}
+                                   addAndSave={ this.handleSave } inventoryList={nonInventory}/>
                 <AddImageDialog open={addImage} close={this.handleClose} confirm={this.handleSave}
                                 imgFile={imgFile} uploadImg={this.uploadImg} message={addMsg} />
+                <ConfirmDialog open={overwriteDialog} close={this.handleClose} confirm={this.handleAddImage}
+                               message={"Are you sure you want to overwrite " + overwriteRecipe + " with " + inputs.name.value + "?"} />
                 <div className={classes.Formula}>
                     <Target  />
                     <Recipe
                         recipes={recipes}
                         delete={this.handleDelete}
                         clear={this.handleClear}
-                        save={this.handleAddImage}
+                        save={this.handleOverwriteWarning}
                         calculate={() => this.handleCalculate() ? this.props.displayResults() : null} />
                 </div>
             </Auxil>
@@ -172,7 +198,7 @@ const mapDispatchToProps = dispatch => {
         onUpdateRecipe: (token, db, key, recipeData, inventory, original) => dispatch(actions.updateRecipe(token, db, key, recipeData, inventory, original)),
         onUpdateIngredients: (control, value) => dispatch(actions.updateIngredients(control, value)),
         onUpdateRecipeInfo: (control, value) => dispatch(actions.updateRecipeInfo(control, value)),
-        onSaveInventoryData: (token, dbEntryId, base, flavors) => dispatch(actions.saveInventoryData(token, dbEntryId, base, flavors)),
+        onSaveInventoryData: (token, dbEntryId, inventory) => dispatch(actions.saveInventoryData(token, dbEntryId, inventory)),
         onInputDataEntered: (control, value) => dispatch(actions.inputDataEntered(control, value))
     }
 };

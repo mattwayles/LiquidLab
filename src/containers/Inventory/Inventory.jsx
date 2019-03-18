@@ -62,7 +62,8 @@ class Inventory extends React.Component {
             this.setState({ flavors: newFlavors });
         }
 
-        this.props.onSaveInventoryData(this.props.token, this.props.dbEntryId, this.state.base, this.state.flavors);
+        let inventory = {base: [...this.state.base], flavors: [...this.state.flavors]};
+        this.props.onSaveInventoryData(this.props.token, this.props.dbEntryId, inventory);
         this.props.history.push("/");
     };
 
@@ -128,7 +129,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSaveInventoryData: (token, dbEntryId, base, flavors) => dispatch(actions.saveInventoryData(token, dbEntryId, base, flavors))
+        onSaveInventoryData: (token, dbEntryId, inventory) => dispatch(actions.saveInventoryData(token, dbEntryId, inventory))
     }
 };
 

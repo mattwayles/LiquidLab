@@ -253,12 +253,19 @@ export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) 
  */
 export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, inventoryBase, flavors, inputs, userRecipes, recipeKey, token, dbEntryId,
                                    error, saveInventoryData, updateRecipe, saveRecipe) => {
-    let inventory = [...inventoryProps];
+    //Copy inventory for modification
+    const inventory = {
+        base: [...inventoryBase],
+        flavors: [...inventoryProps]
+    };
+
+    //Add non-inventoried flavors to inventory
     for (let f in nonInventoriedFlavors) {
-        inventory.push({amount: 0, id: createNextId([...inventory]), name: nonInventoriedFlavors[f].flavor.value,
+        inventory.flavors.push({amount: 0, id: createNextId([...inventory]), name: nonInventoriedFlavors[f].flavor.value,
             vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0, notes: ''})
     }
 
+    //Create object containing receip data to save to database
     const recipeData = {
         batch: inputs.batch,
         name: inputs.name,
@@ -267,23 +274,31 @@ export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, invent
         flavors: [...flavors]
     };
 
+
+
+    //If recipeKey exists, the recipe already exists and we are trying to update it
     if (recipeKey) {
+        //Retrieve existing recipe
         let original = {};
         for (let r in userRecipes) {
             if (userRecipes[r].dbKey === recipeKey) {
                 original = userRecipes[r]
             }
         }
-        saveInventoryData(token, dbEntryId, inventoryBase, inventory);
-        updateRecipe(token, dbEntryId, recipeKey, recipeData, inventory, original);
+
+
+        //Save inventory and update recipe
+        //saveInventoryData(token, dbEntryId, inventoryBase, inventory);
+        updateRecipe(token, dbEntryId, recipeKey, recipeData, inventory, original, recipeData);
     }
-    else {
+    else { //This is a brand-new recipe
         if (duplicateRecipe(inputs.name.value, inputs.batch.value, userRecipes)) {
             const nameBatch = inputs.batch.value ? inputs.name.value + " [" + inputs.batch.value + "]" : inputs.name.value;
             error("The recipe " + nameBatch + " already exists in the database.");
         }
         else {
-            saveInventoryData(token, dbEntryId, inventoryBase, inventory);
+            //Save inventory and update recipe
+            //saveInventoryData(token, dbEntryId, inventoryBase, inventory, recipeData);
             saveRecipe(token, dbEntryId, inventory, recipeData);
         }
     }

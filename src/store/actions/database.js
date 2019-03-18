@@ -112,14 +112,14 @@ export const saveRecipe = (token, dbEntryId, inventory, recipe) => {
         dispatch(saveRecipeStart());
         axios.post('/users/' + dbEntryId + '/recipes.json?auth=' + token, recipe)
             .then(response => {
+                dispatch(saveInventoryData(token, dbEntryId, inventory, true));
                 dispatch(modifyFlavorRecipeCount(token, dbEntryId, recipe.flavors, inventory, 1));
                 dispatch(getUserRecipes(token, dbEntryId));
                 dispatch(selectUserRecipe(response.data.name, recipe));
-                const successMessage = "Successfully saved " + recipe.batch.value ? (recipe.name.value + " [" +
-                    recipe.batch.value + "]") : recipe.name.value + " to the database";
+                const successMessage = "Successfully saved " + (recipe.batch.value ? recipe.name.value + " [" +
+                    recipe.batch.value + "]" : recipe.name.value) + " to the database";
                 dispatch(saveRecipeSuccess(successMessage));
             }).catch(error => {
-                console.log(error);
             dispatch(saveRecipeFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
 
         });
@@ -174,9 +174,9 @@ export const updateRecipe = (token, dbEntryId, key, recipe, inventory, original)
         dispatch(updateRecipeStart());
         axios.patch('/users/' + dbEntryId + '/recipes/' + key + '.json?auth=' + token, recipe)
             .then(() => {
-                const successMessage = recipe.batch.value ? "Successfully updated " + recipe.name.value + " [" +
-                    recipe.batch.value + "] in the database"
-                    : "Successfully updated " + recipe.name.value + " in the database";
+                dispatch(saveInventoryData(token, dbEntryId, inventory, true));
+                const successMessage = "Successfully updated " + (recipe.batch.value ? recipe.name.value + " [" +
+                    recipe.batch.value + "]" : recipe.name.value) + " in the database";
                 dispatch(updateRecipeSuccess(successMessage));
                 dispatch(getUserRecipes(token, dbEntryId));
             }).catch(error => {
@@ -391,19 +391,18 @@ export const clearSuccessMessage = () => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// SAVE USER INVENTORY ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export const saveInventoryData = (token, dbEntryId, base, flavors) => {
+export const saveInventoryData = (token, dbEntryId, inventory, suppress) => {
     return dispatch => {
         dispatch(saveInventoryDataStart());
-        axios.put('/users/' + dbEntryId + '/inventory/base.json?auth=' + token, base)
+        axios.put('/users/' + dbEntryId + '/inventory.json?auth=' + token, inventory)
             .then(() => {
-                axios.put('/users/' + dbEntryId + '/inventory/flavors.json?auth=' + token, flavors)
-                    .then(() => {
-                        const successMessage = "Successfully saved inventory";
-                        dispatch(saveInventoryDataRedux(base, flavors));
-                        dispatch(saveInventoryDataSuccess(successMessage));
-                    }).catch(error => {
-                    dispatch(saveInventoryDataFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
-                });
+                if (!suppress) {
+                    const successMessage = "Successfully updated inventory";
+                    dispatch(saveInventoryDataSuccess(successMessage));
+                } else {
+                    dispatch(saveInventoryDataSuccess(null))
+                }
+                dispatch(saveInventoryDataRedux(inventory));
             }).catch(error => {
             dispatch(saveInventoryDataFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
         });
@@ -418,9 +417,15 @@ export const saveInventoryDataStart = () => {
 };
 
 export const saveInventoryDataSuccess = (success) => {
-    return {
-        type: actionTypes.SAVE_INVENTORY_DATA_DATABASE_SUCCESS,
-        success,
+    if (success) {
+        return {
+            type: actionTypes.SAVE_INVENTORY_DATA_DATABASE_SUCCESS,
+            success
+        }
+    } else {
+        return {
+            type: actionTypes.SAVE_INVENTORY_DATA_DATABASE_SUCCESS
+        }
     }
 };
 
@@ -483,7 +488,6 @@ export const getUserInventory = (token, dbEntryId) => {
                 if (!response.data) {
                     response.data = [];
                 }
-                console.log(response.data);
                 dispatch(getUserInventorySuccess(response.data));
             }).catch(error => {
             dispatch(getUserInventoryFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
@@ -578,7 +582,7 @@ export const modifyFlavorRecipeCount = (token, dbEntryId, flavors, inventory, di
                 }
             }
         }
-        axios.put('/users/' + dbEntryId + '/inventory/flavors.json?auth=' + token, inventory)
+        axios.put('/users/' + dbEntryId + '/inventory.json?auth=' + token, inventory)
             .then(() => {
                 dispatch(modifyFlavorRecipeCountRedux(inventory));
                 dispatch(modifyFlavorRecipeCountSuccess());
