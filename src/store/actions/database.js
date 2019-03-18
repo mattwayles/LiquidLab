@@ -112,13 +112,12 @@ export const saveRecipe = (token, dbEntryId, inventory, recipe) => {
         dispatch(saveRecipeStart());
         axios.post('/users/' + dbEntryId + '/recipes.json?auth=' + token, recipe)
             .then(response => {
-                const successMessage = recipe.batch.value ? "Successfully saved " + recipe.name.value + " [" +
-                recipe.batch.value + "] to the database"
-                    : "Successfully saved " + recipe.name.value + " to the database";
-                dispatch(saveRecipeSuccess(successMessage));
                 dispatch(modifyFlavorRecipeCount(token, dbEntryId, recipe.flavors, inventory, 1));
                 dispatch(getUserRecipes(token, dbEntryId));
                 dispatch(selectUserRecipe(response.data.name, recipe));
+                const successMessage = "Successfully saved " + recipe.batch.value ? (recipe.name.value + " [" +
+                    recipe.batch.value + "]") : recipe.name.value + " to the database";
+                dispatch(saveRecipeSuccess(successMessage));
             }).catch(error => {
                 console.log(error);
             dispatch(saveRecipeFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
@@ -484,6 +483,7 @@ export const getUserInventory = (token, dbEntryId) => {
                 if (!response.data) {
                     response.data = [];
                 }
+                console.log(response.data);
                 dispatch(getUserInventorySuccess(response.data));
             }).catch(error => {
             dispatch(getUserInventoryFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));
@@ -578,7 +578,7 @@ export const modifyFlavorRecipeCount = (token, dbEntryId, flavors, inventory, di
                 }
             }
         }
-        axios.put('/users/' + dbEntryId + '/inventory.json?auth=' + token, inventory)
+        axios.put('/users/' + dbEntryId + '/inventory/flavors.json?auth=' + token, inventory)
             .then(() => {
                 dispatch(modifyFlavorRecipeCountRedux(inventory));
                 dispatch(modifyFlavorRecipeCountSuccess());

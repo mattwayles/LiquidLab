@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactTooltip from 'react-tooltip';
 import * as ToolTip from '../../../constants/Tooltip';
 import './BatchSelect.css';
 import Auxil from "../../../hoc/Auxil";
@@ -40,7 +39,6 @@ const batchSelect = (props) => (
                 <option value="ω">ω</option>
             </select>
         </div>
-        <ReactTooltip type={"dark"} delayShow={500}/> 
     </Auxil>
 );
 

@@ -27,7 +27,7 @@ const addImageDialog = (props) => (
                 <Button classname="Dialog" clicked={props.confirm} color="primary">
                     No
                 </Button>
-                <Button classname="Dialog" clicked={props.confirm}  color="primary">
+                <Button classname="Dialog" disabled={!props.imgFile} clicked={props.confirm} color="primary">
                     Add
                 </Button>
             </DialogActions>

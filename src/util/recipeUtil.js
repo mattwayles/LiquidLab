@@ -2,7 +2,6 @@ import {calculateFlavorResults} from "./formulaUtil";
 import {compareFlavors} from "./shared";
 import RecipeControl from "../components/RecipeControl/RecipeControl";
 import React from "react";
-import ReactTooltip from 'react-tooltip';
 import * as ToolTip from '../constants/Tooltip';
 
 /**
@@ -152,7 +151,6 @@ export const mapControls = (col1Controls, classes, recipeKey, recipes, flavors, 
                             className={disabled ? classes.PlusButtonDisabled : classes.PlusButton}
                             onClick={plusClickedHandler}
                     >+</button>
-                    <ReactTooltip delayShow={500}/>
                 </span>
             )
         }

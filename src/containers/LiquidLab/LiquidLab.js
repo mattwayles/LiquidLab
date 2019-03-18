@@ -5,7 +5,6 @@ import Results from './Results/Results';
 import classes from './LiquidLab.css';
 import logo from '../../assets/logo.png';
 import * as ToolTip from "../../constants/Tooltip";
-import ReactTooltip from 'react-tooltip';
 import * as actions from "../../store/actions";
 import Input from "../../components/ui/Input/Input";
 import {enforceInputConstraints} from "../../util/shared";
@@ -19,15 +18,13 @@ class LiquidLab extends Component {
         results: false,
         error: null,
         made: false,
-        navWarn: false
+        navWarn: false,
     };
 
-    /**
-     * Retain the MLToMake value across page visits
-     */
     componentWillMount() {
-        if (this.props.inputs.mlToMake.value) {
-            this.props.onDataEntered('mlToMake', '', true);
+        if(this.props.isAuthenticated) {
+            console.log("Validating from LiquidLabMount");
+            this.validateSufficientInventory(this.props.inputs.mlToMake.value);
         }
     }
 
@@ -89,26 +86,39 @@ class LiquidLab extends Component {
         let valid = event.target.value >= 1;
         this.props.onDataEntered('mlToMake', event.target.value, valid);
 
+        //Perform input validation on ML To Make edit for validated users only
+        if (this.props.isAuthenticated) {
+            this.validateSufficientInventory(event.target.value);
+        }
+    };
+
+    /**
+     * Validate the current user input against inventory for authenticated users only
+     * @param value The data input value
+     */
+    validateSufficientInventory = (value) => {
         let recipes = [...this.props.userRecipes];
         let flavors = [...this.props.flavors];
 
         //Validate base ingredients
         let baseArr = ['targetNic', 'targetPg', 'targetVg'];
         for (let i in baseArr) {
-            let updatedInputs = {...this.props.inputs, mlToMake: {...this.props.inputs["mlToMake"], value: event.target.value}};
+            let updatedInputs = {
+                ...this.props.inputs,
+                mlToMake: {...this.props.inputs["mlToMake"], value: value}
+            };
             let valid = validateTargetInput(baseArr[i], updatedInputs, this.props.weights, this.props.flavors, this.props.baseInventory);
-            console.log(this.props.inputs[baseArr[i]]);
             this.props.onDataEntered(baseArr[i], this.props.inputs[baseArr[i]].value, valid);
         }
 
 
         //Validate flavors
-        for(let f in flavors) {
-            flavors[f] = setInvalidFlavor(flavors[f], this.props.inputs, this.props.weights, this.props.inventory, event.target.value);
+        for (let f in flavors) {
+            flavors[f] = setInvalidFlavor(flavors[f], this.props.inputs, this.props.weights, this.props.inventory, value);
         }
         this.props.onRecipeDataEntered(flavors);
 
-        let filteredRecipes = setInvalidRecipes(recipes, this.props.inputs, this.props.weights, this.props.inventory, event.target.value);
+        let filteredRecipes = setInvalidRecipes(recipes, this.props.inputs, this.props.weights, this.props.inventory, value);
         this.props.onRecipeValidation(filteredRecipes);
     };
 
@@ -174,7 +184,6 @@ class LiquidLab extends Component {
                                 : <option key={recipe.dbKey} value={recipe.dbKey}>{recName}</option>
                         }) : null}
                     </select>
-                    <ReactTooltip delayShow={500}/>
                 </header>
                 {successMsg ? <p className={classes.Success}>{successMsg}</p> : null}
                 <div className={classes.Views}>

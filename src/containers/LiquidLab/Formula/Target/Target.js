@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import * as actions from '../../../../store/actions/index';
 import { connect } from 'react-redux';
 import { enforceInputConstraints } from '../../../../util/shared';
-import ReactTooltip from 'react-tooltip';
 import * as ToolTip from '../../../../constants/Tooltip';
 
 import Auxil from '../../../../hoc/Auxil';
@@ -20,16 +19,29 @@ class Target extends Component {
     dataEnteredHandler = (event, control) => {
         event.target.value = enforceInputConstraints(event.target.value, event.target.maxLength);
 
-        let updatedInputs = {...this.props.inputs, [control]: {...this.props.inputs[control], value: event.target.value}};
-         let valid = validateTargetInput(control, updatedInputs, this.props.weights, this.props.flavors, this.props.baseInventory);
+        let valid = this.props.isAuthenticated ? this.validateSufficientInventory(event, control) : true;
 
         if (control === 'targetPg' || control === 'targetVg') {
             const oppControl = control === 'targetPg' ? 'targetVg' : 'targetPg';
-            valid = valid && +event.target.value + +this.props.inputs[oppControl].value === 100;
+            const sum = +event.target.value + +this.props.inputs[oppControl].value;
+            valid = valid && (sum === 100 || sum === 0);
             this.props.onDataEntered(oppControl, this.props.inputs[oppControl].value, valid);
         }
 
         this.props.onDataEntered(control, event.target.value, valid);
+    };
+
+    /**
+     * Validate current input data for authenticated users only
+     * @param event The user input event
+     * @param control The control receiving the user input
+     */
+    validateSufficientInventory = (event, control) => {
+        let updatedInputs = {
+            ...this.props.inputs,
+            [control]: {...this.props.inputs[control], value: event.target.value}
+        };
+        return validateTargetInput(control, updatedInputs, this.props.weights, this.props.flavors, this.props.baseInventory);
     };
 
     render() {
@@ -90,6 +102,7 @@ class Target extends Component {
 
 const mapStateToProps = state => {
     return {
+        isAuthenticated: state.auth.token !== null,
         inputs: state.formula.inputs,
         flavors: state.formula.flavors,
         weights: state.formula.weights,

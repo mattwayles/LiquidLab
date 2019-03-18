@@ -129,8 +129,6 @@ class Results extends Component {
         });
 
         let recipeName = results.recipeInfo.name.value ? results.recipeInfo.name.value : "No-Name Recipe";
-        recipeName += results.recipeInfo.batch.value ? + " [" + results.recipeInfo.batch.value + "] "
-            : "";
 
         const columns = [{name:'', tooltip: ToolTip.RESULT_INGREDIENT},  {name:'ML', tooltip: ToolTip.RESULT_ML}, {name:'Grams', tooltip: ToolTip.RESULT_GRAM}, {name: '%', tooltip: ToolTip.RESULT_PERCENT}];
 
@@ -142,7 +140,7 @@ class Results extends Component {
                             <p className={classes.Header}>
                                 {recipeName + " "}
                                 {results.recipeInfo.batch.value ?
-                                    <span style={{fontSize: '0.75em'}}>({results.recipeInfo.batch.value})</span>
+                                    <span style={{fontSize: '0.75em'}}>[{results.recipeInfo.batch.value}]</span>
                                     : null}
                             </p>
                     </div>

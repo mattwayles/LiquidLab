@@ -2,12 +2,21 @@
 ============================ BUGS / CLEANUP ================================
 ============================================================================
 
+===== DECISION ======
+- Should saving a recipe save the target data (ML to make, target Nic, tartget PG, target VG)?
+
 ===== LIQUIDLAB =====
-- Make Target PG/VG/NIC red if I don't have enough in inventory!
+- Target inputs should not remove themselves when selecting a new recipe
 - I Made It should give the opportunity to add flavors to inventory
 - I Made It should give a better success message
 - Success message 'drawer', grow open, shrink closed
+- Warning message when calculating recipe with invalid inputs
+- Saving/updating recipe briefly gives correct success message, then fades into "Successfully updated inventory". This is not the message I want.
+- Sub-directories for each batch under the same name (So I'm not populating recipe list with a ton of different batches of the same recipe)
 
+===== INVENTORY =====
+- On plus button click, open the Vendor textbox to await data input
+- Tab button in base should move to next base ingredient
 
 ===== ADD FLV TO INVENTORY =====
 - When adding flavor to inventory, present a grid with amount to add. Give user the chance to input flavor amount there, instead of it adding at 0ml

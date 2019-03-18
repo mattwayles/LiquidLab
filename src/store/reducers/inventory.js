@@ -3,7 +3,9 @@ import { updateObject } from '../../util/shared.js';
 
 const initialState = {
     cutoff: 3,
-    base: [],
+    base: [{name: "NIC", id: 0, amount: 0},
+        {name: "PG", id: 1, amount: 0},
+        {name: "VG", id: 2, amount: 0}],
     flavors: [],
     shoppingList: [],
     loading: false,

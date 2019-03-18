@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { enforceInputConstraints } from '../../../../util/shared';
 import * as actions from '../../../../store/actions/index';
-import ReactTooltip from 'react-tooltip';
 import * as ToolTip from '../../../../constants/Tooltip';
 import BatchSelect from '../../../../components/ui/BatchSelect/BatchSelect';
 import classes from './Recipe.css';
@@ -162,7 +161,6 @@ class Recipe extends Component {
                                type="text"
                                placeholder="Recipe Name"
                                 onChange={(event) => this.props.onInputDataEntered('name', event.target.value)} />
-                        <ReactTooltip delayShow={500}/>
                         <BatchSelect value={input.batch.value}
                                      changed={(event) => this.props.onInputDataEntered('batch', event.target.value)} />
                     </div>

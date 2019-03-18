@@ -89,10 +89,6 @@ export const validateTargetInput = (control, inputs, weights, flavors, baseInven
         mlRequired = baseResults["vgMl"];
     }
 
-
-    // console.log("For the control " + control + ", I require " + mlRequired + "ml and I have " + mlInventory + "ml in inventory." +
-    //     "Therefore, the control's validity is: " + (mlInventory >= mlRequired));
-
     return mlInventory >= mlRequired;
 };
 
@@ -262,6 +258,15 @@ export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, invent
         inventory.push({amount: 0, id: createNextId([...inventory]), name: nonInventoriedFlavors[f].flavor.value,
             vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0, notes: ''})
     }
+
+    const recipeData = {
+        batch: inputs.batch,
+        name: inputs.name,
+        notes: inputs.notes,
+        image: inputs.image,
+        flavors: [...flavors]
+    };
+
     if (recipeKey) {
         let original = {};
         for (let r in userRecipes) {
@@ -270,9 +275,7 @@ export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, invent
             }
         }
         saveInventoryData(token, dbEntryId, inventoryBase, inventory);
-        updateRecipe(token, dbEntryId, recipeKey,
-            {...inputs, flavors: [...flavors]
-            }, inventory, original);
+        updateRecipe(token, dbEntryId, recipeKey, recipeData, inventory, original);
     }
     else {
         if (duplicateRecipe(inputs.name.value, inputs.batch.value, userRecipes)) {
@@ -281,10 +284,7 @@ export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, invent
         }
         else {
             saveInventoryData(token, dbEntryId, inventoryBase, inventory);
-            saveRecipe(token, dbEntryId, inventory, {
-                ...inputs,
-                flavors: [...flavors]
-            });
+            saveRecipe(token, dbEntryId, inventory, recipeData);
         }
     }
 };
