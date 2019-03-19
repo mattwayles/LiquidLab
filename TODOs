@@ -19,6 +19,7 @@
 - Warn when token is about to expire, allow user to re-up
 - Better logout acknowledgement
 - "I Made This" scroll to top
+- TO DOs!
 - Either add image onto main screen (if authenticated), or add image preview to AddImage dialog. I don't like three dialog message showing up when overwriting a recipe.
 - Clean up the code. Extract util methods into smaller, more logical methods. Pull logical code out of classes into util.
     Stop doing the same thing three different ways, analyze the inputs/outputs and write reusable functions accordingly.
