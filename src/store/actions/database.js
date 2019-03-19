@@ -572,19 +572,19 @@ export const modifyFlavorRecipeCount = (token, dbEntryId, flavors, inventory, di
         dispatch(modifyFlavorRecipeCountStart());
 
         for (let f in flavors) {
-            for (let i in inventory) {
-                if (compareFlavors(flavors[f], inventory[i])) {
+            for (let i in inventory.flavors) {
+                if (compareFlavors(flavors[f], inventory.flavors[i])) {
                     if (dir) {
-                        inventory[i].recipes++;
+                        inventory.flavors[i].recipes++;
                     } else {
-                        inventory[i].recipes--;
+                        inventory.flavors[i].recipes--;
                     }
                 }
             }
         }
         axios.put('/users/' + dbEntryId + '/inventory.json?auth=' + token, inventory)
             .then(() => {
-                dispatch(modifyFlavorRecipeCountRedux(inventory));
+                dispatch(modifyFlavorRecipeCountRedux(inventory.flavors));
                 dispatch(modifyFlavorRecipeCountSuccess());
             }).catch(error => {
             dispatch(modifyFlavorRecipeCountFailed(ErrorMessage(error.response ? error.response.data.error.message : error)));

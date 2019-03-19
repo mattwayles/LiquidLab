@@ -11,7 +11,7 @@ import * as classes from '../Inventory.css';
 import * as ToolTip from "../../../constants/Tooltip";
 import TableBody from "@material-ui/core/es/TableBody/TableBody";
 import Input from "../../../components/ui/Input/Input";
-import {enforceInputConstraints, round} from "../../../util/shared";
+import { enforceInputConstraints, round} from "../../../util/shared";
 import {sortTable} from "../../../util/inventoryUtil";
 
 
@@ -47,12 +47,8 @@ class InventoryBase extends React.Component {
     handleKeyDown = (event, row, control) => {
         if (event.keyCode === 9 && this.state.edit) {
             event.preventDefault();
-            if (this.state.edit.cell === 'name') {
-                this.setState({edit: {...this.state.edit, cell: 'amount'}})
-            }
-            else if (this.state.edit.cell === 'amount') {
-                this.setState({edit: {...this.state.edit, cell: 'notes'}})
-            }
+            let index = this.state.data.indexOf(row);
+            this.setState({edit: {row: index + 1, cell: 'amount'}});
         }
         else if (event.keyCode === 13) {
             this.props.handleSaveInventory();

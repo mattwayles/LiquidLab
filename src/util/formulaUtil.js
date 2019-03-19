@@ -5,9 +5,10 @@ import {compareFlavors, createNextId, round} from "./shared";
  * @param inputs    The user inputs
  * @param flavors   The list of user-input flavors
  * @param error The error to return
+ * @param warning The warning to return
  * @returns {boolean}   Boolean indicating the validity of all input values
  */
-export const validateInputs = (inputs, flavors, error) => {
+export const validateInputs = (inputs, flavors, error, warning) => {
     if (inputs.mlToMake.value < 1) {
         error("ML To Make must be greater than or equal to 1");
         return false;
@@ -30,6 +31,13 @@ export const validateInputs = (inputs, flavors, error) => {
             }
         }
     }
+
+    for (let i in Object.keys(inputs)) {
+        if (!inputs[Object.keys(inputs)[i]].valid) {
+            warning("One or more ingredients has insufficient inventory volume to complete this product.");
+        }
+    }
+
     return true;
 };
 
@@ -228,7 +236,7 @@ export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) 
                 }
             }
             if (!found && flavors[f].flavor && flavors[f].flavor.value !== "") {
-                nonInventoriedFlavors.push(flavors[f]);
+                nonInventoriedFlavors.push({...flavors[f], checked: true, amount: 0});
             }
         }
     }
@@ -238,8 +246,7 @@ export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) 
 /**
  * Save or update a recipe, also verifying successful inventory update
  * @param nonInventoriedFlavors The list of non-inventoried flavors in the recipe
- * @param inventoryProps    The flavors included in the Redux inventory
- * @param inventoryBase The base ingredients included in the Redux inventory
+ * @param inventory The inventory to be included in redux
  * @param flavors   The flavors in the recipe
  * @param inputs    The user inputs in the recipe
  * @param userRecipes   All user recipes available in Redux
@@ -251,18 +258,23 @@ export const populateNonInventoriedFlavors = (nonInventory, flavors, inventory) 
  * @param updateRecipe  The updateRecipe database function
  * @param saveRecipe    The saveRecipe database function
  */
-export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventoryProps, inventoryBase, flavors, inputs, userRecipes, recipeKey, token, dbEntryId,
+export const saveOrUpdateRecipe = (nonInventoriedFlavors, inventory, flavors, inputs, userRecipes, recipeKey, token, dbEntryId,
                                    error, saveInventoryData, updateRecipe, saveRecipe) => {
-    //Copy inventory for modification
-    const inventory = {
-        base: [...inventoryBase],
-        flavors: [...inventoryProps]
-    };
 
+    console.log(nonInventoriedFlavors);
     //Add non-inventoried flavors to inventory
     for (let f in nonInventoriedFlavors) {
-        inventory.flavors.push({amount: 0, id: createNextId([...inventory]), name: nonInventoriedFlavors[f].flavor.value,
-            vendor: nonInventoriedFlavors[f].ven ? nonInventoriedFlavors[f].ven.value : '', recipes: 0, notes: ''})
+        let flavor = nonInventoriedFlavors[f];
+        if (flavor.checked) {
+            inventory.flavors.push({
+                amount: flavor.amount,
+                id: createNextId([...inventory.flavors]),
+                name: flavor.flavor.value,
+                vendor: flavor.ven ? flavor.ven.value : '',
+                recipes: 0,
+                notes: ''
+            })
+        }
     }
 
     //Create object containing receip data to save to database

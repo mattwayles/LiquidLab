@@ -132,9 +132,10 @@ class InventoryFlavors extends React.Component {
      */
     handleAdd = () => {
         let data = [...this.state.data];
-        data.push({id: createNextId(data), vendor: '', name:'New Flavor', amount: 0, recipes: 0, notes: ''});
+        const id = createNextId(data);
+        data.push({id: id, vendor: '', name:'New Flavor', amount: 0, recipes: 0, notes: ''});
         this.props.handleSetFlavors(data);
-        this.setState({data: data});
+        this.setState({data: data, edit: {row: id, cell: 'vendor'}});
     };
 
     /**

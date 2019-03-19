@@ -12,11 +12,13 @@ import {setInvalidFlavor, setInvalidRecipes} from "../../util/recipeUtil";
 import {CircularProgress} from "@material-ui/core";
 import ErrorDialog from "../../components/Dialog/ErrorDialog";
 import {validateTargetInput} from "../../util/formulaUtil";
+import WarningDialog from "../../components/Dialog/WarningDialog";
 
 class LiquidLab extends Component {
     state = {
         results: false,
         error: null,
+        warning: null,
         made: false,
         navWarn: false,
     };
@@ -150,8 +152,12 @@ class LiquidLab extends Component {
         this.setState({ error: error });
     };
 
+    warningHandler = (warning) => {
+        this.setState({ warning: warning });
+    };
+
     render() {
-        const { results, error, made, navWarn } = this.state;
+        const { results, error, warning, made, navWarn } = this.state;
         const { isAuthenticated, inputs, userRecipes, recipeKey, successMsg, loading } = this.props;
 
         let displayedRecipes = userRecipes;
@@ -186,14 +192,15 @@ class LiquidLab extends Component {
                 </header>
                 {successMsg ? <p className={classes.Success}>{successMsg}</p> : null}
                 <div className={classes.Views}>
-                    <Formula clear={this.handleClearResults} recipes={userRecipes} displayResults={this.displayResultsHandler} error={this.errorHandler}/>
+                    <Formula clear={this.handleClearResults} recipes={userRecipes} displayResults={this.displayResultsHandler} error={this.errorHandler} warning={this.warningHandler}/>
                     <div className={classes.Results}>
                         {results ? <Results navWarn={navWarn} made={made} navWarnHandler={this.handleNavWarn} madeHandler={this.handleRecipeMade}/>
                             : <div className={classes.ResultPlaceholder}><img className={classes.Logo} src={logo} alt="" /><span className={classes.Placeholder}>Results</span></div>}
                     </div>
                 </div>
                 {error ? <ErrorDialog open={!!error} close={() => this.errorHandler(null)} message={error} /> : null}
-            </div> 
+                {warning ? <WarningDialog open={!!warning} close={() => this.warningHandler(null)} message={warning} /> : null}
+            </div>
         ); 
     }
 }

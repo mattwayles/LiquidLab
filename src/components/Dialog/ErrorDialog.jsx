@@ -1,6 +1,5 @@
 //React imports
 import React from 'react';
-import errorImg from '../../assets/error.png';
 
 //@material-ui/core Imports
 import {
@@ -8,6 +7,7 @@ import {
     DialogTitle,
 } from "@material-ui/core";
 import Button from "../ui/Button/Button";
+import Error from "@material-ui/icons/es/Error";
 
 
 /**
@@ -15,7 +15,8 @@ import Button from "../ui/Button/Button";
  */
 const errorDialog = (props) => (
         <Dialog open={props.open} onClose={props.close} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title"><img style={{width: '2vw'}} src={errorImg} alt="!!!" />&emsp;<span style={{color: 'red'}}>{props.message}</span></DialogTitle>
+            <Error style={{margin: "4vh auto 0",width: "100%", textAlign: 'center', fontSize: '6vw', color: "red"}} />
+            <DialogTitle id="form-dialog-title" style={{textAlign: 'center'}}>{props.message}</DialogTitle>
             <DialogActions>
                 <Button classname="Dialog" clicked={props.close}>
                     OK

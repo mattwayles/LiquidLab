@@ -22,7 +22,8 @@ class Inventory extends React.Component {
      * When opening the Inventory, sort all items available in Redux
      */
     componentWillMount() {
-        let flavors  = this.props.flavors.sort((a, b) => {
+        let flavors  = this.props.flavors;
+        flavors = flavors.sort((a, b) => {
             return (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0)
         });
         let base = this.props.base;
@@ -62,7 +63,7 @@ class Inventory extends React.Component {
             this.setState({ flavors: newFlavors });
         }
 
-        let inventory = {base: [...this.state.base], flavors: [...this.state.flavors]};
+        let inventory = {base: this.state.base, flavors: this.state.flavors};
         this.props.onSaveInventoryData(this.props.token, this.props.dbEntryId, inventory);
         this.props.history.push("/");
     };

@@ -16,23 +16,27 @@ import Auxil from "../../../hoc/Auxil";
 import AddInventoryDialog from "../../../components/Dialog/AddInventoryDialog";
 import AddImageDialog from "../../../components/Dialog/AddImageDialog";
 import firebase from "firebase";
+import CreateNewRecipeDialog from "../../../components/Dialog/CreateNewRecipeDialog";
 import ConfirmDialog from "../../../components/Dialog/ConfirmDialog";
+import {enforceInputConstraints} from "../../../util/shared";
 
 class Formula extends Component {
     state = {
-        saveConfirm: false,
+        saveDialog: false,
+        deleteDialog: false,
         overwriteDialog: false,
         overwriteRecipe: '',
         nonInventory: [],
         addImage: false,
-        imgFile: ''
+        imgFile: '',
+        newRecipe: false
     };
 
     /**
      * Handler for closing the Save Confirm dialog
      */
     handleClose = () => {
-        this.setState({ overwriteDialog: false, addImage: false, saveConfirm: false, nonInventory: [], overwriteRecipe: '' });
+        this.setState({ overwriteDialog: false, addImage: false, saveDialog: false, nonInventory: [], overwriteRecipe: '' });
     };
 
     /**
@@ -47,8 +51,13 @@ class Formula extends Component {
      * Handler for user click of the 'Delete' button, to delete a recipe from redux and database
      */
     handleDelete = () => {
+        this.setState({ deleteDialog: !this.state.deleteDialog });
+    };
+
+    handleDeleteConfirm = () => {
         this.props.onDeleteRecipe(this.props.token, this.props.dbEntryId,
-            this.props.recipeKey, this.props.inputs.name, this.props.inputs.batch, this.props.flavors, this.props.inventory, this.props.inventoryBase);
+            this.props.recipeKey, this.props.inputs.name, this.props.inputs.batch, this.props.flavors, this.props.inventory);
+        this.setState({ deleteDialog: false });
     };
 
     handleOverwriteWarning = () => {
@@ -57,10 +66,12 @@ class Formula extends Component {
         let found = false;
         for (let r in this.props.userRecipes) {
             if (this.props.userRecipes[r].dbKey === this.props.recipeKey) {
-                original = this.props.userRecipes[r]
-                if (this.props.inputs.name.value !== original.name.value) {
+                original = this.props.userRecipes[r];
+                if (this.props.inputs.name.value !== original.name.value
+                    || this.props.inputs.batch.value !== original.batch.value) {
                     found = true;
-                    this.setState({ overwriteDialog: true, overwriteRecipe: original.name.value });
+                    let recipeId = original.batch.value ? original.name.value + " [" + original.batch.value + "]" : original.name.value;
+                    this.setState({ overwriteDialog: true, overwriteRecipe: recipeId });
                     break;
                 }
             }
@@ -69,6 +80,10 @@ class Formula extends Component {
         if (!found) {
             this.handleAddImage();
         }
+    };
+
+    handleOverwriteSelection = (overwrite) => {
+        this.setState({ overwriteDialog: false, addImage: true, newRecipe: !overwrite});
     };
 
     handleAddImage = () => {
@@ -83,16 +98,16 @@ class Formula extends Component {
             this.setState({ addImage: false, imgFile: '' });
         }
         
-        let nonInventoriedFlavors = populateNonInventoriedFlavors(this.state.nonInventory, this.props.flavors, this.props.inventory);
+        let nonInventoriedFlavors = populateNonInventoriedFlavors(this.state.nonInventory, this.props.flavors, this.props.inventory.flavors);
 
-        if (!this.state.saveConfirm && nonInventoriedFlavors.length > 0) {
-            this.setState({ saveConfirm: true, nonInventory: nonInventoriedFlavors })
+        if (!this.state.saveDialog && nonInventoriedFlavors.length > 0) {
+            this.setState({ saveDialog: true, nonInventory: nonInventoriedFlavors })
         }
         else {
-            saveOrUpdateRecipe(addFlavorsToInventory ? nonInventoriedFlavors : [], this.props.inventory, this.props.inventoryBase, this.props.flavors, this.props.inputs, this.props.userRecipes,
-                this.props.recipeKey, this.props.token, this.props.dbEntryId, this.props.error, this.props.onSaveInventoryData, this.props.onUpdateRecipe, this.props.onSaveRecipe);
+            saveOrUpdateRecipe(addFlavorsToInventory ? nonInventoriedFlavors : [], this.props.inventory, this.props.flavors, this.props.inputs, this.props.userRecipes,
+                this.state.newRecipe? null : this.props.recipeKey, this.props.token, this.props.dbEntryId, this.props.error, this.props.onSaveInventoryData, this.props.onUpdateRecipe, this.props.onSaveRecipe);
             this.props.clear();
-            this.setState({ addImage: false, saveConfirm: false, nonInventory: [] });
+            this.setState({ addImage: false, saveDialog: false, nonInventory: [] });
         }
     };
 
@@ -105,7 +120,7 @@ class Formula extends Component {
         this.props.error(null);
 
         //Validate user input
-        if (validateInputs(this.props.inputs, this.props.flavors, this.props.error)) {
+        if (validateInputs(this.props.inputs, this.props.flavors, this.props.error, this.props.warning)) {
             let flavorResults = [];
             let flavorMlTotal = 0;
 
@@ -136,6 +151,13 @@ class Formula extends Component {
         }
     };
 
+    handleInventoryChange = (e, index, prop) => {
+        let value = e.target.value ? enforceInputConstraints(e.target.value, e.target.maxLength) : e.target.checked;
+        let nonInventoryCopy = [...this.state.nonInventory];
+        nonInventoryCopy[index] = {...nonInventoryCopy[index], [prop]: value};
+        this.setState({ nonInventory: nonInventoryCopy})
+    };
+
     uploadImg = (e) => {
         let storageRef = firebase.storage().ref();
         let recipeRef = storageRef.child(e.target.files[0].name);
@@ -146,20 +168,32 @@ class Formula extends Component {
 
 
     render () {
-        const { saveConfirm, overwriteDialog, overwriteRecipe, nonInventory, addImage, imgFile } = this.state;
+        const { saveDialog, overwriteDialog, deleteDialog, overwriteRecipe, nonInventory, addImage, imgFile } = this.state;
         const { recipeKey, recipes, image, inputs} = this.props;
 
+        const currentRecipeName = inputs.batch.value ? inputs.name.value + " [" + inputs.batch.value + "]" : inputs.name.value;
         let addMsg = recipeKey && image !== '' ? "Update the Recipe Image? " : "Add an Image to this Recipe?";
-
+        let overwriteMsg = "Do you want to overwrite " + overwriteRecipe + " with " + currentRecipeName + ", or save as a new recipe?";
 
         return (
             <Auxil>
-                <AddInventoryDialog open={saveConfirm} close={this.handleClose} save={this.handleSave}
-                                   addAndSave={ this.handleSave } inventoryList={nonInventory}/>
+                <AddInventoryDialog
+                    open={saveDialog}
+                    close={this.handleClose}
+                    save={this.handleSave}
+                    addAndSave={ this.handleSave }
+                    inventoryChange={ this.handleInventoryChange }
+                    inventoryList={nonInventory}/>
                 <AddImageDialog open={addImage} close={this.handleClose} confirm={this.handleSave}
                                 imgFile={imgFile} uploadImg={this.uploadImg} message={addMsg} />
-                <ConfirmDialog open={overwriteDialog} close={this.handleClose} confirm={this.handleAddImage}
-                               message={"Are you sure you want to overwrite " + overwriteRecipe + " with " + inputs.name.value + "?"} />
+                <CreateNewRecipeDialog
+                    open={overwriteDialog}
+                    close={this.handleClose}
+                    overwrite={this.handleOverwriteSelection}
+                    message={"Overwriting " + overwriteRecipe}
+                    subtitle={overwriteMsg} />
+                <ConfirmDialog open={deleteDialog} close={this.handleDelete} confirm={this.handleDeleteConfirm}
+                               message={"Are you sure you want to delete " + currentRecipeName + "?"} />
                 <div className={classes.Formula}>
                     <Target  />
                     <Recipe
@@ -183,8 +217,7 @@ const mapStateToProps = state => {
         token: state.auth.token,
         dbEntryId: state.database.dbEntryId,
         userRecipes: state.database.userRecipes,
-        inventory: state.inventory.flavors,
-        inventoryBase: state.inventory.base,
+        inventory: {flavors: [...state.inventory.flavors], base: [...state.inventory.base]},
         results: state.results,
         image: state.formula.inputs.image.value
     }

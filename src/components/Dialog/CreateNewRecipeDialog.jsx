@@ -7,16 +7,14 @@ import {
     DialogTitle, DialogContent, DialogContentText
 } from "@material-ui/core";
 import Button from "../ui/Button/Button";
-import Warning from "@material-ui/icons/es/Warning";
 
 
 /**
  * Produce a dialog box and execute an operation when a button is pressed.
  */
-const confirmDialog = (props) => (
+const createNewRecipeDialog = (props) => (
         <Dialog open={props.open} onClose={props.close} aria-labelledby="form-dialog-title">
-            <Warning style={{margin: "4vh auto 0",width: "100%", textAlign: 'center', fontSize: '6vw', color: "gold"}} />
-            <DialogTitle id="form-dialog-title" style={{textAlign: 'center'}}>{props.message}</DialogTitle>
+            <DialogTitle id="form-dialog-title">{props.message}</DialogTitle>
             {props.subtitle ? <DialogContent>
                 <DialogContentText>
                 {props.subtitle}
@@ -24,13 +22,16 @@ const confirmDialog = (props) => (
             </DialogContent>: null }
             <DialogActions>
                 <Button classname="Dialog" clicked={props.close}>
-                    No
+                    Cancel
                 </Button>
-                <Button classname="Dialog" clicked={props.confirm}>
-                    Yes
+                <Button classname="Dialog" clicked={() => props.overwrite(false)}>
+                    Save New
+                </Button>
+                <Button classname="Dialog" clicked={() => props.overwrite(true)}>
+                    Overwrite
                 </Button>
             </DialogActions>
         </Dialog>
     );
 
-export default confirmDialog ;
+export default createNewRecipeDialog ;

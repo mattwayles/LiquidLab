@@ -1,33 +1,34 @@
-============================================================================
-============================ BUGS / CLEANUP ================================
-============================================================================
-
-===== LIQUIDLAB =====
-- Modify Overwrite dialog to allow user to either Continue or Create New
-- Success message 'drawer', grow open, shrink closed
-- Warning message when calculating recipe with invalid inputs
-- Sub-directories for each batch under the same name (So I'm not populating recipe list with a ton of different batches of the same recipe)
-
-===== INVENTORY =====
-- On plus button click, open the Vendor textbox to await data input
-- Tab button in base should move to next base ingredient
-- # of Recipes is not updating correctly
-- Inventory flavor ID is not incrementing, but it doesn't seem to affect much; do I need a flavor ID?
+========================================================================================================================
+============================================ BUGS / CLEANUP ============================================================
+========================================================================================================================
 
 ===== ADD FLV TO INVENTORY =====
-- When adding flavor to inventory, present a grid with amount to add. Give user the chance to input flavor amount there, instead of it adding at 0ml
+- Do I want this table to be sortable? Probably, to conform to the rest of the app (ugh). This also means I need to update nonInventoryValue via flavor name, not index.
+- Add ToolTips to this new, flashy table.
 
 
 ===== RESULTS =====
-- Maybe alphabetize? Or alphabetize when database I/O? Do users want alphabetization?
+- This grid should be sortable by each column. I may need to convert into Material-UI Table first, but follow the template set in Inventory to complete
 
-======================================================================
-============================ FEATURES ================================
-======================================================================
 
-- Add image to recipe preview
-- Warn when token is about to expire
+===== LIQUIDLAB =====
+- Success message 'drawer', grow open, shrink closed
+- Split notes into description (public) / notes (private) in anticipation of Global Recipes
 - Expand AutoComplete capabilities in InputOption to actually populate the textbox with the top result.
+- Sub-directories for each batch under the same name (So I'm not populating recipe list with a ton of different batches of the same recipe)
+- Warn when token is about to expire, allow user to re-up
+- Better logout acknowledgement
+- "I Made This" scroll to top
+- Either add image onto main screen (if authenticated), or add image preview to AddImage dialog. I don't like three dialog message showing up when overwriting a recipe.
+- Clean up the code. Extract util methods into smaller, more logical methods. Pull logical code out of classes into util.
+    Stop doing the same thing three different ways, analyze the inputs/outputs and write reusable functions accordingly.
+- Mobile / Tablet / Responsive Optimization (Mobile- snap to top when updating DB so success message can be seen!)
+
+
+========================================================================================================================
+================================================ FEATURES ==============================================================
+========================================================================================================================
+
 - Global Recipes
     - What can I make from global recipes? (Filter out local flavors)
     - Browse global with intense search
@@ -36,17 +37,26 @@
     - Include base ingredients in inventory?
     - Auto-add items to shopping list?
     - Delete auto-added items from your shopping list?
-- Better logout acknowledgement
 - Support page with About section, Help section, Walkthrough, Donate/Contact, and TOC
-- Mobile / Tablet / Responsive Optimization (Mobile- snap to top when updating DB so success message can be seen!)
 
-===== REGISTRATION ENHANCEMENTS =====
+
+========================================================================================================================
+========================================= REGISTRATION ENHANCEMENTS ====================================================
+========================================================================================================================
 - Stronger password enforcement
 - Character limit & filtering for username
 - Firebase SMTP (email verification, forgot password e-mail, password reset, tier 0 until verified otherwise)
 - Newly-registered users should set initial base ingredient values
 - First-run wizard tutorial: Set weights, set PG/VG/NIC, introduce to app components
 - Paid Tiers with credit card app embedded
-- Clean up the code. Extract util methods into smaller, more logical methods. Pull logical code out of classes into util.
-    Stop doing the same thing three different ways, analyze the inputs/outputs and write reusable functions accordingly.
+
+
+========================================================================================================================
+================================================ RESEARCH ==============================================================
+========================================================================================================================
+- What am I missing that other calculators have? Saline? Water? Alcohol? etc.
 - Performance testing: what happens when recipes, inventory, shoppingList get massive?
+- Think I need a patent?
+- SEO
+
+

@@ -1,0 +1,11 @@
+.FlexTable {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: left;
+    width: 60%;
+}
+
+.Input {
+    width: 90%;
+}
